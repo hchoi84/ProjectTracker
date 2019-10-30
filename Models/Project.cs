@@ -14,7 +14,7 @@ namespace ProjectTracker.Models
     public String GetRemaining()
     {
       var diff = this.Deadline.Subtract(DateTime.Now);
-      return diff.TotalDays > 30 ? "30+ days" : $"{diff.TotalDays} days";
+      return (Convert.ToInt32(diff.TotalDays).ToString() + " Day(s)");
     }
   }
 }
