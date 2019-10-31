@@ -14,28 +14,10 @@ namespace ProjectTracker.Models
         new Project() 
         {
           Id = 1,
-          ProjectName = "Project Tracker Ver 1",
+          ProjectName = "Project Tracker",
           Created = new DateTime(2019, 10, 30, 12, 03, 00),
           Updated = DateTime.Now,
           Deadline = DateTime.Now.AddMonths(1),
-          Creator = "Howard Choi"
-        },
-        new Project() 
-        {
-          Id = 2,
-          ProjectName = "Project Tracker Ver 2",
-          Created = new DateTime(2019, 10, 30, 12, 03, 00),
-          Updated = DateTime.Now,
-          Deadline = DateTime.Now.AddMonths(2),
-          Creator = "Howard Choi"
-        },
-        new Project() 
-        {
-          Id = 3,
-          ProjectName = "Project Tracker Ver 3",
-          Created = new DateTime(2019, 10, 30, 12, 03, 00),
-          Updated = DateTime.Now,
-          Deadline = DateTime.Now.AddMonths(3),
           Creator = "Howard Choi"
         }
       };
