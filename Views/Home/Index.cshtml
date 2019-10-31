@@ -24,8 +24,12 @@
         <div class="col-sm">@project.Deadline.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@project.Creator</div>
         <div class="col-sm">
-          <a asp-controller="home" asp-action="Edit" asp-route-id="@project.Id"><i class="far fa-edit mr-2"></i></a>
-          <a asp-controller="home" asp-action="Delete"><i class="far fa-trash-alt mr-2"></i></a>
+          <a asp-controller="home" asp-action="Edit" asp-route-id="@project.Id">
+            <i class="far fa-edit fa-lg mr-2"></i>
+          </a>
+          <a asp-controller="home" asp-action="delete" asp-route-id="@project.Id">
+            <i class="far fa-trash-alt fa-lg mr-2"></i>
+          </a>
         </div>
       </div>
       <div class="row align-items-center pb-3 bg-secondary">

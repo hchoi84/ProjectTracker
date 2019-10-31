@@ -31,6 +31,12 @@ namespace ProjectTracker.Controllers
       return View(project);
     }
 
+    public RedirectToActionResult Delete(int id)
+    {
+      _project.Delete(id);
+      return RedirectToAction("index");
+    }
+
     [HttpPost]
     public IActionResult Create(Project newProject)
     {
