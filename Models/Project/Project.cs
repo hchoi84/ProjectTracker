@@ -10,5 +10,6 @@ namespace ProjectTracker.Models
     public DateTime Updated { get; set; }
     public DateTime Deadline { get; set; }
     public string Creator { get; set; }
+    public string Summary { get; set; }
   }
 }

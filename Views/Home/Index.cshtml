@@ -8,25 +8,35 @@
 
   <div class="container">
     <div class="row row-height-3 align-items-center border-bottom border-white">
-      <div class="col-sm">Project Name</div>
+      <div class="col-sm-4">Project Name</div>
       <div class="col-sm">Created</div>
       <div class="col-sm">Updated</div>
       <div class="col-sm">Deadline</div>
       <div class="col-sm">Creator</div>
+      <div class="col-sm">Action</div>
     </div>
     @foreach (var project in Model)
     {
-      <div class="row row-height-3 align-items-center">
-        <div class="col-sm">@project.ProjectName</div>
+      <div class="row row-height-3 align-items-center mt-3 bg-secondary">
+        <div class="col-sm-4">@project.ProjectName</div>
         <div class="col-sm">@project.Created.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@project.Updated.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@project.Deadline.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@project.Creator</div>
+        <div class="col-sm">
+          <a asp-controller="home" asp-action="Edit" asp-route-id="@project.Id"><i class="far fa-edit mr-2"></i></a>
+          <a asp-controller="home" asp-action="Delete"><i class="far fa-trash-alt mr-2"></i></a>
+        </div>
       </div>
-      <div class="row align-items-center">
-        <div class="col-sm-12">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum.</div>
+      <div class="row align-items-center pb-3 bg-secondary">
+        <div class="col-sm-12">@project.Summary</div>
       </div>
     }
+    <div class="row aling-items-center mt-3">
+      <div class="col-sm-12 p-0">
+        <a asp-controller="Home" asp-action="Create" class="btn btn-primary"><i class="fas fa-plus mr-2"></i>Add New Project</a>
+      </div>
+    </div>
   </div>
 
 </div>

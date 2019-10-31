@@ -19,5 +19,31 @@ namespace ProjectTracker.Controllers
       
       return View(projects);
     }
+
+    [HttpGet]
+    public IActionResult Create() => View();
+
+    [HttpGet]
+    public ViewResult Edit(int id)
+    {
+      var project = _project.GetProject(id);
+      project.Deadline = Convert.ToDateTime(project.Deadline.ToString("yyyy/MM/dd HH:mm tt"));
+      return View(project);
+    }
+
+    [HttpPost]
+    public IActionResult Create(Project newProject)
+    {
+      Console.WriteLine("Creating Project");
+      _project.Add(newProject);
+      return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public IActionResult Edit(Project editProject)
+    {
+      _project.Update(editProject);
+      return RedirectToAction("index");
+    }
   }
 }

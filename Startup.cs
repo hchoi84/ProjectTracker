@@ -16,7 +16,8 @@ namespace ProjectTracker
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddMvc();
-      services.AddScoped<IProject, TestProjectRepo>();
+      services.AddSingleton<IProject, TestProjectRepo>();
+      // services.AddScoped<IProject, TestProjectRepo>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

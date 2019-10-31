@@ -1,3 +1,11 @@
+textarea{
+  min-height: 6rem;
+}
+
 .row-height-3{
   height: 3rem;
+}
+
+a{
+  color: #fff;
 }

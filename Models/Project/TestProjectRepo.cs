@@ -16,9 +16,10 @@ namespace ProjectTracker.Models
           Id = 1,
           ProjectName = "Project Tracker",
           Created = new DateTime(2019, 10, 30, 12, 03, 00),
-          Updated = DateTime.Now,
+          Updated = new DateTime(2019, 10, 31, 2, 40, 00),
           Deadline = DateTime.Now.AddMonths(1),
-          Creator = "Howard Choi"
+          Creator = "Howard Choi",
+          Summary = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum."
         }
       };
     }
@@ -26,6 +27,8 @@ namespace ProjectTracker.Models
     public Project Add(Project project)
     {
       project.Id = _projects.Max(p => p.Id) + 1;
+      project.Created = DateTime.Now;
+      project.Updated = DateTime.Now;
       _projects.Add(project);
       return project;
     }
@@ -62,10 +65,8 @@ namespace ProjectTracker.Models
       if (project != null)
       {
         project.ProjectName = updatedProject.ProjectName;
-        project.Created = updatedProject.Created;
-        project.Updated = updatedProject.Updated;
+        project.Updated = DateTime.Now;
         project.Deadline = updatedProject.Deadline;
-        project.Creator = updatedProject.Creator;
         return project;
       }
       return null;
