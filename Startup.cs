@@ -17,6 +17,7 @@ namespace ProjectTracker
     {
       services.AddMvc();
       services.AddSingleton<IProject, TestProjectRepo>();
+      services.AddSingleton<ITask, TestTaskRepo>();
       // services.AddScoped<IProject, TestProjectRepo>();
     }
 

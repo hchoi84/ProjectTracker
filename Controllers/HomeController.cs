@@ -20,10 +20,10 @@ namespace ProjectTracker.Controllers
       return View(projects);
     }
 
-    [HttpGet]
+    [HttpGet("/project/create")]
     public IActionResult Create() => View();
 
-    [HttpGet]
+    [HttpGet("/project/{id}/edit")]
     public ViewResult Edit(int id)
     {
       var project = _project.GetProject(id);
