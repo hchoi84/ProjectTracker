@@ -20,6 +20,16 @@ namespace ProjectTracker.Models
           Deadline = DateTime.Now.AddMonths(1),
           Creator = "Howard Choi",
           Summary = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum."
+        },
+        new Project() 
+        {
+          Id = 2,
+          ProjectName = "Golfio ChannelAdvisor API",
+          Created = new DateTime(2019, 11, 06, 11, 30, 00),
+          Updated = new DateTime(2019, 11, 06, 11, 30, 00),
+          Deadline = DateTime.Now.AddMonths(1),
+          Creator = "Howard Choi",
+          Summary = "Allow data pulling from ChannelAdvisor and report generating without needing to login or do other manual work. Purpose is to increase productivity in other areas and reduce manual report creation."
         }
       };
     }

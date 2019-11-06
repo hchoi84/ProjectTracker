@@ -18,7 +18,9 @@
     @foreach (var project in Model)
     {
       <div class="row row-height-3 align-items-center mt-3 bg-secondary">
-        <div class="col-sm-4">@project.ProjectName</div>
+        <div class="col-sm-4">
+          <a asp-controller="Project" asp-action="Index" asp-route-id="@project.Id">@project.ProjectName</a>
+        </div>
         <div class="col-sm">@project.Created.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@project.Updated.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@project.Deadline.ToString("yyyy/MM/dd")</div>
