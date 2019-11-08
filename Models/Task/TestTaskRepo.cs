@@ -49,6 +49,10 @@ namespace ProjectTracker.Models
 
     public ProjectTask Add(ProjectTask task)
     {
+      int id = _tasks.Max(t => t.Id) + 1;
+      task.Id = id;
+      task.Created = DateTime.Now;
+      task.Updated = DateTime.Now;
       _tasks.Add(task);
       return task;
     }
