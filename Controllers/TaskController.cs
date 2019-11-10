@@ -6,11 +6,11 @@ using ProjectTracker.Models;
 namespace ProjectTracker.Controllers
 {
   [Route("project/{id}/tasks")]
-  public class ProjectController : Controller
+  public class TaskController : Controller
   {
     private readonly IProject _project;
     private readonly ITask _task;
-    public ProjectController(IProject project, ITask task)
+    public TaskController(IProject project, ITask task)
     {
       _project = project;
       _task = task;

@@ -1,11 +1,10 @@
 @model ProjectTask
 
 @{
-  ViewBag.Title = "Edit Task";
+  ViewBag.Title = "Create Task";
 }
 
-<form asp-controller="project" asp-action="edit" method="POST" class="mt-3">
-  <input type="hidden" readonly asp-for="Id">
+<form asp-controller="task" asp-action="create" method="POST" class="mt-3">
   <input type="hidden" readonly asp-for="ProjectId">
   <div class="form-group">
     <label asp-for="TaskName">Task Name</label>
@@ -23,5 +22,5 @@
     <label asp-for="Description">Description</label>
     <textarea asp-for="Description" class="form-control"></textarea>
   </div>
-  <button type="submit" class="btn btn-primary">Update</button>
+  <button type="submit" class="btn btn-primary">Create</button>
 </form>
