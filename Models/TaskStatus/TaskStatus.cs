@@ -10,4 +10,6 @@ namespace ProjectTracker.Models
     public DateTime Created { get; set; }
     public DateTime Updated { get; set; }
   }
+
+  public enum TaskStatusEnum{};
 }

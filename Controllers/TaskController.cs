@@ -10,23 +10,26 @@ namespace ProjectTracker.Controllers
   {
     private readonly IProject _project;
     private readonly ITask _task;
-    public TaskController(IProject project, ITask task)
+    private readonly ITaskStatus _taskStatus;
+    public TaskController(IProject project, ITask task, ITaskStatus taskStatus)
     {
       _project = project;
       _task = task;
+      _taskStatus = taskStatus;
     }
 
     [HttpGet("")]
     public IActionResult Index(int id)
     {
       Project project = _project.GetProject(id);
-      project.Tasks = new List<ProjectTask>();
+      project.Tasks = new List<Task>();
 
-      IEnumerable<ProjectTask> tasks = _task.GetAllTasks();
-      foreach (ProjectTask task in tasks)
+      IEnumerable<Task> tasks = _task.GetAllTasks();
+      foreach (Task task in tasks)
       {
         if (task.ProjectId == id)
         {
+          task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
           project.Tasks.Add(task);
         }
       }
@@ -37,7 +40,7 @@ namespace ProjectTracker.Controllers
     [HttpGet("create")]
     public IActionResult Create(int id)
     {
-      ProjectTask task = new ProjectTask();
+      Task task = new Task();
       task.ProjectId = id;
       task.Deadline = DateTime.Now.AddDays(1).Date;
       return View(task);
@@ -47,6 +50,9 @@ namespace ProjectTracker.Controllers
     public ViewResult Edit(int id, int taskId)
     {
       var task = _task.GetTask(taskId);
+      IEnumerable<TaskStatus> taskStatus = _taskStatus.GetAllTaskStatus();
+      
+
       return View(task);
     }
 
@@ -58,14 +64,14 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("create")]
-    public IActionResult Create(ProjectTask newProject)
+    public IActionResult Create(Task newProject)
     {
       _task.Add(newProject);
       return RedirectToAction("Index");
     }
 
     [HttpPost("{taskId}/edit")]
-    public IActionResult Edit(ProjectTask editProject)
+    public IActionResult Edit(Task editProject)
     {
       _task.Update(editProject);
       return RedirectToAction("index");

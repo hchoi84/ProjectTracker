@@ -14,6 +14,6 @@ namespace ProjectTracker.Models
     public DateTime Deadline { get; set; }
     public DateTime Created { get; set; }
     public DateTime Updated { get; set; }
-    public List<ProjectTask> Tasks { get; set; }
+    public List<Task> Tasks { get; set; }
   }
 }

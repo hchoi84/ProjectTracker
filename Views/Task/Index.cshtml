@@ -13,7 +13,7 @@
   <div class="container mt-3">
     <div class="row row-height-3 align-items-center border-bottom border-white">
       <div class="col-sm-5">Task Name</div>
-      <div class="col-sm">Updated</div>
+      <div class="col-sm">Status</div>
       <div class="col-sm">Deadline</div>
       <div class="col-sm">Creator</div>
       <div class="col-sm">Action</div>
@@ -23,7 +23,7 @@
       {
       <div class="row row-height-3 align-items-center mt-3 bg-secondary">
         <div class="col-sm-5">@task.TaskName</div>
-        <div class="col-sm">@task.Updated.ToString("yyyy/MM/dd")</div>
+        <div class="col-sm">@task.TaskStatus.StatusName</div>
         <div class="col-sm">@task.Deadline.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@task.Creator</div>
         <div class="col-sm">

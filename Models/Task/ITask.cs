@@ -4,10 +4,10 @@ namespace ProjectTracker.Models
 {
   public interface ITask
   {
-    ProjectTask Add(ProjectTask task);
-    ProjectTask GetTask(int id);
-    IEnumerable<ProjectTask> GetAllTasks();
-    ProjectTask Update(ProjectTask task);
-    ProjectTask Delete(int id);
+    Task Add(Task task);
+    Task GetTask(int id);
+    IEnumerable<Task> GetAllTasks();
+    Task Update(Task task);
+    Task Delete(int id);
   }
 }

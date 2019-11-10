@@ -6,15 +6,16 @@ namespace ProjectTracker.Models
 {
   public class TestTaskRepo : ITask
   {
-    private List<ProjectTask> _tasks;
+    private List<Task> _tasks;
     public TestTaskRepo()
     {
-      _tasks = new List<ProjectTask>
+      _tasks = new List<Task>
       {
-        new ProjectTask()
+        new Task()
         {
           Id = 1,
           ProjectId = 1,
+          StatusId = 1,
           TaskName = "Implement Task Feature",
           Description = "Implement CRUD operation for Project tasks",
           Created = new DateTime(2019, 11, 06, 13, 34, 00),
@@ -22,10 +23,11 @@ namespace ProjectTracker.Models
           Deadline = new DateTime(2019, 11, 06, 13, 34, 00).AddMonths(1),
           Creator = "Howard Choi"
         },
-        new ProjectTask()
+        new Task()
         {
           Id = 2,
           ProjectId = 1,
+          StatusId = 1,
           TaskName = "Implement SQL",
           Description = "Transition all data to utilize SQL",
           Created = new DateTime(2019, 11, 06, 13, 34, 00),
@@ -33,10 +35,11 @@ namespace ProjectTracker.Models
           Deadline = new DateTime(2019, 11, 06, 13, 34, 00).AddMonths(1),
           Creator = "Howard Choi"
         },
-        new ProjectTask()
+        new Task()
         {
           Id = 3,
           ProjectId = 1,
+          StatusId = 1,
           TaskName = "Design touch-up on Project view",
           Description = "Project title and description to go on top. Rest can stay the same for now",
           Created = new DateTime(2019, 11, 06, 13, 34, 00),
@@ -47,7 +50,7 @@ namespace ProjectTracker.Models
       };
     }
 
-    public ProjectTask Add(ProjectTask task)
+    public Task Add(Task task)
     {
       int id = _tasks.Max(t => t.Id) + 1;
       task.Id = id;
@@ -57,9 +60,9 @@ namespace ProjectTracker.Models
       return task;
     }
 
-    public ProjectTask Delete(int id)
+    public Task Delete(int id)
     {
-      ProjectTask task = _tasks.FirstOrDefault(t => t.Id == id);
+      Task task = _tasks.FirstOrDefault(t => t.Id == id);
       if (task != null)
       {
         _tasks.Remove(task);
@@ -68,19 +71,19 @@ namespace ProjectTracker.Models
       return null;
     }
 
-    public IEnumerable<ProjectTask> GetAllTasks()
+    public IEnumerable<Task> GetAllTasks()
     {
       return _tasks;
     }
 
-    public ProjectTask GetTask(int id)
+    public Task GetTask(int id)
     {
       return _tasks.FirstOrDefault(t => t.Id == id);
     }
 
-    public ProjectTask Update(ProjectTask updateTask)
+    public Task Update(Task updateTask)
     {
-      ProjectTask task = _tasks.FirstOrDefault(t => t.Id == updateTask.Id);
+      Task task = _tasks.FirstOrDefault(t => t.Id == updateTask.Id);
       if (task != null)
       {
         task.ProjectId = updateTask.ProjectId;
