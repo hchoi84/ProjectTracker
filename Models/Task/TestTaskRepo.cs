@@ -87,6 +87,7 @@ namespace ProjectTracker.Models
       if (task != null)
       {
         task.ProjectId = updateTask.ProjectId;
+        task.StatusId = updateTask.StatusId;
         task.TaskName = updateTask.TaskName;
         task.Description = updateTask.Description;
         task.Deadline = updateTask.Deadline;

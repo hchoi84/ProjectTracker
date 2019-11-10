@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
+using ProjectTracker.ViewModels;
 
 namespace ProjectTracker.Controllers
 {
@@ -49,11 +51,11 @@ namespace ProjectTracker.Controllers
     [HttpGet("{taskId}/edit")]
     public ViewResult Edit(int id, int taskId)
     {
-      var task = _task.GetTask(taskId);
-      IEnumerable<TaskStatus> taskStatus = _taskStatus.GetAllTaskStatus();
-      
+      TaskViewModel taskVM = new TaskViewModel();
+      taskVM.Task = _task.GetTask(taskId);
+      taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().ToList();
 
-      return View(task);
+      return View(taskVM);
     }
 
     [HttpGet("{taskId}/delete")]
@@ -64,16 +66,16 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("create")]
-    public IActionResult Create(Task newProject)
+    public IActionResult Create(Task newTask)
     {
-      _task.Add(newProject);
+      _task.Add(newTask);
       return RedirectToAction("Index");
     }
 
     [HttpPost("{taskId}/edit")]
-    public IActionResult Edit(Task editProject)
+    public IActionResult Edit(TaskViewModel taskViewModel)
     {
-      _task.Update(editProject);
+      _task.Update(taskViewModel.Task);
       return RedirectToAction("index");
     }
     
