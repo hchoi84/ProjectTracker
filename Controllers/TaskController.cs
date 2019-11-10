@@ -42,10 +42,13 @@ namespace ProjectTracker.Controllers
     [HttpGet("create")]
     public IActionResult Create(int id)
     {
-      Task task = new Task();
-      task.ProjectId = id;
-      task.Deadline = DateTime.Now.AddDays(1).Date;
-      return View(task);
+      TaskViewModel taskVM = new TaskViewModel();
+      taskVM.Task = new Task();
+      taskVM.Task.ProjectId = id;
+      taskVM.Task.StatusId = 1;
+      taskVM.Task.Deadline = DateTime.Now.AddDays(1).Date;
+      taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
+      return View(taskVM);
     }
 
     [HttpGet("{taskId}/edit")]
