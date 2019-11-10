@@ -6,7 +6,8 @@ namespace ProjectTracker.Models
   {
     TaskStatus Add(TaskStatus taskStatus);
     IEnumerable<TaskStatus> GetAllTaskStatus();
+    TaskStatus GetTaskStatus(int id);
     TaskStatus Update(TaskStatus taskStatus);
-    TaskStatus Delete(TaskStatus taskStatus);
+    TaskStatus Delete(int id);
   }
 }

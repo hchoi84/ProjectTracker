@@ -52,18 +52,23 @@ namespace ProjectTracker.Models
       return taskStatus;
     }
 
-    public TaskStatus Delete(TaskStatus taskStatus)
+    public TaskStatus Delete(int id)
     {
-      TaskStatus taskStatusToDelete = _taskStatus.FirstOrDefault(ts => ts.Id == taskStatus.Id);
+      TaskStatus taskStatusToDelete = _taskStatus.FirstOrDefault(ts => ts.Id == id);
       if (taskStatusToDelete != null)
       {
         _taskStatus.Remove(taskStatusToDelete);
-        return taskStatus;
+        return taskStatusToDelete;
       }
       return null;
     }
 
     public IEnumerable<TaskStatus> GetAllTaskStatus() => _taskStatus;
+
+    public TaskStatus GetTaskStatus(int id)
+    {
+      return _taskStatus.FirstOrDefault(ts => ts.Id == id);
+    }
 
     public TaskStatus Update(TaskStatus taskStatus)
     {
