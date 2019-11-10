@@ -63,7 +63,10 @@ namespace ProjectTracker.Models
       return null;
     }
 
-    public IEnumerable<TaskStatus> GetAllTaskStatus() => _taskStatus;
+    public IEnumerable<TaskStatus> GetAllTaskStatus()
+    {
+      return _taskStatus;
+    }
 
     public TaskStatus GetTaskStatus(int id)
     {

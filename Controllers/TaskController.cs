@@ -53,7 +53,7 @@ namespace ProjectTracker.Controllers
     {
       TaskViewModel taskVM = new TaskViewModel();
       taskVM.Task = _task.GetTask(taskId);
-      taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().ToList();
+      taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
 
       return View(taskVM);
     }
