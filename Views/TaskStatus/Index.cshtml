@@ -6,16 +6,23 @@
 
 <div class="container mt-3">
     <div class="row row-height-3 align-items-center border-bottom border-white">
-      <div class="col-sm-5">Status Name</div>
-      <div class="col-sm-5">Priority Order</div>
+      <div class="col-sm-4">Status Name</div>
+      <div class="col-sm-3">Priority Order</div>
+      <div class="col-sm-3">Default</div>
       <div class="col-sm">Action</div>
     </div>
 
     @foreach (var taskStatus in Model)
     {
     <div class="row row-height-3 align-items-center mt-3 bg-secondary">
-      <div class="col-sm-5">@taskStatus.StatusName</div>
-      <div class="col-sm-5">@taskStatus.OrderPriority</div>
+      <div class="col-sm-4">@taskStatus.StatusName</div>
+      <div class="col-sm-3">@taskStatus.OrderPriority</div>
+      <div class="col-sm-3 pl-4">
+          @if (taskStatus.IsDefault)
+          {
+            <i class="fas fa-check fa-lg"></i>
+          }
+      </div>
       <div class="col-sm">
         <a asp-controller="taskstatus" asp-action="edit" asp-route-id="@taskStatus.Id">
           <i class="far fa-edit fa-lg mr-2"></i>

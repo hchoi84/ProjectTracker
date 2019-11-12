@@ -9,5 +9,6 @@ namespace ProjectTracker.Models
     TaskStatus GetTaskStatus(int id);
     TaskStatus Update(TaskStatus taskStatus);
     TaskStatus Delete(int id);
+    int GetDefaultTaskStatus();
   }
 }

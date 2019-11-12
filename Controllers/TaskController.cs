@@ -45,7 +45,7 @@ namespace ProjectTracker.Controllers
       TaskViewModel taskVM = new TaskViewModel();
       taskVM.Task = new Task();
       taskVM.Task.ProjectId = id;
-      taskVM.Task.StatusId = 1;
+      taskVM.Task.StatusId = _taskStatus.GetDefaultTaskStatus();
       taskVM.Task.Deadline = DateTime.Now.AddDays(1).Date;
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
       return View(taskVM);

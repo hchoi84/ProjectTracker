@@ -17,6 +17,7 @@ namespace ProjectTracker.Models
           Id = 1,
           OrderPriority = 20,
           StatusName = "Pending",
+          IsDefault = true,
           Created = new DateTime(2019, 11, 09),
           Updated = new DateTime(2019, 11, 09)
         },
@@ -25,6 +26,7 @@ namespace ProjectTracker.Models
           Id = 2,
           OrderPriority = 40,
           StatusName = "Assigned",
+          IsDefault = false,
           Created = new DateTime(2019, 11, 09),
           Updated = new DateTime(2019, 11, 09)
         },
@@ -33,6 +35,7 @@ namespace ProjectTracker.Models
           Id = 3,
           OrderPriority = 60,
           StatusName = "Completed",
+          IsDefault = false,
           Created = new DateTime(2019, 11, 09),
           Updated = new DateTime(2019, 11, 09)
         }
@@ -42,9 +45,15 @@ namespace ProjectTracker.Models
     public TaskStatus Add(TaskStatus taskStatus)
     {
       taskStatus.Id = _taskStatus.Max(ts => ts.Id) + 1;
-      if(taskStatus.OrderPriority == 0)
+      if (taskStatus.OrderPriority == 0)
       {
         taskStatus.OrderPriority = _taskStatus.Max(ts => ts.OrderPriority) + 20;
+      }
+
+      // Singleton on IsDefault Task Status
+      if (taskStatus.IsDefault)
+      {
+        _taskStatus.FirstOrDefault(ts => ts.IsDefault).IsDefault = false;
       }
       taskStatus.Created = DateTime.Now;
       taskStatus.Updated = DateTime.Now;
@@ -80,10 +89,20 @@ namespace ProjectTracker.Models
       {
         taskStatusToUpdate.OrderPriority = taskStatus.OrderPriority;
         taskStatusToUpdate.StatusName = taskStatus.StatusName;
+        if (taskStatusToUpdate.IsDefault)
+        {
+          _taskStatus.FirstOrDefault(ts => ts.IsDefault).IsDefault = false;
+          taskStatusToUpdate.IsDefault = taskStatus.IsDefault;
+        }
         taskStatusToUpdate.Updated = DateTime.Now;
         return taskStatus;
       }
       return null;
+    }
+
+    public int GetDefaultTaskStatus()
+    {
+      return _taskStatus.FirstOrDefault(ts => ts.IsDefault).Id;
     }
   }
 }

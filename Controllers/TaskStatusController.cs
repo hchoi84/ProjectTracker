@@ -27,8 +27,14 @@ namespace ProjectTracker.Controllers
       return View(taskStatus);
     }
 
-    public RedirectToActionResult Delete(int id)
+    public IActionResult Delete(int id)
     {
+      if (_taskStatus.GetTaskStatus(id).IsDefault)
+      {
+        ModelState.AddModelError("IsDefault", "Please indicate another Default Task Status before deleting");
+        IEnumerable<TaskStatus> allTaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority);
+        return View("Index", allTaskStatus);
+      }
       _taskStatus.Delete(id);
       return RedirectToAction("index");
     }
