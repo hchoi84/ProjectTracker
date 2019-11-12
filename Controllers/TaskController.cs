@@ -35,6 +35,7 @@ namespace ProjectTracker.Controllers
           project.Tasks.Add(task);
         }
       }
+      project.Tasks = project.Tasks.OrderBy(t => t.TaskStatus.OrderPriority).ToList();
 
       return View(project);
     }
