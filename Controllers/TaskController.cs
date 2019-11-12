@@ -70,9 +70,9 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("create")]
-    public IActionResult Create(Task newTask)
+    public IActionResult Create(TaskViewModel newTaskViewModel)
     {
-      _task.Add(newTask);
+      _task.Add(newTaskViewModel.Task);
       return RedirectToAction("Index");
     }
 
