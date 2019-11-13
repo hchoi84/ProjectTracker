@@ -53,7 +53,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("{taskId}/edit")]
-    public ViewResult Edit(int id, int taskId)
+    public ViewResult Edit(int taskId)
     {
       TaskViewModel taskVM = new TaskViewModel();
       taskVM.Task = _task.GetTask(taskId);
@@ -73,6 +73,9 @@ namespace ProjectTracker.Controllers
     public IActionResult Create(TaskViewModel newTaskViewModel)
     {
       _task.Add(newTaskViewModel.Task);
+      Project project = _project.GetProject(newTaskViewModel.Task.ProjectId);
+      project.Updated = DateTime.Now;
+      _project.Update(project);
       return RedirectToAction("Index");
     }
 
@@ -80,6 +83,9 @@ namespace ProjectTracker.Controllers
     public IActionResult Edit(TaskViewModel taskViewModel)
     {
       _task.Update(taskViewModel.Task);
+      Project project = _project.GetProject(taskViewModel.Task.ProjectId);
+      project.Updated = DateTime.Now;
+      _project.Update(project);
       return RedirectToAction("index");
     }
     
