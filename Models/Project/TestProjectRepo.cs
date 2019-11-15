@@ -14,21 +14,21 @@ namespace ProjectTracker.Models
         new Project() 
         {
           Id = 1,
+          UserId = 1,
           ProjectName = "Project Tracker",
           Created = new DateTime(2019, 10, 30, 12, 03, 00),
           Updated = new DateTime(2019, 10, 31, 2, 40, 00),
           Deadline = DateTime.Now.AddMonths(1),
-          Creator = "Howard Choi",
           Summary = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum."
         },
         new Project() 
         {
           Id = 2,
+          UserId = 1,
           ProjectName = "Golfio ChannelAdvisor API",
           Created = new DateTime(2019, 11, 06, 11, 30, 00),
           Updated = new DateTime(2019, 11, 06, 11, 30, 00),
           Deadline = DateTime.Now.AddMonths(1),
-          Creator = "Howard Choi",
           Summary = "Allow data pulling from ChannelAdvisor and report generating without needing to login or do other manual work. Purpose is to increase productivity in other areas and reduce manual report creation."
         }
       };
@@ -37,6 +37,7 @@ namespace ProjectTracker.Models
     public Project Add(Project project)
     {
       project.Id = _projects.Max(p => p.Id) + 1;
+      project.UserId = project.UserId;
       project.Created = DateTime.Now;
       project.Updated = DateTime.Now;
       _projects.Add(project);
@@ -74,6 +75,7 @@ namespace ProjectTracker.Models
       Project project = _projects.FirstOrDefault(p => p.Id == updatedProject.Id);
       if (project != null)
       {
+        project.UserId = updatedProject.UserId;
         project.ProjectName = updatedProject.ProjectName;
         project.Updated = DateTime.Now;
         project.Deadline = updatedProject.Deadline;

@@ -24,7 +24,7 @@
         <div class="col-sm">@project.Created.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@project.Updated.ToString("yyyy/MM/dd")</div>
         <div class="col-sm">@project.Deadline.ToString("yyyy/MM/dd")</div>
-        <div class="col-sm">@project.Creator</div>
+        <div class="col-sm">@project.Creator.GetFullName</div>
         <div class="col-sm">
           <a asp-controller="home" asp-action="Edit" asp-route-id="@project.Id">
             <i class="far fa-edit fa-lg mr-2"></i>

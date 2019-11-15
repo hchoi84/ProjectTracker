@@ -19,6 +19,7 @@ namespace ProjectTracker
       services.AddSingleton<IProject, TestProjectRepo>();
       services.AddSingleton<ITask, TestTaskRepo>();
       services.AddSingleton<ITaskStatus, TestTaskStatusRepo>();
+      services.AddSingleton<IUser, TestUserRepo>();
       // services.AddScoped<IProject, TestProjectRepo>();
     }
 
