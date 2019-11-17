@@ -13,8 +13,10 @@ namespace ProjectTracker.Controllers
     private readonly IProject _project;
     private readonly ITask _task;
     private readonly ITaskStatus _taskStatus;
-    public TaskController(IProject project, ITask task, ITaskStatus taskStatus)
+    private readonly IUser _user;
+    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, IUser user)
     {
+      _user = user;
       _project = project;
       _task = task;
       _taskStatus = taskStatus;
@@ -23,32 +25,46 @@ namespace ProjectTracker.Controllers
     [HttpGet("")]
     public IActionResult Index(int id)
     {
-      Project project = _project.GetProject(id);
-      project.Tasks = new List<Task>();
-
-      IEnumerable<Task> tasks = _task.GetAllTasks();
-      foreach (Task task in tasks)
+      TaskViewModel taskVM = new TaskViewModel();
+      taskVM.Project = _project.GetProject(id);
+      
+      taskVM.Tasks = _task.GetAllTasks().ToList();
+      foreach (var task in taskVM.Tasks)
       {
-        if (task.ProjectId == id)
-        {
-          task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
-          project.Tasks.Add(task);
-        }
+        task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
       }
-      project.Tasks = project.Tasks.OrderBy(t => t.TaskStatus.OrderPriority).ToList();
 
-      return View(project);
+      taskVM.Tasks = taskVM.Tasks.Where(task => task.ProjectId == id).OrderBy(task => task.TaskStatus.OrderPriority).ToList();
+      foreach (var task in taskVM.Tasks)
+      {
+        task.Creator = _user.GetUser(task.UserId);
+        task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
+      }
+
+      taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().ToList();
+      
+      taskVM.Users = _user.GetAllUsers().ToList();
+
+      return View(taskVM);
     }
 
     [HttpGet("create")]
     public IActionResult Create(int id)
     {
       TaskViewModel taskVM = new TaskViewModel();
-      taskVM.Task = new Task();
-      taskVM.Task.ProjectId = id;
-      taskVM.Task.StatusId = _taskStatus.GetDefaultTaskStatus();
-      taskVM.Task.Deadline = DateTime.Now.AddDays(1).Date;
+
+      taskVM.Project = _project.GetProject(id);
+      
+      var task = new Task();
+      task.ProjectId = id;
+      task.StatusId = _taskStatus.GetDefaultTaskStatus();
+      task.Deadline = DateTime.Now.AddDays(1).Date;
+      taskVM.Tasks.Add(task);
+
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
+
+      taskVM.Users = _user.GetAllUsers().ToList();
+
       return View(taskVM);
     }
 
@@ -56,8 +72,9 @@ namespace ProjectTracker.Controllers
     public ViewResult Edit(int taskId)
     {
       TaskViewModel taskVM = new TaskViewModel();
-      taskVM.Task = _task.GetTask(taskId);
+      taskVM.Tasks.Add(_task.GetTask(taskId));
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
+      taskVM.Users = _user.GetAllUsers().ToList();
 
       return View(taskVM);
     }
@@ -70,24 +87,32 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("create")]
-    public IActionResult Create(TaskViewModel newTaskViewModel)
+    public IActionResult Create(int id, TaskViewModel newTaskVM)
     {
-      _task.Add(newTaskViewModel.Task);
-      Project project = _project.GetProject(newTaskViewModel.Task.ProjectId);
-      project.Updated = DateTime.Now;
+      foreach (var task in newTaskVM.Tasks)
+      {
+        Task newTask = _task.Add(task);
+      }
+      
+      Project project = _project.GetProject(id);
       _project.Update(project);
+
       return RedirectToAction("Index");
     }
 
     [HttpPost("{taskId}/edit")]
-    public IActionResult Edit(TaskViewModel taskViewModel)
+    public IActionResult Edit(int id, TaskViewModel editTaskVM)
     {
-      _task.Update(taskViewModel.Task);
-      Project project = _project.GetProject(taskViewModel.Task.ProjectId);
-      project.Updated = DateTime.Now;
+      foreach (var task in editTaskVM.Tasks)
+      {
+        _task.Update(task);
+      }
+
+      Project project = _project.GetProject(id);
       _project.Update(project);
+
       return RedirectToAction("index");
     }
-    
+
   }
 }

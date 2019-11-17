@@ -5,15 +5,17 @@
 }
 
 <form asp-controller="task" asp-action="edit" method="POST" class="mt-3">
-  <input type="hidden" readonly asp-for="@Model.Task.Id">
-  <input type="hidden" readonly asp-for="@Model.Task.ProjectId">
+  @for (var i = 0; i < Model.Tasks.Count; i++)
+  {
+  <input type="hidden" readonly asp-for="@Model.Tasks[i].Id">
+  <input type="hidden" readonly asp-for="@Model.Tasks[i].ProjectId">
   <div class="form-group">
-    <label asp-for="@Model.Task.TaskName">Task Name</label>
-    <input asp-for="@Model.Task.TaskName" class="form-control">
+    <label asp-for="@Model.Tasks[i].TaskName">Task Name</label>
+    <input asp-for="@Model.Tasks[i].TaskName" class="form-control">
   </div>
   <div class="form-group">
-    <label asp-for="@Model.Task.StatusId">Task Status</label>
-    <Select asp-for="@Model.Task.StatusId" class="form-control">
+    <label asp-for="@Model.Tasks[i].StatusId">Task Status</label>
+    <Select asp-for="@Model.Tasks[i].StatusId" class="form-control">
       @foreach (var ts in Model.TaskStatus)
       {
       <Option value="@ts.Id">@ts.StatusName</Option>
@@ -21,17 +23,23 @@
     </Select>
   </div>
   <div class="form-group">
-    <label asp-for="@Model.Task.Deadline">Deadline</label>
-    <input asp-for="@Model.Task.Deadline" class="form-control">
+    <label asp-for="@Model.Tasks[i].Deadline">Deadline</label>
+    <input asp-for="@Model.Tasks[i].Deadline" class="form-control">
   </div>
   <div class="form-group">
-    <label asp-for="@Model.Task.Creator">Creator</label>
-    <input asp-for="@Model.Task.Creator" class="form-control">
+    <label asp-for="@Model.Tasks[i].UserId">Creator</label>
+    <select asp-for="@Model.Tasks[i].UserId" class="form-control">
+      @foreach (var user in Model.Users)
+      {
+        <option value="@user.Id">@user.GetFullName</option>
+      }
+    </select> 
   </div>
   <div class="form-group">
-    <label asp-for="@Model.Task.Description">Description</label>
-    <textarea asp-for="@Model.Task.Description" class="form-control"></textarea>
+    <label asp-for="@Model.Tasks[i].Description">Description</label>
+    <textarea asp-for="@Model.Tasks[i].Description" class="form-control"></textarea>
   </div>
+  }
   <button type="submit" class="btn btn-primary">Update</button>
   <a asp-controller="task" asp-action="index" class="btn btn-primary ml-3">Cancel</a>
 </form>
