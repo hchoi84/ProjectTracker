@@ -7,7 +7,7 @@ namespace ProjectTracker.Models
   public class Project
   {
     public int Id { get; set; }
-    public int UserId { get; set; }
+    public int MemberId { get; set; }
     public string ProjectName { get; set; }
     public string Summary { get; set; }
     
@@ -17,6 +17,6 @@ namespace ProjectTracker.Models
     public DateTime Updated { get; set; }
     public List<Task> Tasks { get; set; }
 
-    public User Creator { get; set; }
+    public Member Member { get; set; }
   }
 }

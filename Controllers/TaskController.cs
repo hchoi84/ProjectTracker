@@ -1,22 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
 
 namespace ProjectTracker.Controllers
 {
+  [AllowAnonymous]
   [Route("project/{id}/tasks")]
   public class TaskController : Controller
   {
     private readonly IProject _project;
     private readonly ITask _task;
     private readonly ITaskStatus _taskStatus;
-    private readonly IUser _user;
-    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, IUser user)
+    private readonly IMember _member;
+    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, IMember member)
     {
-      _user = user;
+      _member = member;
       _project = project;
       _task = task;
       _taskStatus = taskStatus;
@@ -37,13 +39,13 @@ namespace ProjectTracker.Controllers
       taskVM.Tasks = taskVM.Tasks.Where(task => task.ProjectId == id).OrderBy(task => task.TaskStatus.OrderPriority).ToList();
       foreach (var task in taskVM.Tasks)
       {
-        task.Creator = _user.GetUser(task.UserId);
+        task.Member = _member.GetMember(task.MemberId);
         task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
       }
 
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().ToList();
       
-      taskVM.Users = _user.GetAllUsers().ToList();
+      taskVM.Members = _member.GetAllMembers().ToList();
 
       return View(taskVM);
     }
@@ -63,7 +65,7 @@ namespace ProjectTracker.Controllers
 
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
 
-      taskVM.Users = _user.GetAllUsers().ToList();
+      taskVM.Members = _member.GetAllMembers().ToList();
 
       return View(taskVM);
     }
@@ -74,7 +76,7 @@ namespace ProjectTracker.Controllers
       TaskViewModel taskVM = new TaskViewModel();
       taskVM.Tasks.Add(_task.GetTask(taskId));
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
-      taskVM.Users = _user.GetAllUsers().ToList();
+      taskVM.Members = _member.GetAllMembers().ToList();
 
       return View(taskVM);
     }

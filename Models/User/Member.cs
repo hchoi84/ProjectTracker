@@ -2,7 +2,7 @@ using System;
 
 namespace ProjectTracker.Models
 {
-  public class User
+  public class Member
   {
     public int Id { get; set; }
     public string FirstName { get; set; }

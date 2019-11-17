@@ -5,22 +5,42 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectTracker.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ProjectTracker
 {
   public class Startup
   {
-    
+    private readonly IConfiguration _config;
+    public Startup(IConfiguration config)
+    {
+      _config = config;
+    }
+
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddMvc();
+      services.AddMvc(options => {
+        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+        options.Filters.Add(new AuthorizeFilter(policy));
+      });
+
+      services.AddIdentity<IdentityUser, IdentityRole>(options => {
+        options.Password.RequiredLength = 10;
+        options.Password.RequiredUniqueChars = 3;
+      }).AddEntityFrameworkStores<AppDbContext>();
+
       services.AddSingleton<IProject, TestProjectRepo>();
       services.AddSingleton<ITask, TestTaskRepo>();
       services.AddSingleton<ITaskStatus, TestTaskStatusRepo>();
-      services.AddSingleton<IUser, TestUserRepo>();
-      // services.AddScoped<IProject, TestProjectRepo>();
+      services.AddSingleton<IMember, TestMemberRepo>();
+
+      services.AddDbContext<AppDbContext>(options => options.UseMySql(_config["DBInfo:ConnectionString"]));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,8 +52,10 @@ namespace ProjectTracker
       }
 
       app.UseStaticFiles();
+      app.UseAuthentication();
 
-      app.UseMvc(routes => {
+      app.UseMvc(routes =>
+      {
         routes.MapRoute("default", "{controller=Home}/{action=Index}/{Id?}");
       });
     }

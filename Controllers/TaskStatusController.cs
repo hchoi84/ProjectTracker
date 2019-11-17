@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProjectTracker.Controllers
 {
+  [AllowAnonymous]
   public class TaskStatusController : Controller
   {
     private readonly ITaskStatus _taskStatus;

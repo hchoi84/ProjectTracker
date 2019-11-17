@@ -26,11 +26,11 @@
     <input asp-for="@Model.Tasks[i].Deadline" class="form-control">
   </div>
   <div class="form-group">
-    <label asp-for="@Model.Tasks[i].UserId">Creator</label>
-    <select asp-for="@Model.Tasks[i].UserId" class="form-control">
-      @foreach (var user in Model.Users)
+    <label asp-for="@Model.Tasks[i].MemberId">Creator</label>
+    <select asp-for="@Model.Tasks[i].MemberId" class="form-control">
+      @foreach (var member in Model.Members)
       {
-        <option value="@user.Id">@user.GetFullName</option>
+        <option value="@member.Id">@member.GetFullName</option>
       }
     </select>
   </div>

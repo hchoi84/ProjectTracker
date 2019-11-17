@@ -7,11 +7,11 @@ namespace ProjectTracker.ViewModels
   {
     public ProjectViewModel()
     {
-      project = new Project();
-      users = new List<User>();
+      Project = new Project();
+      Members = new List<Member>();
     }
     
-    public Project project { get; set; }
-    public List<User> users { get; set; }
+    public Project Project { get; set; }
+    public List<Member> Members { get; set; }
   }
 }

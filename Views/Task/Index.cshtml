@@ -25,7 +25,7 @@
         <div class="col-sm-5">@task.TaskName</div>
         <div class="col-sm">@task.TaskStatus.StatusName</div>
         <div class="col-sm">@task.Deadline.ToString("yyyy/MM/dd")</div>
-        <div class="col-sm">@task.Creator.GetFullName</div>
+        <div class="col-sm">@task.Member.GetFullName</div>
         <div class="col-sm">
           <a asp-controller="task" asp-action="edit" asp-route-id="@task.ProjectId" asp-route-taskId="@task.Id">
             <i class="far fa-edit fa-lg mr-2"></i>

@@ -14,7 +14,7 @@ namespace ProjectTracker.Models
         new Project() 
         {
           Id = 1,
-          UserId = 1,
+          MemberId = 1,
           ProjectName = "Project Tracker",
           Created = new DateTime(2019, 10, 30, 12, 03, 00),
           Updated = new DateTime(2019, 10, 31, 2, 40, 00),
@@ -24,7 +24,7 @@ namespace ProjectTracker.Models
         new Project() 
         {
           Id = 2,
-          UserId = 1,
+          MemberId = 1,
           ProjectName = "Golfio ChannelAdvisor API",
           Created = new DateTime(2019, 11, 06, 11, 30, 00),
           Updated = new DateTime(2019, 11, 06, 11, 30, 00),
@@ -37,7 +37,7 @@ namespace ProjectTracker.Models
     public Project Add(Project project)
     {
       project.Id = _projects.Max(p => p.Id) + 1;
-      project.UserId = project.UserId;
+      project.MemberId = project.MemberId;
       project.Created = DateTime.Now;
       project.Updated = DateTime.Now;
       _projects.Add(project);
@@ -75,7 +75,7 @@ namespace ProjectTracker.Models
       Project project = _projects.FirstOrDefault(p => p.Id == updatedProject.Id);
       if (project != null)
       {
-        project.UserId = updatedProject.UserId;
+        project.MemberId = updatedProject.MemberId;
         project.ProjectName = updatedProject.ProjectName;
         project.Updated = DateTime.Now;
         project.Deadline = updatedProject.Deadline;

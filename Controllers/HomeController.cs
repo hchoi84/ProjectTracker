@@ -3,16 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProjectTracker.Controllers
 {
+  [AllowAnonymous]
   public class HomeController : Controller
   {
     private readonly IProject _project;
-    private readonly IUser _user;
-    public HomeController(IProject project, IUser user)
+    private readonly IMember _member;
+    public HomeController(IProject project, IMember member)
     {
-      _user = user;
+      _member = member;
       _project = project;
     }
 
@@ -21,7 +23,7 @@ namespace ProjectTracker.Controllers
       var projects = _project.GetAllProjects();
       foreach (var project in projects)
       {
-        project.Creator = _user.GetUser(project.UserId);
+        project.Member = _member.GetMember(project.MemberId);
       }
 
       return View(projects);
@@ -31,7 +33,7 @@ namespace ProjectTracker.Controllers
     public IActionResult Create()
     {
       var projectVM = new ProjectViewModel();
-      projectVM.users = _user.GetAllUsers().ToList();
+      projectVM.Members = _member.GetAllMembers().ToList();
       return View(projectVM);
     }
 
@@ -39,8 +41,8 @@ namespace ProjectTracker.Controllers
     public ViewResult Edit(int id)
     {
       var projectVM = new ProjectViewModel();
-      projectVM.project = _project.GetProject(id);
-      projectVM.users = _user.GetAllUsers().ToList();
+      projectVM.Project = _project.GetProject(id);
+      projectVM.Members = _member.GetAllMembers().ToList();
       return View(projectVM);
     }
 
@@ -53,14 +55,14 @@ namespace ProjectTracker.Controllers
     [HttpPost("/project/create")]
     public IActionResult Create(ProjectViewModel newProjectVM)
     {
-      _project.Add(newProjectVM.project);
+      _project.Add(newProjectVM.Project);
       return RedirectToAction("Index");
     }
 
     [HttpPost("/project/{id}/edit")]
     public IActionResult Edit(ProjectViewModel editProjectVM)
     {
-      _project.Update(editProjectVM.project);
+      _project.Update(editProjectVM.Project);
       return RedirectToAction("index");
     }
   }

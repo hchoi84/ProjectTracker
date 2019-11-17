@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace ProjectTracker.Models
 {
-  public class TestUserRepo : IUser
+  public class TestMemberRepo : IMember
   {
-    private List<User> _user;
-    public TestUserRepo()
+    private List<Member> _members;
+    public TestMemberRepo()
     {
-      _user = new List<User>()
+      _members = new List<Member>()
       {
-        new User
+        new Member
         {
           Id = 1,
           FirstName = "Howard",
@@ -19,7 +19,7 @@ namespace ProjectTracker.Models
           Created = new DateTime(2019, 11, 15),
           Updated = new DateTime(2019, 11, 15),
         },
-        new User
+        new Member
         {
           Id = 2,
           FirstName = "Kenny",
@@ -30,51 +30,51 @@ namespace ProjectTracker.Models
       };
     }
 
-    public User Create(User newUser)
+    public Member Create(Member newMember)
     {
-      newUser.Id = _user.Count == 0 ? 1 : _user.Max(u => u.Id) + 1;
-      newUser.Created = DateTime.Now;
-      newUser.Updated = DateTime.Now;
+      newMember.Id = _members.Count == 0 ? 1 : _members.Max(u => u.Id) + 1;
+      newMember.Created = DateTime.Now;
+      newMember.Updated = DateTime.Now;
 
-      _user.Add(newUser);
-      return newUser;
+      _members.Add(newMember);
+      return newMember;
     }
 
-    public User Delete(int id)
+    public Member Delete(int id)
     {
-      User user = _user.FirstOrDefault(u => u.Id == id);
-      if (user == null)
+      Member member = _members.FirstOrDefault(u => u.Id == id);
+      if (member == null)
         return null;
 
-      _user.Remove(user);
-      return user;
+      _members.Remove(member);
+      return member;
     }
 
-    public IEnumerable<User> GetAllUsers()
+    public IEnumerable<Member> GetAllMembers()
     {
-      return _user;
+      return _members;
     }
 
-    public User GetUser(int id)
+    public Member GetMember(int id)
     {
-      User user = _user.FirstOrDefault(u => u.Id == id);
-      if (user == null)
+      Member member = _members.FirstOrDefault(u => u.Id == id);
+      if (member == null)
         return null;
 
-      return user;
+      return member;
     }
 
-    public User Update(User updateUser)
+    public Member Update(Member updateMember)
     {
-      User user = _user.FirstOrDefault(u => u.Id == updateUser.Id);
-      if (user == null)
+      Member member = _members.FirstOrDefault(u => u.Id == updateMember.Id);
+      if (member == null)
         return null;
 
-      user.FirstName = updateUser.FirstName;
-      user.LastName = updateUser.LastName;
-      user.Updated = DateTime.Now;
+      member.FirstName = updateMember.FirstName;
+      member.LastName = updateMember.LastName;
+      member.Updated = DateTime.Now;
 
-      return user;
+      return member;
     }
   }
 }
