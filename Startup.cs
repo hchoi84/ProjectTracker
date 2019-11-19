@@ -38,7 +38,6 @@ namespace ProjectTracker
       services.AddSingleton<IProject, TestProjectRepo>();
       services.AddSingleton<ITask, TestTaskRepo>();
       services.AddSingleton<ITaskStatus, TestTaskStatusRepo>();
-      services.AddSingleton<IMember, TestMemberRepo>();
 
       services.AddDbContext<AppDbContext>(options => options.UseMySql(_config["DBInfo:ConnectionString"]));
     }

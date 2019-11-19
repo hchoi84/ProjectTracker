@@ -9,7 +9,7 @@ using ProjectTracker.Models;
 namespace ProjectTracker.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191119042903_Initial")]
+    [Migration("20191119044504_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -209,7 +209,7 @@ namespace ProjectTracker.Migrations
                         {
                             Id = 1,
                             Created = new DateTime(2019, 10, 30, 12, 3, 0, 0, DateTimeKind.Unspecified),
-                            Deadline = new DateTime(2019, 12, 18, 20, 29, 3, 318, DateTimeKind.Local).AddTicks(3239),
+                            Deadline = new DateTime(2019, 12, 18, 20, 45, 4, 154, DateTimeKind.Local).AddTicks(8298),
                             MemberId = "1",
                             ProjectName = "Project Tracker",
                             Summary = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum.",
@@ -219,7 +219,7 @@ namespace ProjectTracker.Migrations
                         {
                             Id = 2,
                             Created = new DateTime(2019, 11, 6, 11, 30, 0, 0, DateTimeKind.Unspecified),
-                            Deadline = new DateTime(2019, 12, 18, 20, 29, 3, 320, DateTimeKind.Local).AddTicks(291),
+                            Deadline = new DateTime(2019, 12, 18, 20, 45, 4, 158, DateTimeKind.Local).AddTicks(6318),
                             MemberId = "1",
                             ProjectName = "Golfio ChannelAdvisor API",
                             Summary = "Allow data pulling from ChannelAdvisor and report generating without needing to login or do other manual work. Purpose is to increase productivity in other areas and reduce manual report creation.",
@@ -367,7 +367,7 @@ namespace ProjectTracker.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "055b270a-884c-42c9-94ac-cb93ef42e76e",
+                            ConcurrencyStamp = "427bd657-55a0-4f96-bb26-1a5f410f65df",
                             Email = "howard.choi@email.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
@@ -383,7 +383,7 @@ namespace ProjectTracker.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8a5dfe31-fbcc-4901-8c57-e49849ca5132",
+                            ConcurrencyStamp = "e7336daa-1abf-439b-959d-09faf33958ac",
                             Email = "kenny.ock@email.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
