@@ -14,7 +14,7 @@ namespace ProjectTracker.Models
         new Project() 
         {
           Id = 1,
-          MemberId = 1,
+          MemberId = "1",
           ProjectName = "Project Tracker",
           Created = new DateTime(2019, 10, 30, 12, 03, 00),
           Updated = new DateTime(2019, 10, 31, 2, 40, 00),
@@ -24,7 +24,7 @@ namespace ProjectTracker.Models
         new Project() 
         {
           Id = 2,
-          MemberId = 1,
+          MemberId = "1",
           ProjectName = "Golfio ChannelAdvisor API",
           Created = new DateTime(2019, 11, 06, 11, 30, 00),
           Updated = new DateTime(2019, 11, 06, 11, 30, 00),

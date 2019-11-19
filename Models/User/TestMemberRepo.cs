@@ -13,7 +13,9 @@ namespace ProjectTracker.Models
       {
         new Member
         {
-          Id = 1,
+          Id = "1",
+          UserName = "howard.choi@email.com",
+          Email = "howard.choi@email.com",
           FirstName = "Howard",
           LastName = "Choi",
           Created = new DateTime(2019, 11, 15),
@@ -21,7 +23,9 @@ namespace ProjectTracker.Models
         },
         new Member
         {
-          Id = 2,
+          Id = "2",
+          UserName = "kenny.ock@email.com",
+          Email = "kenny.ock@email.com",
           FirstName = "Kenny",
           LastName = "Ock",
           Created = new DateTime(2019, 11, 15),
@@ -32,7 +36,7 @@ namespace ProjectTracker.Models
 
     public Member Create(Member newMember)
     {
-      newMember.Id = _members.Count == 0 ? 1 : _members.Max(u => u.Id) + 1;
+      newMember.Id = _members.Count == 0 ? "1" : _members.Max(u => u.Id) + 1;
       newMember.Created = DateTime.Now;
       newMember.Updated = DateTime.Now;
 
@@ -42,7 +46,7 @@ namespace ProjectTracker.Models
 
     public Member Delete(int id)
     {
-      Member member = _members.FirstOrDefault(u => u.Id == id);
+      Member member = _members.FirstOrDefault(u => u.Id == id.ToString());
       if (member == null)
         return null;
 
@@ -55,9 +59,9 @@ namespace ProjectTracker.Models
       return _members;
     }
 
-    public Member GetMember(int id)
+    public Member GetMember(string id)
     {
-      Member member = _members.FirstOrDefault(u => u.Id == id);
+      Member member = _members.FirstOrDefault(u => u.Id == id.ToString());
       if (member == null)
         return null;
 

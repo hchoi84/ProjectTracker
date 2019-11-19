@@ -30,7 +30,7 @@ namespace ProjectTracker
         options.Filters.Add(new AuthorizeFilter(policy));
       });
 
-      services.AddIdentity<IdentityUser, IdentityRole>(options => {
+      services.AddIdentity<Member, IdentityRole>(options => {
         options.Password.RequiredLength = 10;
         options.Password.RequiredUniqueChars = 3;
       }).AddEntityFrameworkStores<AppDbContext>();

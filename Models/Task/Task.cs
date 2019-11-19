@@ -8,7 +8,7 @@ namespace ProjectTracker.Models
     public int Id { get; set; }
     public int ProjectId { get; set; }
     public int StatusId { get; set; }
-    public int MemberId { get; set; }
+    public string MemberId { get; set; }
     public string TaskName { get; set; }
     public string Description { get; set; }
     
