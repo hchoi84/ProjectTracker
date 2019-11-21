@@ -17,7 +17,7 @@ namespace ProjectTracker.Models
 
     public async Task<Project> AddAsync(Project newProject)
     {
-      _context.Projects.Add(newProject);
+      await _context.Projects.AddAsync(newProject);
       await _context.SaveChangesAsync();
       return newProject;
     }

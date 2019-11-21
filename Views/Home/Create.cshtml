@@ -9,10 +9,12 @@
   <div class="form-group">
     <label asp-for="@Model.Project.ProjectName">Project Name</label>
     <input asp-for="@Model.Project.ProjectName" class="form-control">
+    <span asp-validation-for="@Model.Project.ProjectName"></span>
   </div>
   <div class="form-group">
     <label asp-for="@Model.Project.Deadline">Deadline</label>
     <input asp-for="@Model.Project.Deadline" class="form-control" value="@deadlineDefault">
+    <span asp-validation-for="@MOdel.Project.Deadline"></span>
   </div>
   <div class="form-group">
     <label asp-for="@Model.Project.MemberId">Creator</label>
@@ -26,6 +28,7 @@
   <div class="form-group">
     <label asp-for="@Model.Project.Summary">Summary</label>
     <textarea asp-for="@Model.Project.Summary" class="form-control"></textarea>
+    <span asp-validation-for="@Model.Project.Summary"></span>
   </div>
   <button type="submit" class="btn btn-primary">Create</button>
   <a asp-controller="home" asp-action="index" class="btn btn-primary ml-2">Cancel</a>

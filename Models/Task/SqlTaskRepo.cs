@@ -18,7 +18,7 @@ namespace ProjectTracker.Models
     {
       task.Created = DateTime.Now;
       task.Updated = DateTime.Now;
-      _context.Tasks.Add(task);
+      await _context.Tasks.AddAsync(task);
       await _context.SaveChangesAsync();
       return task;
     }

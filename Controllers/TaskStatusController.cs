@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace ProjectTracker.Controllers
 {
@@ -15,43 +16,46 @@ namespace ProjectTracker.Controllers
       _taskStatus = taskStatus;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-      IEnumerable<TaskStatus> allTaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority);
+      IEnumerable<ProjectTracker.Models.TaskStatus> allTaskStatus = await _taskStatus.GetAllTaskStatusAsync();
+      allTaskStatus.OrderBy(ts => ts.OrderPriority);
       return View(allTaskStatus);
     }
 
     public IActionResult Create() => View();
 
-    public ViewResult Edit(int id)
+    public async Task<ViewResult> Edit(int id)
     {
-      var taskStatus = _taskStatus.GetTaskStatus(id);
+      var taskStatus = await _taskStatus.GetTaskStatusAsync(id);
       return View(taskStatus);
     }
 
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-      if (_taskStatus.GetTaskStatus(id).IsDefault)
+      ProjectTracker.Models.TaskStatus taskStatus = await _taskStatus.GetTaskStatusAsync(id);
+      if (taskStatus.IsDefault)
       {
         ModelState.AddModelError("IsDefault", "Please indicate another Default Task Status before deleting");
-        IEnumerable<TaskStatus> allTaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority);
+        IEnumerable<ProjectTracker.Models.TaskStatus> allTaskStatus = await _taskStatus.GetAllTaskStatusAsync();
+        allTaskStatus.OrderBy(ts => ts.OrderPriority);
         return View("Index", allTaskStatus);
       }
-      _taskStatus.Delete(id);
+      await _taskStatus.DeleteAsync(id);
       return RedirectToAction("index");
     }
 
     [HttpPost]
-    public IActionResult Create(TaskStatus newTaskStatus)
+    public async Task<IActionResult> Create(ProjectTracker.Models.TaskStatus newTaskStatus)
     {
-      _taskStatus.Add(newTaskStatus);
+      await _taskStatus.AddAsync(newTaskStatus);
       return RedirectToAction("Index");
     }
 
     [HttpPost]
-    public IActionResult Edit(TaskStatus editTaskStatus)
+    public async Task<IActionResult> Edit(ProjectTracker.Models.TaskStatus editTaskStatus)
     {
-      _taskStatus.Update(editTaskStatus);
+      await _taskStatus.UpdateAsync(editTaskStatus);
       return RedirectToAction("index");
     }
   }

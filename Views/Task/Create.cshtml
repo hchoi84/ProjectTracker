@@ -12,6 +12,7 @@
   <div class="form-group">
     <label asp-for="@Model.Tasks[i].TaskName">Task Name</label>
     <input asp-for="@Model.Tasks[i].TaskName" class="form-control">
+    <span asp-validation-for="@Model.Tasks[i].TaskName"></span>
   </div>
   <div class="form-group">
     <label asp-for="@Model.Tasks[i].StatusId">Task Status</label>
@@ -25,6 +26,7 @@
   <div class="form-group">
     <label asp-for="@Model.Tasks[i].Deadline">Deadline</label>
     <input asp-for="@Model.Tasks[i].Deadline" class="form-control" value="@deadlineDefault">
+    <span asp-validation-for="@Model.Tasks[i].Deadline"></span>
   </div>
   <div class="form-group">
     <label asp-for="@Model.Tasks[i].MemberId">Creator</label>
@@ -38,6 +40,7 @@
   <div class="form-group">
     <label asp-for="@Model.Tasks[i].Description">Description</label>
     <textarea asp-for="@Model.Tasks[i].Description" class="form-control"></textarea>
+    <span asp-validation-for="@Model.Tasks[i].Description"></span>
   </div>
   }
   <button type="submit" class="btn btn-primary">Create</button>

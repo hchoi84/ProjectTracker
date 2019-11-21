@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProjectTracker.Models
 {
   public interface ITaskStatus
   {
-    TaskStatus Add(TaskStatus taskStatus);
-    IEnumerable<TaskStatus> GetAllTaskStatus();
-    TaskStatus GetTaskStatus(int id);
-    TaskStatus Update(TaskStatus taskStatus);
-    TaskStatus Delete(int id);
-    int GetDefaultTaskStatus();
+    Task<TaskStatus> AddAsync(TaskStatus taskStatus);
+    Task<List<TaskStatus>> GetAllTaskStatusAsync();
+    Task<TaskStatus> GetTaskStatusAsync(int id);
+    Task<TaskStatus> UpdateAsync(TaskStatus taskStatus);
+    Task<TaskStatus> DeleteAsync(int id);
+    Task<int> GetDefaultTaskStatusAsync();
   }
 }

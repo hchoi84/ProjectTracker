@@ -36,17 +36,17 @@ namespace ProjectTracker.Controllers
       taskVM.Tasks = await _task.GetAllTasksAsync();
       foreach (var task in taskVM.Tasks)
       {
-        task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
+        task.TaskStatus = await _taskStatus.GetTaskStatusAsync(task.StatusId);
       }
 
       taskVM.Tasks = taskVM.Tasks.Where(task => task.ProjectId == id).OrderBy(task => task.TaskStatus.OrderPriority).ToList();
       foreach (var task in taskVM.Tasks)
       {
         task.Member = await _member.FindByIdAsync(task.MemberId);
-        task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
+        task.TaskStatus = await _taskStatus.GetTaskStatusAsync(task.StatusId);
       }
 
-      taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().ToList();
+      taskVM.TaskStatus = await _taskStatus.GetAllTaskStatusAsync();
       
       taskVM.Members = await _member.Users.ToListAsync();
 
@@ -62,10 +62,10 @@ namespace ProjectTracker.Controllers
       
       var task = new ProjectTracker.Models.Task();
       task.ProjectId = id;
-      task.StatusId = _taskStatus.GetDefaultTaskStatus();
+      task.StatusId = await _taskStatus.GetDefaultTaskStatusAsync();
       taskVM.Tasks.Add(task);
 
-      taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
+      taskVM.TaskStatus = await _taskStatus.GetAllTaskStatusAsync();
 
       taskVM.Members = await _member.Users.ToListAsync();
 
@@ -77,7 +77,7 @@ namespace ProjectTracker.Controllers
     {
       TaskViewModel taskVM = new TaskViewModel();
       taskVM.Tasks.Add(await _task.GetTaskAsync(taskId));
-      taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
+      taskVM.TaskStatus = await _taskStatus.GetAllTaskStatusAsync();
       taskVM.Members = await _member.Users.ToListAsync();
 
       return View(taskVM);

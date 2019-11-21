@@ -8,15 +8,16 @@
   <div class="form-group">
     <label asp-for="StatusName">Status Name</label>
     <input asp-for="StatusName" class="form-control">
+    <span asp-validation-for="StatusName"></span>
   </div>
   <div class="form-group">
     <label asp-for="OrderPriority">Order Priority</label>
     <input asp-for="OrderPriority" class="form-control" placeholder="Optional">
+    <span asp-validation-for="OrderPriority"></span>
   </div>
   <div class="form-group">
-    <label asp-for="IsDefault" class="form-check-label">Order Priority</label>
+    <label asp-for="IsDefault" class="form-check-label">Default Status</label>
     <input asp-for="IsDefault" class="ml-3" style="transform: scale(2);">
-    <span asp-validation-for="IsDefault"></span>
   </div>
   <button type="submit" class="btn btn-primary">Create</button>
   <a asp-controller="taskstatus" asp-action="index" class="btn btn-primary ml-3">Cancel</a>
