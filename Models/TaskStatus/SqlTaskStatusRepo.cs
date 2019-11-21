@@ -39,6 +39,7 @@ namespace ProjectTracker.Models
       if (taskStatusToDelete != null)
       {
         _context.Remove(taskStatusToDelete);
+        await _context.SaveChangesAsync();
         return taskStatusToDelete;
       }
       return null;

@@ -49,6 +49,7 @@ namespace ProjectTracker.Controllers
       return View(projectVM);
     }
 
+    [HttpGet("/project/{id}/delete")]
     public async Task<RedirectToActionResult> Delete(int id)
     {
       await _project.DeleteAsync(id);
