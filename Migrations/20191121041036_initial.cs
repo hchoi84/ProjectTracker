@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectTracker.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -182,8 +182,8 @@ namespace ProjectTracker.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     MemberId = table.Column<string>(nullable: true),
-                    ProjectName = table.Column<string>(nullable: true),
-                    Summary = table.Column<string>(nullable: true),
+                    ProjectName = table.Column<string>(nullable: false),
+                    Summary = table.Column<string>(nullable: false),
                     Deadline = table.Column<DateTime>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Updated = table.Column<DateTime>(nullable: false)
@@ -243,8 +243,8 @@ namespace ProjectTracker.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "Created", "FirstName", "LastName", "Updated" },
                 values: new object[,]
                 {
-                    { "1", 0, "427bd657-55a0-4f96-bb26-1a5f410f65df", "Member", "howard.choi@email.com", false, false, null, null, null, null, null, false, null, false, "howard.choi@email.com", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Howard", "Choi", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { "2", 0, "e7336daa-1abf-439b-959d-09faf33958ac", "Member", "kenny.ock@email.com", false, false, null, null, null, null, null, false, null, false, "kenny.ock@email.com", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Kenny", "Ock", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { "1", 0, "29ec376f-b4a7-483d-bed9-5bfd772aece5", "Member", "howard.choi@email.com", false, false, null, null, null, null, null, false, null, false, "howard.choi@email.com", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Howard", "Choi", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { "2", 0, "97207265-3df0-4baa-9df4-7c2134f088da", "Member", "kenny.ock@email.com", false, false, null, null, null, null, null, false, null, false, "kenny.ock@email.com", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Kenny", "Ock", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -260,12 +260,12 @@ namespace ProjectTracker.Migrations
             migrationBuilder.InsertData(
                 table: "Projects",
                 columns: new[] { "Id", "Created", "Deadline", "MemberId", "ProjectName", "Summary", "Updated" },
-                values: new object[] { 1, new DateTime(2019, 10, 30, 12, 3, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 18, 20, 45, 4, 154, DateTimeKind.Local).AddTicks(8298), "1", "Project Tracker", "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum.", new DateTime(2019, 10, 31, 2, 40, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, new DateTime(2019, 10, 30, 12, 3, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 20, 20, 10, 36, 53, DateTimeKind.Local).AddTicks(1312), "1", "Project Tracker", "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum.", new DateTime(2019, 10, 31, 2, 40, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "Projects",
                 columns: new[] { "Id", "Created", "Deadline", "MemberId", "ProjectName", "Summary", "Updated" },
-                values: new object[] { 2, new DateTime(2019, 11, 6, 11, 30, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 18, 20, 45, 4, 158, DateTimeKind.Local).AddTicks(6318), "1", "Golfio ChannelAdvisor API", "Allow data pulling from ChannelAdvisor and report generating without needing to login or do other manual work. Purpose is to increase productivity in other areas and reduce manual report creation.", new DateTime(2019, 11, 6, 11, 30, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 2, new DateTime(2019, 11, 6, 11, 30, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 20, 20, 10, 36, 53, DateTimeKind.Local).AddTicks(1802), "1", "Golfio ChannelAdvisor API", "Allow data pulling from ChannelAdvisor and report generating without needing to login or do other manual work. Purpose is to increase productivity in other areas and reduce manual report creation.", new DateTime(2019, 11, 6, 11, 30, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "Tasks",

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjectTracker.Models
 {
@@ -34,17 +35,17 @@ namespace ProjectTracker.Models
       };
     }
 
-    public Project Add(Project project)
+    public async Task<Project> AddAsync(Project newProject)
     {
-      project.Id = _projects.Max(p => p.Id) + 1;
-      project.MemberId = project.MemberId;
-      project.Created = DateTime.Now;
-      project.Updated = DateTime.Now;
-      _projects.Add(project);
-      return project;
+      newProject.Id = _projects.Max(p => p.Id) + 1;
+      newProject.MemberId = newProject.MemberId;
+      newProject.Created = DateTime.Now;
+      newProject.Updated = DateTime.Now;
+      _projects.Add(newProject);
+      return newProject;
     }
 
-    public Project Delete(int id)
+    public async Task<Project> DeleteAsync(int id)
     {
       Project project = _projects.FirstOrDefault(p => p.Id == id);
       if (project != null)
@@ -55,12 +56,12 @@ namespace ProjectTracker.Models
       return null;
     }
 
-    public IEnumerable<Project> GetAllProjects()
+    public async Task<List<Project>> GetAllProjectsAsync()
     {
-      return _projects;
+      return _projects.ToList();
     }
 
-    public Project GetProject(int id)
+    public async Task<Project> GetProjectAsync(int id)
     {
       Project project = _projects.FirstOrDefault(p => p.Id == id);
       if (project != null)
@@ -70,7 +71,7 @@ namespace ProjectTracker.Models
       return null;
     }
 
-    public Project Update(Project updatedProject)
+    public async Task<Project> UpdateAsync(Project updatedProject)
     {
       Project project = _projects.FirstOrDefault(p => p.Id == updatedProject.Id);
       if (project != null)

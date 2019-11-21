@@ -4,6 +4,9 @@ using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjectTracker.Controllers
 {
@@ -11,58 +14,58 @@ namespace ProjectTracker.Controllers
   public class HomeController : Controller
   {
     private readonly IProject _project;
-    private readonly IMember _member;
-    public HomeController(IProject project, IMember member)
+    private readonly UserManager<Member> _member;
+    public HomeController(IProject project, UserManager<Member> member)
     {
       _member = member;
       _project = project;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-      var projects = _project.GetAllProjects();
+      var projects = await _project.GetAllProjectsAsync();
       foreach (var project in projects)
       {
-        project.Member = _member.GetMember(project.MemberId);
+        project.Member = await _member.FindByIdAsync(project.MemberId);
       }
 
       return View(projects);
     }
 
     [HttpGet("/project/create")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
       var projectVM = new ProjectViewModel();
-      projectVM.Members = _member.GetAllMembers().ToList();
+      projectVM.Members = await _member.Users.ToListAsync();
       return View(projectVM);
     }
 
     [HttpGet("/project/{id}/edit")]
-    public ViewResult Edit(int id)
+    public async Task<ViewResult> Edit(int id)
     {
       var projectVM = new ProjectViewModel();
-      projectVM.Project = _project.GetProject(id);
-      projectVM.Members = _member.GetAllMembers().ToList();
+      projectVM.Project = await _project.GetProjectAsync(id);
+      projectVM.Members = await _member.Users.ToListAsync();
       return View(projectVM);
     }
 
-    public RedirectToActionResult Delete(int id)
+    public async Task<RedirectToActionResult> Delete(int id)
     {
-      _project.Delete(id);
+      await _project.DeleteAsync(id);
       return RedirectToAction("index");
     }
 
     [HttpPost("/project/create")]
-    public IActionResult Create(ProjectViewModel newProjectVM)
+    public async Task<IActionResult> Create(ProjectViewModel newProjectVM)
     {
-      _project.Add(newProjectVM.Project);
+      await _project.AddAsync(newProjectVM.Project);
       return RedirectToAction("Index");
     }
 
     [HttpPost("/project/{id}/edit")]
-    public IActionResult Edit(ProjectViewModel editProjectVM)
+    public async Task<IActionResult> Edit(ProjectViewModel editProjectVM)
     {
-      _project.Update(editProjectVM.Project);
+      await _project.UpdateAsync(editProjectVM.Project);
       return RedirectToAction("index");
     }
   }

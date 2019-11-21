@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
@@ -25,10 +26,10 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("")]
-    public IActionResult Index(int id)
+    public async Task<IActionResult> Index(int id)
     {
       TaskViewModel taskVM = new TaskViewModel();
-      taskVM.Project = _project.GetProject(id);
+      taskVM.Project = await _project.GetProjectAsync(id);
       
       taskVM.Tasks = _task.GetAllTasks().ToList();
       foreach (var task in taskVM.Tasks)
@@ -51,13 +52,13 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("create")]
-    public IActionResult Create(int id)
+    public async Task<IActionResult> Create(int id)
     {
       TaskViewModel taskVM = new TaskViewModel();
 
-      taskVM.Project = _project.GetProject(id);
+      taskVM.Project = await _project.GetProjectAsync(id);
       
-      var task = new Task();
+      var task = new ProjectTracker.Models.Task();
       task.ProjectId = id;
       task.StatusId = _taskStatus.GetDefaultTaskStatus();
       task.Deadline = DateTime.Now.AddDays(1).Date;
@@ -89,29 +90,29 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("create")]
-    public IActionResult Create(int id, TaskViewModel newTaskVM)
+    public async Task<IActionResult> Create(int id, TaskViewModel newTaskVM)
     {
       foreach (var task in newTaskVM.Tasks)
       {
-        Task newTask = _task.Add(task);
+        ProjectTracker.Models.Task newTask = _task.Add(task);
       }
       
-      Project project = _project.GetProject(id);
-      _project.Update(project);
+      Project project = await _project.GetProjectAsync(id);
+      await _project.UpdateAsync(project);
 
       return RedirectToAction("Index");
     }
 
     [HttpPost("{taskId}/edit")]
-    public IActionResult Edit(int id, TaskViewModel editTaskVM)
+    public async Task<IActionResult> Edit(int id, TaskViewModel editTaskVM)
     {
       foreach (var task in editTaskVM.Tasks)
       {
         _task.Update(task);
       }
 
-      Project project = _project.GetProject(id);
-      _project.Update(project);
+      Project project = await _project.GetProjectAsync(id);
+      await _project.UpdateAsync(project);
 
       return RedirectToAction("index");
     }

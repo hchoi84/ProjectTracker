@@ -9,8 +9,8 @@ using ProjectTracker.Models;
 namespace ProjectTracker.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191119044504_Initial")]
-    partial class Initial
+    [Migration("20191121041036_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -192,9 +192,11 @@ namespace ProjectTracker.Migrations
 
                     b.Property<string>("MemberId");
 
-                    b.Property<string>("ProjectName");
+                    b.Property<string>("ProjectName")
+                        .IsRequired();
 
-                    b.Property<string>("Summary");
+                    b.Property<string>("Summary")
+                        .IsRequired();
 
                     b.Property<DateTime>("Updated");
 
@@ -209,7 +211,7 @@ namespace ProjectTracker.Migrations
                         {
                             Id = 1,
                             Created = new DateTime(2019, 10, 30, 12, 3, 0, 0, DateTimeKind.Unspecified),
-                            Deadline = new DateTime(2019, 12, 18, 20, 45, 4, 154, DateTimeKind.Local).AddTicks(8298),
+                            Deadline = new DateTime(2019, 12, 20, 20, 10, 36, 53, DateTimeKind.Local).AddTicks(1312),
                             MemberId = "1",
                             ProjectName = "Project Tracker",
                             Summary = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum.",
@@ -219,7 +221,7 @@ namespace ProjectTracker.Migrations
                         {
                             Id = 2,
                             Created = new DateTime(2019, 11, 6, 11, 30, 0, 0, DateTimeKind.Unspecified),
-                            Deadline = new DateTime(2019, 12, 18, 20, 45, 4, 158, DateTimeKind.Local).AddTicks(6318),
+                            Deadline = new DateTime(2019, 12, 20, 20, 10, 36, 53, DateTimeKind.Local).AddTicks(1802),
                             MemberId = "1",
                             ProjectName = "Golfio ChannelAdvisor API",
                             Summary = "Allow data pulling from ChannelAdvisor and report generating without needing to login or do other manual work. Purpose is to increase productivity in other areas and reduce manual report creation.",
@@ -367,7 +369,7 @@ namespace ProjectTracker.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "427bd657-55a0-4f96-bb26-1a5f410f65df",
+                            ConcurrencyStamp = "29ec376f-b4a7-483d-bed9-5bfd772aece5",
                             Email = "howard.choi@email.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
@@ -383,7 +385,7 @@ namespace ProjectTracker.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e7336daa-1abf-439b-959d-09faf33958ac",
+                            ConcurrencyStamp = "97207265-3df0-4baa-9df4-7c2134f088da",
                             Email = "kenny.ock@email.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,

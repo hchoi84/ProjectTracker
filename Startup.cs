@@ -35,7 +35,7 @@ namespace ProjectTracker
         options.Password.RequiredUniqueChars = 3;
       }).AddEntityFrameworkStores<AppDbContext>();
 
-      services.AddSingleton<IProject, TestProjectRepo>();
+      services.AddScoped<IProject, SqlProjectRepo>();
       services.AddSingleton<ITask, TestTaskRepo>();
       services.AddSingleton<ITaskStatus, TestTaskStatusRepo>();
 

@@ -1,13 +1,15 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ProjectTracker.Models
 {
   public interface IProject
   {
-    Project Add(Project project);
-    Project GetProject(int id);
-    IEnumerable<Project> GetAllProjects();
-    Project Update(Project project);
-    Project Delete(int id);
+    Task<Project> AddAsync(Project newProject);
+    Task<Project> GetProjectAsync(int id);
+    Task<List<Project>> GetAllProjectsAsync();
+    Task<Project> UpdateAsync(Project updatedProject);
+    Task<Project> DeleteAsync(int id);
   }
 }
