@@ -18,7 +18,7 @@ namespace ProjectTracker.Models
     [Range(2, 25, ErrorMessage="Must be between 2 to 25 characters")]
     public string ProjectName { get; set; }
     
-    [Required(ErrorMessage="Summary about the project is required")]
+    [Required(ErrorMessage="Summary is required")]
     [Range(2, 50, ErrorMessage="Must be between 2 to 50 characters")]
     public string Summary { get; set; }
     

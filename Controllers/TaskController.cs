@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
 
@@ -16,8 +18,8 @@ namespace ProjectTracker.Controllers
     private readonly IProject _project;
     private readonly ITask _task;
     private readonly ITaskStatus _taskStatus;
-    private readonly IMember _member;
-    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, IMember member)
+    private readonly UserManager<Member> _member;
+    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, UserManager<Member> member)
     {
       _member = member;
       _project = project;
@@ -31,7 +33,7 @@ namespace ProjectTracker.Controllers
       TaskViewModel taskVM = new TaskViewModel();
       taskVM.Project = await _project.GetProjectAsync(id);
       
-      taskVM.Tasks = _task.GetAllTasks().ToList();
+      taskVM.Tasks = await _task.GetAllTasksAsync();
       foreach (var task in taskVM.Tasks)
       {
         task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
@@ -40,13 +42,13 @@ namespace ProjectTracker.Controllers
       taskVM.Tasks = taskVM.Tasks.Where(task => task.ProjectId == id).OrderBy(task => task.TaskStatus.OrderPriority).ToList();
       foreach (var task in taskVM.Tasks)
       {
-        task.Member = _member.GetMember(task.MemberId);
+        task.Member = await _member.FindByIdAsync(task.MemberId);
         task.TaskStatus = _taskStatus.GetTaskStatus(task.StatusId);
       }
 
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().ToList();
       
-      taskVM.Members = _member.GetAllMembers().ToList();
+      taskVM.Members = await _member.Users.ToListAsync();
 
       return View(taskVM);
     }
@@ -61,31 +63,30 @@ namespace ProjectTracker.Controllers
       var task = new ProjectTracker.Models.Task();
       task.ProjectId = id;
       task.StatusId = _taskStatus.GetDefaultTaskStatus();
-      task.Deadline = DateTime.Now.AddDays(1).Date;
       taskVM.Tasks.Add(task);
 
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
 
-      taskVM.Members = _member.GetAllMembers().ToList();
+      taskVM.Members = await _member.Users.ToListAsync();
 
       return View(taskVM);
     }
 
     [HttpGet("{taskId}/edit")]
-    public ViewResult Edit(int taskId)
+    public async Task<ViewResult> Edit(int taskId)
     {
       TaskViewModel taskVM = new TaskViewModel();
-      taskVM.Tasks.Add(_task.GetTask(taskId));
+      taskVM.Tasks.Add(await _task.GetTaskAsync(taskId));
       taskVM.TaskStatus = _taskStatus.GetAllTaskStatus().OrderBy(ts => ts.OrderPriority).ToList();
-      taskVM.Members = _member.GetAllMembers().ToList();
+      taskVM.Members = await _member.Users.ToListAsync();
 
       return View(taskVM);
     }
 
     [HttpGet("{taskId}/delete")]
-    public RedirectToActionResult Delete(int taskId)
+    public async Task<RedirectToActionResult> Delete(int taskId)
     {
-      _task.Delete(taskId);
+      await _task.DeleteAsync(taskId);
       return RedirectToAction("index");
     }
 
@@ -94,7 +95,7 @@ namespace ProjectTracker.Controllers
     {
       foreach (var task in newTaskVM.Tasks)
       {
-        ProjectTracker.Models.Task newTask = _task.Add(task);
+        ProjectTracker.Models.Task newTask = await _task.AddAsync(task);
       }
       
       Project project = await _project.GetProjectAsync(id);
@@ -108,7 +109,7 @@ namespace ProjectTracker.Controllers
     {
       foreach (var task in editTaskVM.Tasks)
       {
-        _task.Update(task);
+        await _task.UpdateAsync(task);
       }
 
       Project project = await _project.GetProjectAsync(id);

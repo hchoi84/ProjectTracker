@@ -36,7 +36,7 @@ namespace ProjectTracker
       }).AddEntityFrameworkStores<AppDbContext>();
 
       services.AddScoped<IProject, SqlProjectRepo>();
-      services.AddSingleton<ITask, TestTaskRepo>();
+      services.AddScoped<ITask, SqlTaskRepo>();
       services.AddSingleton<ITaskStatus, TestTaskStatusRepo>();
 
       services.AddDbContext<AppDbContext>(options => options.UseMySql(_config["DBInfo:ConnectionString"]));
