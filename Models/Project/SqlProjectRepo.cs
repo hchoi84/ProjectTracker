@@ -36,7 +36,9 @@ namespace ProjectTracker.Models
 
     public async Task<List<Project>> GetAllProjectsAsync()
     {
-      return await _context.Projects.ToListAsync();
+      var projects = await _context.Projects.Include(p => p.Member).ToListAsync();
+
+      return projects;
     }
 
     public async Task<Project> GetProjectAsync(int id)

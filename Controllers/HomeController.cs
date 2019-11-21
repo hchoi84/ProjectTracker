@@ -24,10 +24,6 @@ namespace ProjectTracker.Controllers
     public async Task<IActionResult> Index()
     {
       var projects = await _project.GetAllProjectsAsync();
-      foreach (var project in projects)
-      {
-        project.Member = await _member.FindByIdAsync(project.MemberId);
-      }
 
       return View(projects);
     }

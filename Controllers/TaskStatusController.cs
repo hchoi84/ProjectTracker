@@ -4,6 +4,7 @@ using ProjectTracker.Models;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using TaskStatus = ProjectTracker.Models.TaskStatus;
 
 namespace ProjectTracker.Controllers
 {
@@ -18,8 +19,7 @@ namespace ProjectTracker.Controllers
 
     public async Task<IActionResult> Index()
     {
-      IEnumerable<ProjectTracker.Models.TaskStatus> allTaskStatus = await _taskStatus.GetAllTaskStatusAsync();
-      allTaskStatus.OrderBy(ts => ts.OrderPriority);
+      List<TaskStatus> allTaskStatus = await _taskStatus.GetAllTaskStatusAsync();
       return View(allTaskStatus);
     }
 
@@ -33,12 +33,11 @@ namespace ProjectTracker.Controllers
 
     public async Task<IActionResult> Delete(int id)
     {
-      ProjectTracker.Models.TaskStatus taskStatus = await _taskStatus.GetTaskStatusAsync(id);
+      TaskStatus taskStatus = await _taskStatus.GetTaskStatusAsync(id);
       if (taskStatus.IsDefault)
       {
-        ModelState.AddModelError("IsDefault", "Please indicate another Default Task Status before deleting");
-        IEnumerable<ProjectTracker.Models.TaskStatus> allTaskStatus = await _taskStatus.GetAllTaskStatusAsync();
-        allTaskStatus.OrderBy(ts => ts.OrderPriority);
+        ViewBag.ErrorMessage = "You are trying to delete a default Task Status. Please indicate another default Task Status before trying again";
+        IEnumerable<TaskStatus> allTaskStatus = await _taskStatus.GetAllTaskStatusAsync();
         return View("Index", allTaskStatus);
       }
       await _taskStatus.DeleteAsync(id);
@@ -46,14 +45,14 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(ProjectTracker.Models.TaskStatus newTaskStatus)
+    public async Task<IActionResult> Create(TaskStatus newTaskStatus)
     {
       await _taskStatus.AddAsync(newTaskStatus);
       return RedirectToAction("Index");
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(ProjectTracker.Models.TaskStatus editTaskStatus)
+    public async Task<IActionResult> Edit(TaskStatus editTaskStatus)
     {
       await _taskStatus.UpdateAsync(editTaskStatus);
       return RedirectToAction("index");

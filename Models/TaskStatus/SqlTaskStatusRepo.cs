@@ -47,7 +47,8 @@ namespace ProjectTracker.Models
 
     public async Task<List<TaskStatus>> GetAllTaskStatusAsync()
     {
-      return await _context.TaskStatuses.ToListAsync();
+      List<TaskStatus> taskStatuses = await _context.TaskStatuses.OrderBy(ts => ts.OrderPriority).ToListAsync();
+      return taskStatuses;
     }
 
     public async Task<TaskStatus> GetTaskStatusAsync(int id)

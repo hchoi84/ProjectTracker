@@ -10,6 +10,15 @@
   {
   <input type="hidden" readonly asp-for="@Model.Tasks[i].ProjectId">
   <div class="form-group">
+    <label asp-for="@Model.Tasks[i].ProjectId">Project Name</label>
+    <select asp-for="@Model.Tasks[i].ProjectId" class="form-control">
+      @foreach (var project in Model.Projects)
+      {
+        <option value="@project.Id">@project.ProjectName</option>
+      }
+    </select>
+  </div>
+  <div class="form-group">
     <label asp-for="@Model.Tasks[i].TaskName">Task Name</label>
     <input asp-for="@Model.Tasks[i].TaskName" class="form-control">
     <span asp-validation-for="@Model.Tasks[i].TaskName"></span>
