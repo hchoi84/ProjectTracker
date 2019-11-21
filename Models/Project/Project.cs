@@ -14,15 +14,15 @@ namespace ProjectTracker.Models
     [ForeignKey("Member")]
     public string MemberId { get; set; }
     
-    [Required(ErrorMessage="Project Name is required")]
-    [Range(2, 25, ErrorMessage="Must be between 2 to 25 characters")]
+    [Required(ErrorMessage = "(Required)")]
+    [StringLength(25, MinimumLength = 2, ErrorMessage = "Value must be between {2} to {1} characters")]
     public string ProjectName { get; set; }
     
-    [Required(ErrorMessage="Summary is required")]
-    [Range(2, 50, ErrorMessage="Must be between 2 to 50 characters")]
+    [Required(ErrorMessage = "(Required)")]
+    [StringLength(300, MinimumLength = 2, ErrorMessage = "Value must be between {2} to {1} characters")]
     public string Summary { get; set; }
     
-    [Required(ErrorMessage="A project must have a deadline")]
+    [Required(ErrorMessage = "(Required)")]
     [DataType(DataType.Date)]
     [FutureDate(ErrorMessage="Deadline must be in the future")]
     public DateTime Deadline { get; set; }

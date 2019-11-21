@@ -55,15 +55,40 @@ namespace ProjectTracker.Controllers
     [HttpPost("/project/create")]
     public async Task<IActionResult> Create(ProjectViewModel newProjectVM)
     {
-      await _project.AddAsync(newProjectVM.Project);
-      return RedirectToAction("Index");
+      if (ModelState.IsValid && await _project.IsUnique(newProjectVM.Project.ProjectName))
+      {
+        await _project.AddAsync(newProjectVM.Project);
+        return RedirectToAction("Index");
+      }
+
+      if (!await _project.IsUnique(newProjectVM.Project.ProjectName))
+      {
+        ModelState.AddModelError(string.Empty, "Project Name already exists");
+      }
+
+      var projectVM = new ProjectViewModel();
+      projectVM.Members = await _member.Users.ToListAsync();
+      return View(projectVM);
     }
 
     [HttpPost("/project/{id}/edit")]
-    public async Task<IActionResult> Edit(ProjectViewModel editProjectVM)
+    public async Task<IActionResult> Edit(int id, ProjectViewModel editProjectVM)
     {
-      await _project.UpdateAsync(editProjectVM.Project);
-      return RedirectToAction("index");
+      if (ModelState.IsValid && await _project.IsUnique(editProjectVM.Project.ProjectName, id))
+      {
+        await _project.UpdateAsync(editProjectVM.Project);
+        return RedirectToAction("Index");
+      }
+
+      if (!await _project.IsUnique(editProjectVM.Project.ProjectName, id))
+      {
+        ModelState.AddModelError(string.Empty, "Project Name already exists");
+      }
+
+      var projectVM = new ProjectViewModel();
+      projectVM.Project = await _project.GetProjectAsync(id);
+      projectVM.Members = await _member.Users.ToListAsync();
+      return View(projectVM);
     }
   }
 }

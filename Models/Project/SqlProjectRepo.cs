@@ -60,11 +60,20 @@ namespace ProjectTracker.Models
         project.ProjectName = updatedProject.ProjectName;
         project.Updated = DateTime.Now;
         project.Deadline = updatedProject.Deadline;
+        project.Summary = updatedProject.Summary;
 
         await _context.SaveChangesAsync();
         return project;
       }
       return null;
+    }
+
+    public async Task<bool> IsUnique(string projectName, int id = 0)
+    {
+      Project project = await _context.Projects.
+        Where(p => p.Id != id).
+        FirstOrDefaultAsync(p => p.ProjectName == projectName);
+      return project == null ? true : false;
     }
   }
 }
