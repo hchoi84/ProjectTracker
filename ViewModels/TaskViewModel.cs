@@ -9,13 +9,13 @@ namespace ProjectTracker.ViewModels
     {
       Projects = new List<Project>();
       Tasks = new List<Task>();
-      TaskStatus = new List<TaskStatus>();
+      TaskStatuses = new List<TaskStatus>();
       Members = new List<Member>();
     }
 
     public List<Project> Projects { get; set; }
     public List<Task> Tasks { get; set; }
-    public List<TaskStatus> TaskStatus { get; set; }
+    public List<TaskStatus> TaskStatuses { get; set; }
     public List<Member> Members { get; set; }
   }
 }

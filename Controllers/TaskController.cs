@@ -49,7 +49,7 @@ namespace ProjectTracker.Controllers
       task.StatusId = await _taskStatus.GetDefaultTaskStatusAsync();
       taskVM.Tasks.Add(task);
 
-      taskVM.TaskStatus = await _taskStatus.GetAllTaskStatusAsync();
+      taskVM.TaskStatuses = await _taskStatus.GetAllTaskStatusAsync();
       taskVM.Members = await _member.Users.ToListAsync();
 
       return View(taskVM);
@@ -61,7 +61,7 @@ namespace ProjectTracker.Controllers
       TaskViewModel taskVM = new TaskViewModel();
       taskVM.Projects = await _project.GetAllProjectsAsync();
       taskVM.Tasks.Add(await _task.GetTaskAsync(taskId));
-      taskVM.TaskStatus = await _taskStatus.GetAllTaskStatusAsync();
+      taskVM.TaskStatuses = await _taskStatus.GetAllTaskStatusAsync();
       taskVM.Members = await _member.Users.ToListAsync();
 
       return View(taskVM);

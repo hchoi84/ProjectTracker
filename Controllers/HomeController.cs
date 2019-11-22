@@ -1,8 +1,6 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
