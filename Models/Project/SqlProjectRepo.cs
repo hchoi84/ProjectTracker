@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ProjectTracker.Utilities;
 
 namespace ProjectTracker.Models
 {
@@ -72,7 +73,7 @@ namespace ProjectTracker.Models
     {
       Project project = await _context.Projects.
         Where(p => p.Id != id).
-        FirstOrDefaultAsync(p => p.ProjectName == projectName);
+        FirstOrDefaultAsync(p => p.ProjectName.TrimAndTitleCase() == projectName);
       return project == null ? true : false;
     }
   }

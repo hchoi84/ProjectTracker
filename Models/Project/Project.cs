@@ -15,7 +15,7 @@ namespace ProjectTracker.Models
     public string MemberId { get; set; }
     
     [Required(ErrorMessage = "(Required)")]
-    [StringLength(25, MinimumLength = 2, ErrorMessage = "Value must be between {2} to {1} characters")]
+    [StringLength(30, MinimumLength = 2, ErrorMessage = "Value must be between {2} to {1} characters")]
     public string ProjectName { get; set; }
     
     [Required(ErrorMessage = "(Required)")]
