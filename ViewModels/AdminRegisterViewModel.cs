@@ -4,6 +4,8 @@ namespace ProjectTracker.ViewModels
 {
   public class AdminRegisterViewModel
   {
+    public string Id { get; set; }
+
     [Required(ErrorMessage = "(Required)")]
     [Display(Name = "First Name")]
     [MinLength(2, ErrorMessage = "Must be between at least {1} characters")]

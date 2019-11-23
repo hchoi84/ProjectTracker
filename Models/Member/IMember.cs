@@ -10,7 +10,8 @@ namespace ProjectTracker.Models
     Task<IdentityResult> RegisterAsync(AdminRegisterViewModel newMember);
     Task<Member> GetMemberAsync(string id);
     Task<List<Member>> GetAllMembersAsync();
-    Task<Member> UpdateAsync(Member member);
-    Task<Member> DeleteAsync(int id);
+    Task<IdentityResult> UpdateAsync(AdminRegisterViewModel member);
+    Task<IdentityResult> DeleteAsync(string id);
+    Task<IdentityResult> UpdatePassword(AdminEditViewModel editVM);
   }
 }

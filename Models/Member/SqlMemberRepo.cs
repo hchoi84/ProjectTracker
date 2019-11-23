@@ -15,9 +15,10 @@ namespace ProjectTracker.Models
       _member = member;
     }
 
-    public Task<Member> DeleteAsync(int id)
+    public async Task<IdentityResult> DeleteAsync(string id)
     {
-      throw new System.NotImplementedException();
+      Member member = await _member.FindByIdAsync(id);
+      return await _member.DeleteAsync(member);
     }
 
     public async Task<List<Member>> GetAllMembersAsync()
@@ -45,9 +46,19 @@ namespace ProjectTracker.Models
       return await _member.CreateAsync(member, newMember.Password);
     }
 
-    public Task<Member> UpdateAsync(Member member)
+    public async Task<IdentityResult> UpdateAsync(AdminRegisterViewModel regVM)
     {
-      throw new System.NotImplementedException();
+      Member member = await _member.FindByIdAsync(regVM.Id);
+      member.FirstName = regVM.FirstName;
+      member.LastName = regVM.LastName;
+      member.Email = regVM.Email;
+      return await _member.UpdateAsync(member);
+    }
+
+    public async Task<IdentityResult> UpdatePassword(AdminEditViewModel editVM)
+    {
+      Member member = await _member.FindByIdAsync(editVM.Id);
+      return await _member.ChangePasswordAsync(member, editVM.OldPassword, editVM.NewPassword);
     }
   }
 }

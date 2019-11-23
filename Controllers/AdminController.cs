@@ -64,10 +64,47 @@ namespace ProjectTracker.Controllers
         FirstName = member.FirstName,
         LastName = member.LastName,
         Email = member.Email,
-        IsPswdNull = member.PasswordHash == null,
       };
 
       return View(editVM);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(AdminRegisterViewModel regVM)
+    {
+      IdentityResult identityResult = await _member.UpdateAsync(regVM);
+      if (identityResult == null)
+      {
+        ViewBag.Message = "Update failed";
+        return View();
+      }
+      else
+      {
+        ViewBag.Message = "Updated successfully";
+        return RedirectToAction("Index");
+      }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Delete(string userId)
+    {
+      var identityResult = await _member.DeleteAsync(userId);
+      if (identityResult.Succeeded)
+      {
+        return RedirectToAction("Index");
+      }
+      return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(AdminEditViewModel editVM)
+    {
+      IdentityResult identityResult = await _member.UpdatePassword(editVM);
+      if (identityResult.Succeeded)
+      {
+        return RedirectToAction("Index");
+      }
+      return View();
     }
   }
 }
