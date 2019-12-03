@@ -8,7 +8,6 @@ using TaskStatus = ProjectTracker.Models.TaskStatus;
 
 namespace ProjectTracker.Controllers
 {
-  [AllowAnonymous]
   public class TaskStatusController : Controller
   {
     private readonly ITaskStatus _taskStatus;

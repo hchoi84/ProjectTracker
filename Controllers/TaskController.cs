@@ -12,7 +12,6 @@ using Task = ProjectTracker.Models.Task;
 
 namespace ProjectTracker.Controllers
 {
-  [AllowAnonymous]
   [Route("project/{id}/tasks")]
   public class TaskController : Controller
   {

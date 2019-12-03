@@ -9,7 +9,6 @@ using ProjectTracker.Utilities;
 
 namespace ProjectTracker.Controllers
 {
-  [AllowAnonymous]
   public class HomeController : Controller
   {
     private readonly IProject _project;

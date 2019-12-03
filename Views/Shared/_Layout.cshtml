@@ -1,3 +1,5 @@
+@inject SignInManager<Member> signInManager;
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +13,20 @@
 </head>
 
 <body class="bg-dark">
+  <nav class="container navbar navbar-expand-sm">
+    <ul class="navbar-nav ml-auto">
+      @if (signInManager.IsSignedIn(User))
+      {
+        <li class="nav-item">
+          <form asp-controller="Account" asp-action="Logout" method="POST">
+            <button type="submit" class="btn btn-secondary text-white">
+              Logout
+            </button>
+          </form>
+        </li>
+      }
+    </ul>
+  </nav>
   <div class="container text-light">
     @RenderBody()
   </div>

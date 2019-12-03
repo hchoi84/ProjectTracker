@@ -40,9 +40,8 @@ namespace ProjectTracker
       services.AddScoped<ITaskStatus, SqlTaskStatusRepo>();
       services.AddScoped<IMember, SqlMemberRepo>();
 
-      services.AddDbContext<AppDbContext>(options => options.UseMySql(_config["DBInfo:ConnectionString"]));
+      services.AddDbContextPool<AppDbContext>(options => options.UseMySql(_config.GetConnectionString("DbConnection")));
     }
-
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {

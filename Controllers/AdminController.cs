@@ -26,35 +26,6 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet]
-    public IActionResult Register()
-    {
-      return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Register(AdminRegisterViewModel regVM)
-    {
-      if (!ModelState.IsValid)
-      {
-        return View();
-      }
-
-      var result = await _member.RegisterAsync(regVM);
-
-      if (result.Succeeded)
-      {
-        return RedirectToAction("Index");
-      }
-
-      foreach (var error in result.Errors)
-      {
-        ModelState.AddModelError(string.Empty, error.Description);
-      }
-
-      return View();
-    }
-
-    [HttpGet]
     public async Task<IActionResult> Edit(string userId)
     {
       Member member = await _member.GetMemberAsync(userId);
@@ -70,7 +41,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(AdminRegisterViewModel regVM)
+    public async Task<IActionResult> Edit(RegisterViewModel regVM)
     {
       IdentityResult identityResult = await _member.UpdateAsync(regVM);
       if (identityResult == null)

@@ -31,7 +31,7 @@ namespace ProjectTracker.Models
       return await _member.FindByIdAsync(id);
     }
 
-    public async Task<IdentityResult> RegisterAsync(AdminRegisterViewModel newMember)
+    public async Task<IdentityResult> RegisterAsync(RegisterViewModel newMember)
     {
       Member member = new Member
       {
@@ -46,12 +46,13 @@ namespace ProjectTracker.Models
       return await _member.CreateAsync(member, newMember.Password);
     }
 
-    public async Task<IdentityResult> UpdateAsync(AdminRegisterViewModel regVM)
+    public async Task<IdentityResult> UpdateAsync(RegisterViewModel regVM)
     {
       Member member = await _member.FindByIdAsync(regVM.Id);
       member.FirstName = regVM.FirstName;
       member.LastName = regVM.LastName;
       member.Email = regVM.Email;
+      
       return await _member.UpdateAsync(member);
     }
 
