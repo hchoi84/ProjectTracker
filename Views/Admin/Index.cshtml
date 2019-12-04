@@ -12,20 +12,20 @@
 
   <div class="container">
     <div class="row row-height-3 align-items-center border-bottom border-white">
-      <div class="col-sm-4">Name</div>
-      <div class="col-sm">Joined</div>
-      <div class="col-sm">Action</div>
+      <div class="col-4">Name</div>
+      <div class="col">Joined</div>
+      <div class="col">Action</div>
     </div>
     @if (Model.Any())
     {
       @foreach (var member in Model)
       {
         <div class="row row-height-3 align-items-center mt-3 bg-secondary">
-          <div class="col-sm-4">
+          <div class="col-4">
             <a asp-controller="task" asp-action="Index">@member.GetFullName</a>
           </div>
-          <div class="col-sm">@member.Created.ToString("yyyy/MM/dd")</div>
-          <div class="col-sm">
+          <div class="col">@member.Created.ToString("yyyy/MM/dd")</div>
+          <div class="col">
             <a asp-controller="admin" asp-action="edit" asp-route-userId="@member.Id">
               <i class="far fa-edit fa-lg mr-2"></i>
             </a>

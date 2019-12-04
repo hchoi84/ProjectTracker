@@ -12,26 +12,26 @@
 
   <div class="container">
     <div class="row row-height-3 align-items-center border-bottom border-white">
-      <div class="col-sm-4">Project Name</div>
-      <div class="col-sm">Created</div>
-      <div class="col-sm">Updated</div>
-      <div class="col-sm">Deadline</div>
-      <div class="col-sm">Creator</div>
-      <div class="col-sm">Action</div>
+      <div class="col-4 name">Project Name</div>
+      <div class="col created">Created</div>
+      <div class="col updated">Updated</div>
+      <div class="col deadline">Deadline</div>
+      <div class="col creator">Creator</div>
+      <div class="col action">Action</div>
     </div>
     @if (Model.Any())
     {
       @foreach (var project in Model)
       {
-        <div class="row row-height-3 align-items-center mt-3 bg-secondary">
-          <div class="col-sm-4">
+        <div class="row row-height-3 align-items-center mt-3 bg-secondary justify-content-between">
+          <div class="col-4 name">
             <a asp-controller="task" asp-action="Index" asp-route-id="@project.Id">@project.ProjectName</a>
           </div>
-          <div class="col-sm">@project.Created.ToString("yyyy/MM/dd")</div>
-          <div class="col-sm">@project.Updated.ToString("yyyy/MM/dd")</div>
-          <div class="col-sm">@project.Deadline.ToString("yyyy/MM/dd")</div>
-          <div class="col-sm">@project.Member.GetFullName</div>
-          <div class="col-sm">
+          <div class="col created">@project.Created.ToString("yyyy/MM/dd")</div>
+          <div class="col updated">@project.Updated.ToString("yyyy/MM/dd")</div>
+          <div class="col deadline">@project.Deadline.ToString("yyyy/MM/dd")</div>
+          <div class="col creator">@project.Member.GetFullName</div>
+          <div class="col action">
             <a asp-controller="home" asp-action="Edit" asp-route-id="@project.Id">
               <i class="far fa-edit fa-lg mr-2"></i>
             </a>
@@ -52,10 +52,10 @@
       </div>
     }
     
-    <div class="row aling-items-center mt-3">
+    <div class="row aling-items-center mt-3" id="footer">
       <div class="col-sm-12 p-0">
-        <a asp-controller="Home" asp-action="Create" class="btn btn-primary"><i class="fas fa-plus mr-2"></i>Add New Project</a>
-        <a asp-controller="taskstatus" asp-action="index" class="btn btn-primary ml-3"><i class="fas fa-tasks mr-2"></i>Manage Task Status</a>
+        <a asp-controller="Home" asp-action="Create" class="btn btn-primary mr-3"><i class="fas fa-plus mr-2"></i>Add New Project</a>
+        <a asp-controller="taskstatus" asp-action="index" class="btn btn-primary"><i class="fas fa-tasks mr-2"></i>Manage Task Status</a>
       </div>
     </div>
   </div>

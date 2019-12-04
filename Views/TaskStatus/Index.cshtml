@@ -6,10 +6,10 @@
 
 <div class="container mt-3">
     <div class="row row-height-3 align-items-center border-bottom border-white">
-      <div class="col-sm-4">Status Name</div>
-      <div class="col-sm-3">Priority Order</div>
-      <div class="col-sm-3">Default</div>
-      <div class="col-sm">Action</div>
+      <div class="col-4 status-name">Status Name</div>
+      <div class="col-2 priority-order">Priority Order</div>
+      <div class="col default">Default</div>
+      <div class="col ts-action">Action</div>
     </div>
 
     @if (ViewBag.ErrorMessage != null)
@@ -19,15 +19,15 @@
     @foreach (var taskStatus in Model)
     {
       <div class="row row-height-3 align-items-center mt-3 bg-secondary">
-        <div class="col-sm-4">@taskStatus.StatusName</div>
-        <div class="col-sm-3">@taskStatus.OrderPriority</div>
-        <div class="col-sm-3 pl-4">
+        <div class="col-4 status-name">@taskStatus.StatusName</div>
+        <div class="col-2 priority-order">@taskStatus.OrderPriority</div>
+        <div class="col" style="padding-right: 0">
             @if (taskStatus.IsDefault)
             {
               <i class="fas fa-check fa-lg"></i>
             }
         </div>
-        <div class="col-sm">
+        <div class="col">
           <a asp-controller="taskstatus" asp-action="edit" asp-route-id="@taskStatus.Id">
             <i class="far fa-edit fa-lg mr-2"></i>
           </a>
@@ -38,10 +38,10 @@
       </div>
     }
 
-    <div class="row aling-items-center mt-3">
+    <div class="row aling-items-center mt-3" id="footer">
       <div class="col-sm-12 p-0">
-        <a asp-controller="home" asp-action="index" class="btn btn-primary"><i class="fas fa-arrow-left mr-2"></i>Back</a>
-        <a asp-controller="TaskStatus" asp-action="Create" class="btn btn-primary ml-3"><i class="fas fa-plus mr-2"></i>Add New Task Status</a>
+        <a asp-controller="home" asp-action="index" class="btn btn-primary mr-3"><i class="fas fa-arrow-left mr-2"></i>Back</a>
+        <a asp-controller="TaskStatus" asp-action="Create" class="btn btn-primary"><i class="fas fa-plus mr-2"></i>Add New Task Status</a>
       </div>
     </div>
   </div>
