@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ProjectTracker.ViewModels
 {
-  public class ProjectViewModel
+  public class ProjectEditViewModel
   {
-    public ProjectViewModel()
+    public ProjectEditViewModel()
     {
       Project = new Project();
       Members = new List<Member>();

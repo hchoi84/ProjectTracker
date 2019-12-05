@@ -55,11 +55,17 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("{taskId}/edit")]
-    public async Task<ViewResult> Edit(int taskId)
+    public async Task<IActionResult> Edit(int taskId)
     {
+      var task = await _task.GetTaskAsync(taskId);
+      if (task.MemberId != _member.GetUserId(User))
+      {
+        return RedirectToAction("Error", "Error");
+      }
+
       TaskViewModel taskVM = new TaskViewModel();
       taskVM.Projects = await _project.GetAllProjectsAsync();
-      taskVM.Tasks.Add(await _task.GetTaskAsync(taskId));
+      taskVM.Tasks.Add(task);
       taskVM.TaskStatuses = await _taskStatus.GetAllTaskStatusAsync();
       taskVM.Members = await _member.Users.ToListAsync();
 
@@ -69,6 +75,12 @@ namespace ProjectTracker.Controllers
     [HttpGet("{taskId}/delete")]
     public async Task<RedirectToActionResult> Delete(int taskId)
     {
+      var task = await _task.GetTaskAsync(taskId);
+      if (task.MemberId != _member.GetUserId(User))
+      {
+        return RedirectToAction("Error", "Error");
+      }
+
       await _task.DeleteAsync(taskId);
       return RedirectToAction("index");
     }

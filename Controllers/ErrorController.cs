@@ -14,5 +14,12 @@ namespace ProjectTracker.Controllers
       
       return View("Error");
     }
+
+    [Route("Error/AccessDenied")]
+    public IActionResult Error()
+    {
+      ViewBag.ErrorMessage = "Access Denied";
+      return View();
+    }
   }
 }

@@ -1,4 +1,4 @@
-@model IEnumerable<Project>
+@model List<Project>
 
 @{
   ViewBag.Title = "Projects";
@@ -32,12 +32,19 @@
           <div class="col deadline">@project.Deadline.ToString("yyyy/MM/dd")</div>
           <div class="col creator">@project.Member.GetFullName</div>
           <div class="col action">
-            <a asp-controller="home" asp-action="Edit" asp-route-id="@project.Id">
-              <i class="far fa-edit fa-lg mr-2"></i>
-            </a>
-            <a asp-controller="home" asp-action="delete" asp-route-id="@project.Id">
-              <i class="far fa-trash-alt fa-lg mr-2"></i>
-            </a>
+            @if (project.MemberId == userManager.GetUserId(User))
+            {
+              <a asp-controller="home" asp-action="Edit" asp-route-id="@project.Id">
+                <i class="far fa-edit fa-lg mr-2"></i>
+              </a>
+              <a asp-controller="home" asp-action="delete" asp-route-id="@project.Id">
+                <i class="far fa-trash-alt fa-lg mr-2"></i>
+              </a>
+            }
+            else
+            {
+              <a>No Action</a>
+            }
           </div>
         </div>
         <div class="row align-items-center pb-3 bg-secondary">

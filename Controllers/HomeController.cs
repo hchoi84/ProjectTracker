@@ -27,46 +27,64 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("/project/create")]
-    public async Task<IActionResult> Create()
-    {
-      return View(await GenerateProjectViewModel(null));
-    }
+    public IActionResult Create() => View();
 
     [HttpGet("/project/{id}/edit")]
-    public async Task<ViewResult> Edit(int id)
+    public async Task<IActionResult> Edit(int id)
     {
+      var project = await _project.GetProjectAsync(id);
+      
+      if (project.MemberId != _member.GetUserId(User))
+      {
+        return RedirectToAction("Error", "Error");
+      }
+
       return View(await GenerateProjectViewModel(id));
     }
 
     [HttpGet("/project/{id}/delete")]
     public async Task<RedirectToActionResult> Delete(int id)
     {
+      var project = await _project.GetProjectAsync(id);
+      
+      if (project.MemberId != _member.GetUserId(User))
+      {
+        return RedirectToAction("Error", "Error");
+      }
+
       await _project.DeleteAsync(id);
       return RedirectToAction("index");
     }
 
     [HttpPost("/project/create")]
-    public async Task<IActionResult> Create(ProjectViewModel newProjectVM)
+    public async Task<IActionResult> Create(ProjectCreateViewModel newProjectVM)
     {
-      newProjectVM.Project.ProjectName = newProjectVM.Project.ProjectName.TrimAndTitleCase();
+      newProjectVM.ProjectName = newProjectVM.ProjectName.TrimAndTitleCase();
 
       if (!ModelState.IsValid)
       {
-        return View(await GenerateProjectViewModel(null));
+        return View();
       }
 
-      if (!await _project.IsUnique(newProjectVM.Project.ProjectName))
+      if (!await _project.IsUnique(newProjectVM.ProjectName))
       {
         ModelState.AddModelError(string.Empty, "Project Name already exists");
-        return View(await GenerateProjectViewModel(null));
+        return View();
       }
 
-      await _project.AddAsync(newProjectVM.Project);
+      Project project = new Project()
+      {
+        Deadline = newProjectVM.Deadline,
+        MemberId = _member.GetUserId(User),
+        ProjectName = newProjectVM.ProjectName,
+        Summary = newProjectVM.Summary,
+      };
+      await _project.AddAsync(project);
       return RedirectToAction("Index");
     }
 
     [HttpPost("/project/{id}/edit")]
-    public async Task<IActionResult> Edit(ProjectViewModel editProjectVM)
+    public async Task<IActionResult> Edit(ProjectEditViewModel editProjectVM)
     {
       editProjectVM.Project.ProjectName = editProjectVM.Project.ProjectName.TrimAndTitleCase();
 
@@ -85,9 +103,9 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("Index");
     }
 
-    public async Task<ProjectViewModel> GenerateProjectViewModel(int? id)
+    public async Task<ProjectEditViewModel> GenerateProjectViewModel(int? id)
     {
-      var projectVM = new ProjectViewModel();
+      var projectVM = new ProjectEditViewModel();
       if (id != null)
       {
         projectVM.Project = await _project.GetProjectAsync((int)id);

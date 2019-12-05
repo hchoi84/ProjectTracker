@@ -28,12 +28,19 @@
           <div class="col deadline">@task.Deadline.ToString("yyyy/MM/dd")</div>
           <div class="col creator">@task.Member.GetFullName</div>
           <div class="col action">
-            <a asp-controller="task" asp-action="edit" asp-route-id="@task.ProjectId" asp-route-taskId="@task.Id">
-              <i class="far fa-edit fa-lg mr-2"></i>
-            </a>
-            <a asp-controller="task" asp-action="delete" asp-route-id="@task.ProjectId" asp-route-taskId="@task.Id">
-              <i class="far fa-trash-alt fa-lg mr-2"></i>
-            </a>
+            @if (task.MemberId == userManager.GetUserId(User))
+            {
+              <a asp-controller="task" asp-action="edit" asp-route-id="@task.ProjectId" asp-route-taskId="@task.Id">
+                <i class="far fa-edit fa-lg mr-2"></i>
+              </a>
+              <a asp-controller="task" asp-action="delete" asp-route-id="@task.ProjectId" asp-route-taskId="@task.Id">
+                <i class="far fa-trash-alt fa-lg mr-2"></i>
+              </a>
+            }
+            else
+            {
+              <a>No Action</a>
+            }
           </div>
         </div>
         <div class="row align-items-center pb-3 bg-secondary">
@@ -51,7 +58,10 @@
     <div class="row aling-items-center mt-3" id="footer">
       <div class="col-sm-12 p-0">
         <a asp-controller="home" asp-action="index" class="btn btn-primary"><i class="fas fa-arrow-left mr-2"></i>Back</a>
-        <a asp-controller="task" asp-action="create" asp-route-id="@Model.Projects[0].Id" class="btn btn-primary ml-3"><i class="fas fa-plus mr-2"></i>Add New Task</a>
+        @if (Model.Projects[0].MemberId == userManager.GetUserId(User))
+        {
+          <a asp-controller="task" asp-action="create" asp-route-id="@Model.Projects[0].Id" class="btn btn-primary ml-3"><i class="fas fa-plus mr-2"></i>Add New Task</a>
+        }
       </div>
     </div>
 
