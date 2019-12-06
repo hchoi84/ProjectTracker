@@ -30,9 +30,9 @@ namespace ProjectTracker.Controllers
     [HttpGet("")]
     public async Task<IActionResult> Index(int id)
     {
-      TaskViewModel taskVM = new TaskViewModel();
-      taskVM.Projects.Add(await _project.GetProjectAsync(id));
+      TaskViewModel taskVM = new TaskViewModel(id);
       taskVM.Tasks = await _task.GetAllTasksOfProjectIdAsync(id);
+      taskVM.Project = await _project.GetProjectAsync(id);
 
       return View(taskVM);
     }
@@ -40,16 +40,10 @@ namespace ProjectTracker.Controllers
     [HttpGet("create")]
     public async Task<IActionResult> Create(int id)
     {
-      TaskViewModel taskVM = new TaskViewModel();
-      taskVM.Projects = await _project.GetAllProjectsAsync();
+      TaskCreateViewModel taskVM = new TaskCreateViewModel();
 
-      var task = new Task();
-      task.ProjectId = id;
-      task.StatusId = await _taskStatus.GetDefaultTaskStatusAsync();
-      taskVM.Tasks.Add(task);
-
+      taskVM.Task.StatusId = await _taskStatus.GetDefaultTaskStatusAsync();
       taskVM.TaskStatuses = await _taskStatus.GetAllTaskStatusAsync();
-      taskVM.Members = await _member.Users.ToListAsync();
 
       return View(taskVM);
     }
@@ -63,11 +57,9 @@ namespace ProjectTracker.Controllers
         return RedirectToAction("Error", "Error");
       }
 
-      TaskViewModel taskVM = new TaskViewModel();
-      taskVM.Projects = await _project.GetAllProjectsAsync();
-      taskVM.Tasks.Add(task);
+      TaskCreateViewModel taskVM = new TaskCreateViewModel();
+      taskVM.Task = await _task.GetTaskAsync(taskId);
       taskVM.TaskStatuses = await _taskStatus.GetAllTaskStatusAsync();
-      taskVM.Members = await _member.Users.ToListAsync();
 
       return View(taskVM);
     }
@@ -86,12 +78,12 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Create(int id, TaskViewModel newTaskVM)
+    public async Task<IActionResult> Create(int id, TaskCreateViewModel newTaskVM)
     {
-      foreach (var task in newTaskVM.Tasks)
-      {
-        Task newTask = await _task.AddAsync(task);
-      }
+      newTaskVM.Task.MemberId = _member.GetUserId(User);
+      newTaskVM.Task.ProjectId = id;
+
+      Task newTask = await _task.AddAsync(newTaskVM.Task);
       
       Project project = await _project.GetProjectAsync(id);
       await _project.UpdateAsync(project);
@@ -100,12 +92,9 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("{taskId}/edit")]
-    public async Task<IActionResult> Edit(int id, TaskViewModel editTaskVM)
+    public async Task<IActionResult> Edit(int id, TaskCreateViewModel editTaskVM)
     {
-      foreach (var task in editTaskVM.Tasks)
-      {
-        await _task.UpdateAsync(task);
-      }
+      await _task.UpdateAsync(editTaskVM.Task);
 
       Project project = await _project.GetProjectAsync(id);
       await _project.UpdateAsync(project);

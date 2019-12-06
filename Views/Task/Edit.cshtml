@@ -1,30 +1,20 @@
-@model TaskViewModel
+@model TaskCreateViewModel
 
 @{
   ViewBag.Title = "Edit Task";
 }
 
 <form asp-controller="task" asp-action="edit" method="POST" class="mt-3">
-  @for (var i = 0; i < Model.Tasks.Count; i++)
-  {
-  <input type="hidden" readonly asp-for="@Model.Tasks[i].Id">
+  <input type="hidden" readonly asp-for="@Model.Task.Id">
+  
   <div class="form-group">
-    <label asp-for="@Model.Tasks[i].ProjectId">Project Name</label>
-    <select asp-for="@Model.Tasks[i].ProjectId" class="form-control">
-      @foreach (var project in Model.Projects)
-      {
-        <option value="@project.Id">@project.ProjectName</option>
-      }
-    </select>
+    <label asp-for="@Model.Task.TaskName">Task Name</label>
+    <input asp-for="@Model.Task.TaskName" class="form-control">
+    <span asp-validation-for="@Model.Task.TaskName"></span>
   </div>
   <div class="form-group">
-    <label asp-for="@Model.Tasks[i].TaskName">Task Name</label>
-    <input asp-for="@Model.Tasks[i].TaskName" class="form-control">
-    <span asp-validation-for="@Model.Tasks[i].TaskName"></span>
-  </div>
-  <div class="form-group">
-    <label asp-for="@Model.Tasks[i].StatusId">Task Status</label>
-    <Select asp-for="@Model.Tasks[i].StatusId" class="form-control">
+    <label asp-for="@Model.Task.StatusId">Task Status</label>
+    <Select asp-for="@Model.Task.StatusId" class="form-control">
       @foreach (var ts in Model.TaskStatuses)
       {
       <Option value="@ts.Id">@ts.StatusName</Option>
@@ -32,25 +22,16 @@
     </Select>
   </div>
   <div class="form-group">
-    <label asp-for="@Model.Tasks[i].Deadline">Deadline</label>
-    <input asp-for="@Model.Tasks[i].Deadline" class="form-control">
-    <span asp-validation-for="@Model.Tasks[i].Deadline"></span>
+    <label asp-for="@Model.Task.Deadline">Deadline</label>
+    <input asp-for="@Model.Task.Deadline" class="form-control">
+    <span asp-validation-for="@Model.Task.Deadline"></span>
   </div>
+  
   <div class="form-group">
-    <label asp-for="@Model.Tasks[i].MemberId">Creator</label>
-    <select asp-for="@Model.Tasks[i].MemberId" class="form-control">
-      @foreach (var member in Model.Members)
-      {
-        <option value="@member.Id">@member.GetFullName</option>
-      }
-    </select> 
+    <label asp-for="@Model.Task.Description">Description</label>
+    <textarea asp-for="@Model.Task.Description" class="form-control"></textarea>
+    <span asp-validation-for="@Model.Task.Description"></span>
   </div>
-  <div class="form-group">
-    <label asp-for="@Model.Tasks[i].Description">Description</label>
-    <textarea asp-for="@Model.Tasks[i].Description" class="form-control"></textarea>
-    <span asp-validation-for="@Model.Tasks[i].Description"></span>
-  </div>
-  }
   <button type="submit" class="btn btn-primary">Update</button>
   <a asp-controller="task" asp-action="index" class="btn btn-primary ml-3">Cancel</a>
 </form>

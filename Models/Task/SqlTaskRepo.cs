@@ -65,9 +65,7 @@ namespace ProjectTracker.Models
       Task task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == updateTask.Id);
       if (task != null)
       {
-        task.ProjectId = updateTask.ProjectId;
         task.StatusId = updateTask.StatusId;
-        task.MemberId = updateTask.MemberId;
         task.TaskName = updateTask.TaskName;
         task.Description = updateTask.Description;
         task.Deadline = updateTask.Deadline;

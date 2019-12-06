@@ -3,17 +3,14 @@ using ProjectTracker.Models;
 
 namespace ProjectTracker.ViewModels
 {
-  public class TaskViewModel
+  public class TaskCreateViewModel
   {
-    public TaskViewModel(int id)
+    public TaskCreateViewModel()
     {
-      Project = new Project();
-      Tasks = new List<Task>();
+      Task = new Task();
       TaskStatuses = new List<TaskStatus>();
     }
-
-    public Project Project { get; set; }
-    public List<Task> Tasks { get; set; }
+    public Task Task { get; set; }
     public List<TaskStatus> TaskStatuses { get; set; }
   }
 }
