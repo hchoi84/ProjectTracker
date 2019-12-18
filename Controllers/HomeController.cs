@@ -43,7 +43,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("/project/{id}/delete")]
-    public async Task<RedirectToActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
       var project = await _project.GetProjectAsync(id);
       
@@ -52,7 +52,12 @@ namespace ProjectTracker.Controllers
         return RedirectToAction("Error", "Error");
       }
 
-      await _project.DeleteAsync(id);
+      var proj = await _project.DeleteAsync(id);
+      if (proj == null)
+      {
+        ViewBag.ErrorMessage = "You can't delete as there are tasks associated with it";
+        return View("Error");
+      }
       return RedirectToAction("index");
     }
 

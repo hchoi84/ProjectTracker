@@ -29,8 +29,17 @@ namespace ProjectTracker.Models
       if (project != null)
       {
         _context.Projects.Remove(project);
-        await _context.SaveChangesAsync();
-        return project;
+
+        try
+        {
+          await _context.SaveChangesAsync();
+          return project;   
+        }
+        catch (Exception e)
+        {
+          return null;
+        }
+        
       }
       return null;
     }

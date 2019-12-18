@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
 
 namespace ProjectTracker
 {
@@ -43,7 +44,7 @@ namespace ProjectTracker
       services.AddDbContextPool<AppDbContext>(options => options.UseMySql(_config.GetConnectionString("DbConnection")));
     }
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
       if (env.IsDevelopment())
       {
@@ -51,16 +52,22 @@ namespace ProjectTracker
       }
       else
       {
-        // app.UseExceptionHandler("/Error");
+        app.UseExceptionHandler("/Error");
         app.UseStatusCodePagesWithReExecute("/Error/{0}");
       }
 
       app.UseStaticFiles();
-      app.UseAuthentication();
 
-      app.UseMvc(routes =>
+      app.UseRouting();
+
+      app.UseAuthentication();
+      app.UseAuthorization();
+
+      app.UseEndpoints(endpoints =>
       {
-        routes.MapRoute("default", "{controller=Home}/{action=Index}/{Id?}");
+        endpoints.MapControllerRoute(
+          name: "default",
+          pattern: "{controller=Home}/{action=Index}/{Id?}");
       });
     }
   }
