@@ -35,7 +35,7 @@ namespace ProjectTracker.Models
           await _context.SaveChangesAsync();
           return project;   
         }
-        catch (Exception e)
+        catch (DbUpdateException e)
         {
           return null;
         }
