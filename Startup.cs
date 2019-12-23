@@ -34,7 +34,11 @@ namespace ProjectTracker
       services.AddIdentity<Member, IdentityRole>(options => {
         options.Password.RequiredLength = 10;
         options.Password.RequiredUniqueChars = 3;
-      }).AddEntityFrameworkStores<AppDbContext>();
+
+        options.SignIn.RequireConfirmedEmail = true;
+      })
+      .AddEntityFrameworkStores<AppDbContext>()
+      .AddDefaultTokenProviders();
 
       services.AddScoped<IProject, SqlProjectRepo>();
       services.AddScoped<ITask, SqlTaskRepo>();

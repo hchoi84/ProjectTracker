@@ -28,7 +28,7 @@ namespace ProjectTracker.Controllers
     [HttpGet]
     public async Task<IActionResult> Edit(string userId)
     {
-      Member member = await _member.GetMemberAsync(userId);
+      Member member = await _member.GetMemberByIdAsync(userId);
       AdminEditViewModel editVM = new AdminEditViewModel
       {
         Id = member.Id,

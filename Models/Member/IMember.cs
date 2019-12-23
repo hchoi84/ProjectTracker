@@ -8,7 +8,7 @@ namespace ProjectTracker.Models
   public interface IMember
   {
     Task<IdentityResult> RegisterAsync(RegisterViewModel newMember);
-    Task<Member> GetMemberAsync(string id);
+    Task<Member> GetMemberByIdAsync(string id);
     Task<List<Member>> GetAllMembersAsync();
     Task<IdentityResult> UpdateAsync(RegisterViewModel member);
     Task<IdentityResult> DeleteAsync(string id);

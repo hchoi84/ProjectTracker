@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectTracker.ViewModels;
 
@@ -26,7 +28,7 @@ namespace ProjectTracker.Models
       return await _member.Users.ToListAsync();
     }
 
-    public async Task<Member> GetMemberAsync(string id)
+    public async Task<Member> GetMemberByIdAsync(string id)
     {
       return await _member.FindByIdAsync(id);
     }

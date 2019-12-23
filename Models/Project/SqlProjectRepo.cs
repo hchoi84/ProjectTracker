@@ -37,6 +37,7 @@ namespace ProjectTracker.Models
         }
         catch (DbUpdateException e)
         {
+          // TODO log the error message. Where? How?
           return null;
         }
         
