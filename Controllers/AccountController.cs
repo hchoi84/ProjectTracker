@@ -41,7 +41,9 @@ namespace ProjectTracker.Controllers
 
           if (isValidPassword && !isEmailConfirmed)
           {
-            ModelState.AddModelError(string.Empty, "Email is not confirmed yet. Please check your inbox for email confirmation link");
+            await SendEmailConfirmationLink(member);
+
+            ModelState.AddModelError(string.Empty, "Email is not confirmed yet. New confirmation link as been sent. Please check your Inbox for email confirmation link. Alternatively, please check your Spam as well.");
             return View();
           }
         }
@@ -154,13 +156,11 @@ namespace ProjectTracker.Controllers
       if (result.Succeeded)
       {
         Member member = await _userManager.FindByEmailAsync(regVM.Email);
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(member);
-        var emailConfirmationLink = Url.Action("ConfirmEmail", "Account", new { memberId = member.Id, token = token }, Request.Scheme);
-
-        EmailClient.SendLink(member, emailConfirmationLink, EmailType.EmailConfirmation);
+        await SendEmailConfirmationLink(member);
 
         // return RedirectToAction("Login");
-        ViewBag.ConfirmMessage = "Registeration successful. Please check your inbox for confirmation link";
+        ViewBag.ConfirmTitle = "Registration Successful";
+        ViewBag.ConfirmMessage = "Please check your Inbox or Spam folder for confirmation link. If you do not receive it within 5 minutes, try to login to receive new confirmation link.";
         return View("Confirmation");
       }
 
@@ -192,11 +192,21 @@ namespace ProjectTracker.Controllers
 
       if (result.Succeeded)
       {
-        return View();
+        ViewBag.ConfirmTitle = "Email Confirmed";
+        ViewBag.ConfirmMessage = "You can now safely access your account";
+        return View("Confirmation");
       }
 
       ViewBag.ErrorMessage = "Can't be confirmed";
       return View("Error");
+    }
+
+    private async System.Threading.Tasks.Task SendEmailConfirmationLink(Member member)
+    {
+      var token = await _userManager.GenerateEmailConfirmationTokenAsync(member);
+      var emailConfirmationLink = Url.Action("ConfirmEmail", "Account", new { memberId = member.Id, token = token }, Request.Scheme);
+
+      EmailClient.SendLink(member, emailConfirmationLink, EmailType.EmailConfirmation);
     }
   }
 }
