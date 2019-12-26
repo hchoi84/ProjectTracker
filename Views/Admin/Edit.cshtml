@@ -1,4 +1,4 @@
-@model AdminEditViewModel
+@model MemberEditViewModel
 
 @{
   ViewBag.Title = "Edit " + Model.FirstName + " " + Model.LastName;
@@ -8,17 +8,14 @@
   <input type="hidden" asp-for="@Model.Id">
   <div class="form-group">
     <label asp-for="@Model.FirstName"></label>
-    <span asp-validation-for="@Model.FirstName" class="text-danger"></span>
     <input asp-for="@Model.FirstName" class="form-control">
   </div>
   <div class="form-group">
     <label asp-for="@Model.LastName"></label>
-    <span asp-validation-for="@Model.LastName" class="text-danger"></span>
     <input asp-for="@Model.LastName" class="form-control">
   </div>
   <div class="form-group">
     <label asp-for="@Model.Email"></label>
-    <span asp-validation-for="@Model.Email" class="text-danger"></span>
     <input asp-for="@Model.Email" class="form-control">
   </div>
   <div asp-validation-summary="All" class="text-danger"></div>
@@ -26,9 +23,8 @@
   <a asp-controller="admin" asp-action="index" class="btn btn-primary ml-3">Cancel</a>
 </form>
 
-<form asp-controller="admin" asp-action="ChangePassword" method="POST" class="mt-5">
+<form asp-controller="Admin" asp-action="ChangePassword" method="POST" class="mt-5">
   <input type="hidden" asp-for="@Model.Id">
-  <p class="text-danger">Change Password</p>
   <div class="form-group">
     <label asp-for="@Model.OldPassword"></label>
     <span asp-validation-for="@Model.OldPassword" class="text-danger"></span>

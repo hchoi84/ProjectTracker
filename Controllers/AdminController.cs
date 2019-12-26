@@ -29,7 +29,7 @@ namespace ProjectTracker.Controllers
     public async Task<IActionResult> Edit(string userId)
     {
       Member member = await _member.GetMemberByIdAsync(userId);
-      AdminEditViewModel editVM = new AdminEditViewModel
+      MemberEditViewModel editVM = new MemberEditViewModel
       {
         Id = member.Id,
         FirstName = member.FirstName,
@@ -41,9 +41,9 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(RegisterViewModel regVM)
+    public async Task<IActionResult> Edit(MemberEditViewModel model)
     {
-      IdentityResult identityResult = await _member.UpdateAsync(regVM);
+      IdentityResult identityResult = await _member.UpdateAsync(model);
       if (identityResult == null)
       {
         ViewBag.Message = "Update failed";
@@ -68,7 +68,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> ChangePassword(AdminEditViewModel editVM)
+    public async Task<IActionResult> ChangePassword(MemberEditViewModel editVM)
     {
       IdentityResult identityResult = await _member.UpdatePassword(editVM);
       if (identityResult.Succeeded)

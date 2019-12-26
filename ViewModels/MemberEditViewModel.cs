@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectTracker.ViewModels
 {
-  public class AdminEditViewModel
+  public class MemberEditViewModel
   {
     public string Id { get; set; }
 

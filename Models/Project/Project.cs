@@ -14,16 +14,16 @@ namespace ProjectTracker.Models
     [ForeignKey("Member")]
     public string MemberId { get; set; }
     
-    [Required(ErrorMessage = "(Required)")]
+    [Required(ErrorMessage = "Project Name is Required")]
     // [UIHint()]  <== what's this??
     [StringLength(30, MinimumLength = 2, ErrorMessage = "Value must be between {2} to {1} characters")]
     public string ProjectName { get; set; }
     
-    [Required(ErrorMessage = "(Required)")]
+    [Required(ErrorMessage = "Summary is Required")]
     [StringLength(300, MinimumLength = 2, ErrorMessage = "Value must be between {2} to {1} characters")]
     public string Summary { get; set; }
     
-    [Required(ErrorMessage = "(Required)")]
+    [Required(ErrorMessage = "Deadline is Required")]
     [DataType(DataType.Date)]
     [FutureDate(ErrorMessage="Deadline must be in the future")]
     public DateTime Deadline { get; set; }

@@ -48,17 +48,17 @@ namespace ProjectTracker.Models
       return await _member.CreateAsync(member, newMember.Password);
     }
 
-    public async Task<IdentityResult> UpdateAsync(RegisterViewModel regVM)
+    public async Task<IdentityResult> UpdateAsync(MemberEditViewModel model)
     {
-      Member member = await _member.FindByIdAsync(regVM.Id);
-      member.FirstName = regVM.FirstName;
-      member.LastName = regVM.LastName;
-      member.Email = regVM.Email;
+      Member member = await _member.FindByIdAsync(model.Id);
+      member.FirstName = model.FirstName;
+      member.LastName = model.LastName;
+      member.Email = model.Email;
       
       return await _member.UpdateAsync(member);
     }
 
-    public async Task<IdentityResult> UpdatePassword(AdminEditViewModel editVM)
+    public async Task<IdentityResult> UpdatePassword(MemberEditViewModel editVM)
     {
       Member member = await _member.FindByIdAsync(editVM.Id);
       return await _member.ChangePasswordAsync(member, editVM.OldPassword, editVM.NewPassword);
