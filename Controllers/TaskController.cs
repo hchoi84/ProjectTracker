@@ -12,7 +12,6 @@ using Task = ProjectTracker.Models.Task;
 
 namespace ProjectTracker.Controllers
 {
-  [Route("project/{id}/tasks")]
   public class TaskController : Controller
   {
     private readonly IProject _project;
@@ -27,7 +26,7 @@ namespace ProjectTracker.Controllers
       _taskStatus = taskStatus;
     }
 
-    [HttpGet("")]
+    [HttpGet("project/{id}/tasks")]
     public async Task<IActionResult> Index(int id)
     {
       TaskViewModel taskVM = new TaskViewModel(id);
@@ -37,7 +36,7 @@ namespace ProjectTracker.Controllers
       return View(taskVM);
     }
 
-    [HttpGet("create")]
+    [HttpGet("project/{id}/tasks/create")]
     public async Task<IActionResult> Create(int id)
     {
       TaskCreateViewModel taskVM = new TaskCreateViewModel();
@@ -48,7 +47,7 @@ namespace ProjectTracker.Controllers
       return View(taskVM);
     }
 
-    [HttpGet("{taskId}/edit")]
+    [HttpGet("project/{id}/tasks/{taskId}/edit")]
     public async Task<IActionResult> Edit(int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
@@ -64,7 +63,7 @@ namespace ProjectTracker.Controllers
       return View(taskVM);
     }
 
-    [HttpGet("{taskId}/delete")]
+    [HttpGet("project/{id}/tasks/{taskId}/delete")]
     public async Task<RedirectToActionResult> Delete(int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
@@ -77,7 +76,7 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("index");
     }
 
-    [HttpPost("create")]
+    [HttpPost("project/{id}/tasks/create")]
     public async Task<IActionResult> Create(int id, TaskCreateViewModel newTaskVM)
     {
       newTaskVM.Task.MemberId = _member.GetUserId(User);
@@ -91,7 +90,7 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("Index");
     }
 
-    [HttpPost("{taskId}/edit")]
+    [HttpPost("project/{id}/tasks/{taskId}/edit")]
     public async Task<IActionResult> Edit(int id, TaskCreateViewModel editTaskVM)
     {
       await _task.UpdateAsync(editTaskVM.Task);
@@ -99,8 +98,15 @@ namespace ProjectTracker.Controllers
       Project project = await _project.GetProjectAsync(id);
       await _project.UpdateAsync(project);
 
-      return RedirectToAction("index");
+      return RedirectToAction("Index");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> TasksByMembers(HomeIndexViewModel model)
+    {
+      List<Task> tasks = await _task.GetTasksByMemberIds(model.MemberIds);
+
+      return View("DisplayTasks", tasks);
+    }
   }
 }

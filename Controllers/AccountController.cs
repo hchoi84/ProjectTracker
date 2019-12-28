@@ -193,11 +193,12 @@ namespace ProjectTracker.Controllers
       if (result.Succeeded)
       {
         ViewBag.ConfirmTitle = "Email Confirmed";
-        ViewBag.ConfirmMessage = "You can now safely access your account";
+        ViewBag.ConfirmMessage = "Thank you for confirming your email address. You may now login by <a href=\"/Account/Login\" class=\"text-primary\"><u>clicking here</u></a>";
         return View("Confirmation");
       }
 
-      ViewBag.ErrorMessage = "Can't be confirmed";
+      ViewBag.ErrorTitle = "Can't Confirm";
+      ViewBag.ErrorMessage = "Either the confirmation link has expired or it's been tampered. Please request a new link by trying to <a href=\"/Account/Login\" class=\"text-primary\"><u>Login</u></a>";
       return View("Error");
     }
 

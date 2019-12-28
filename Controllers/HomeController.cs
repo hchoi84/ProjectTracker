@@ -1,9 +1,33 @@
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ProjectTracker.Models;
+using ProjectTracker.ViewModels;
 
 namespace ProjectTracker.Controllers
 {
   public class HomeController : Controller
   {
-    public IActionResult Index() => View();
+    private readonly IProject _project;
+    private readonly ITask _task;
+    private readonly IMember _member;
+
+    public HomeController(IProject project, ITask task, IMember member)
+    {
+      _member = member;
+      _task = task;
+      _project = project;
+    }
+    
+    public async Task<IActionResult> Index()
+    {
+      HomeIndexViewModel model = new HomeIndexViewModel();
+
+      model.ProjectsCount = (await _project.GetAllProjectsAsync()).Count();
+      model.TasksCount = (await _task.GetAllTasksAsync()).Count();
+      model.Members = await _member.GetAllMembersAsync();
+
+      return View(model);
+    }
   }
 }

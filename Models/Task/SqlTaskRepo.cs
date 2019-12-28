@@ -60,6 +60,17 @@ namespace ProjectTracker.Models
       return await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id);
     }
 
+    public async Task<List<Task>> GetTasksByMemberIds(List<string> memberIds)
+    {
+      return await _context.Tasks.Where(t => memberIds.Contains(t.MemberId))
+        .Include(t => t.Project)
+        .Include(t => t.Member)
+        .Include(t => t.TaskStatus)
+          .Where(t => t.TaskStatus.StatusName != "Completed")
+          .OrderBy(t => t.TaskStatus.OrderPriority)
+        .ToListAsync();
+    }
+
     public async Task<Task> UpdateAsync(Task updateTask)
     {
       Task task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == updateTask.Id);

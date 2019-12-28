@@ -9,6 +9,7 @@ namespace ProjectTracker.Models
     Task<Task> GetTaskAsync(int id);
     Task<List<Task>> GetAllTasksAsync();
     Task<List<Task>> GetAllTasksOfProjectIdAsync(int id);
+    Task<List<Task>> GetTasksByMemberIds(List<string> memberIds);
     Task<Task> UpdateAsync(Task task);
     Task<Task> DeleteAsync(int id);
   }

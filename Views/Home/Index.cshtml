@@ -1,5 +1,44 @@
+@model HomeIndexViewModel
+
 @{
   ViewBag.Title = "Dashboard";
 }
 
-<h1>This is where all the numerical stuff will go</h1>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card text-center">
+      <h3 class="card-header">
+        Active Projects
+      </h3>
+      <h2 class="card-body">
+        @Model.ProjectsCount
+      </h2>
+    </div>
+  </div>
+
+  <div class="col-sm-6">
+    <div class="card text-center">
+      <h3 class="card-header">
+        Active Tasks
+      </h3>
+      <h2 class="card-body">
+        @Model.TasksCount
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div class="card text-center mt-4">
+  <h3 class="card-header">See Tasks by Member</h3>
+  <div class="card-body">
+    <form asp-controller="Task" asp-action="TasksByMembers" method="GET">
+      <select asp-for="@Model.MemberIds" class="form-control" size="10">
+        @foreach (Member member in Model.Members)
+        {
+          <option value="@member.Id" class="font-weight-bold font-size-12">@member.GetFullName</option>
+        }
+      </select>
+      <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+  </div>
+</div>
