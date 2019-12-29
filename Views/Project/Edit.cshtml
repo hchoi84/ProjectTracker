@@ -4,7 +4,7 @@
   ViewBag.Title = "Edit Project";
 }
 
-<form asp-controller="Project" asp-action="Edit" method="POST" class="mt-3">
+<form method="POST" class="mt-3">
   <input type="hidden" asp-for="@Model.Project.Id">
   <div class="form-group">
     <label asp-for="@Model.Project.ProjectName">

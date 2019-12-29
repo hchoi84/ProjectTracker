@@ -101,10 +101,18 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("Index");
     }
 
-    [HttpGet]
-    public async Task<IActionResult> TasksByMembers(HomeIndexViewModel model)
+    [HttpPost]
+    public async Task<IActionResult> GetTasksByMembers(HomeIndexViewModel model)
     {
-      List<Task> tasks = await _task.GetTasksByMemberIds(model.MemberIds);
+      ViewData["TasksByMembers"] = await _task.GetTasksByMemberIds(model.MemberIds);
+
+      return RedirectToAction("TasksByMembers");
+    }
+
+    [HttpGet]
+    public IActionResult TasksByMembers()
+    {
+      List<Task> tasks = ViewData["TasksByMembers"] as List<Task>;
 
       return View("DisplayTasks", tasks);
     }

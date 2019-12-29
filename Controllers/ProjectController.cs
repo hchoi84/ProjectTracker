@@ -57,7 +57,7 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("Index");
     }
 
-    [HttpGet("{projectId}/edit")]
+    [HttpGet]
     public async Task<IActionResult> Edit(int projectId)
     {
       var project = await _project.GetProjectAsync(projectId);
@@ -92,7 +92,7 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("Index");
     }
 
-    [HttpGet("{projectId}/delete")]
+    [HttpPost]
     public async Task<IActionResult> Delete(int projectId)
     {
       var project = await _project.GetProjectAsync(projectId);

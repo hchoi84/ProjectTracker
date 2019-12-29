@@ -7,31 +7,33 @@
 <div class="row">
   <div class="col-sm-6">
     <div class="card text-center">
-      <h3 class="card-header">
-        Active Projects
-      </h3>
-      <h2 class="card-body">
-        @Model.ProjectsCount
-      </h2>
+      <div class="card-header">
+        <h3 class="text-dark">Active Projects</h3>
+      </div>
+      <div class="card-body">
+        <h2 class="text-dark">@Model.ProjectsCount</h2>
+      </div>
     </div>
   </div>
 
   <div class="col-sm-6">
     <div class="card text-center">
-      <h3 class="card-header">
-        Active Tasks
-      </h3>
-      <h2 class="card-body">
-        @Model.TasksCount
-      </h2>
+      <div class="card-header">
+        <h3 class="text-dark">Active Tasks</h3>
+      </div>
+      <div class="card-body">
+        <h2 class="text-dark">@Model.TasksCount</h2>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="card text-center mt-4">
-  <h3 class="card-header">See Tasks by Member</h3>
+  <div class="card-header">
+    <h3 class="text-dark">See Task(s) by Member(s)</h3>
+  </div>
   <div class="card-body">
-    <form asp-controller="Task" asp-action="TasksByMembers" method="GET">
+    <form asp-controller="Task" asp-action="GetTasksByMembers" method="POST">
       <select asp-for="@Model.MemberIds" class="form-control" size="10">
         @foreach (Member member in Model.Members)
         {

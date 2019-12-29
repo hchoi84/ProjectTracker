@@ -81,9 +81,14 @@ namespace ProjectTracker.Models
 
     public async Task<bool> IsUnique(string projectName, int id = 0)
     {
-      Project project = await _context.Projects.
-        Where(p => p.Id != id).
-        FirstOrDefaultAsync(p => p.ProjectName.TrimAndTitleCase() == projectName);
+      if (!await _context.Projects.AnyAsync())
+      {
+        return true;
+      }
+
+      Project project = await _context.Projects
+        .Where(p => p.Id != id)
+        .FirstOrDefaultAsync(p => p.ProjectName == projectName);
       return project == null ? true : false;
     }
   }
