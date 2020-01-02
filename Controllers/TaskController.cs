@@ -116,6 +116,7 @@ namespace ProjectTracker.Controllers
     public IActionResult TasksByMembers()
     {
       List<Task> tasks = HttpContext.Session.GetObject<List<Task>>("TBM");
+      HttpContext.Session.Clear();
 
       return View("DisplayTasks", tasks);
     }
