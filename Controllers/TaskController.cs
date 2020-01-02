@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
+using ProjectTracker.Utilities;
 using Task = ProjectTracker.Models.Task;
 
 namespace ProjectTracker.Controllers
 {
+  [Route("project/{projectId}")]
   public class TaskController : Controller
   {
     private readonly IProject _project;
@@ -26,18 +28,18 @@ namespace ProjectTracker.Controllers
       _taskStatus = taskStatus;
     }
 
-    [HttpGet("project/{id}/tasks")]
-    public async Task<IActionResult> Index(int id)
+    [HttpGet("tasks")]
+    public async Task<IActionResult> Index(int projectId)
     {
-      TaskViewModel taskVM = new TaskViewModel(id);
-      taskVM.Tasks = await _task.GetAllTasksOfProjectIdAsync(id);
-      taskVM.Project = await _project.GetProjectAsync(id);
+      TaskViewModel taskVM = new TaskViewModel(projectId);
+      taskVM.Tasks = await _task.GetAllTasksOfProjectIdAsync(projectId);
+      taskVM.Project = await _project.GetProjectAsync(projectId);
 
       return View(taskVM);
     }
 
-    [HttpGet("project/{id}/tasks/create")]
-    public async Task<IActionResult> Create(int id)
+    [HttpGet("tasks/create")]
+    public async Task<IActionResult> Create(int projectId)
     {
       TaskCreateViewModel taskVM = new TaskCreateViewModel();
 
@@ -46,8 +48,22 @@ namespace ProjectTracker.Controllers
 
       return View(taskVM);
     }
+    
+    [HttpPost("tasks/create")]
+    public async Task<IActionResult> Create(int projectId, TaskCreateViewModel newTaskVM)
+    {
+      newTaskVM.Task.MemberId = _member.GetUserId(User);
+      newTaskVM.Task.ProjectId = projectId;
 
-    [HttpGet("project/{id}/tasks/{taskId}/edit")]
+      Task newTask = await _task.AddAsync(newTaskVM.Task);
+      
+      Project project = await _project.GetProjectAsync(projectId);
+      await _project.UpdateAsync(project);
+
+      return RedirectToAction("Index", new { projectId = projectId });
+    }
+
+    [HttpGet("tasks/{taskId}/edit")]
     public async Task<IActionResult> Edit(int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
@@ -63,8 +79,8 @@ namespace ProjectTracker.Controllers
       return View(taskVM);
     }
 
-    [HttpGet("project/{id}/tasks/{taskId}/delete")]
-    public async Task<RedirectToActionResult> Delete(int taskId)
+    [HttpPost("tasks/{taskId}/delete")]
+    public async Task<RedirectToActionResult> Delete(int projectId, int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
       if (task.MemberId != _member.GetUserId(User))
@@ -73,46 +89,33 @@ namespace ProjectTracker.Controllers
       }
 
       await _task.DeleteAsync(taskId);
-      return RedirectToAction("index");
+      return RedirectToAction("index", new { projectId = projectId });
     }
 
-    [HttpPost("project/{id}/tasks/create")]
-    public async Task<IActionResult> Create(int id, TaskCreateViewModel newTaskVM)
-    {
-      newTaskVM.Task.MemberId = _member.GetUserId(User);
-      newTaskVM.Task.ProjectId = id;
-
-      Task newTask = await _task.AddAsync(newTaskVM.Task);
-      
-      Project project = await _project.GetProjectAsync(id);
-      await _project.UpdateAsync(project);
-
-      return RedirectToAction("Index");
-    }
-
-    [HttpPost("project/{id}/tasks/{taskId}/edit")]
-    public async Task<IActionResult> Edit(int id, TaskCreateViewModel editTaskVM)
+    [HttpPost("tasks/{taskId}/edit")]
+    public async Task<IActionResult> Edit(int projectId, TaskCreateViewModel editTaskVM)
     {
       await _task.UpdateAsync(editTaskVM.Task);
 
-      Project project = await _project.GetProjectAsync(id);
+      Project project = await _project.GetProjectAsync(projectId);
       await _project.UpdateAsync(project);
 
-      return RedirectToAction("Index");
+      return RedirectToAction("Index", new { projectId = projectId });
     }
 
-    [HttpPost]
+    [HttpPost("/")]
     public async Task<IActionResult> GetTasksByMembers(HomeIndexViewModel model)
     {
-      ViewData["TasksByMembers"] = await _task.GetTasksByMemberIds(model.MemberIds);
+      List<Task> tasks = await _task.GetTasksByMemberIds(model.MemberIds);
+      HttpContext.Session.SetObject("TBM", tasks);
 
       return RedirectToAction("TasksByMembers");
     }
 
-    [HttpGet]
+    [HttpGet("/tasks")]
     public IActionResult TasksByMembers()
     {
-      List<Task> tasks = ViewData["TasksByMembers"] as List<Task>;
+      List<Task> tasks = HttpContext.Session.GetObject<List<Task>>("TBM");
 
       return View("DisplayTasks", tasks);
     }

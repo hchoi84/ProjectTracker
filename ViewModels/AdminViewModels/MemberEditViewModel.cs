@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ProjectTracker.Utilities;
 
 namespace ProjectTracker.ViewModels
 {
@@ -14,6 +16,9 @@ namespace ProjectTracker.ViewModels
 
     [Display(Name = "Email")]
     public string Email { get; set; }
+
+    [Display(Name = "Access Permission")]
+    public List<MemberClaim> MemberClaims { get; set; }
 
     [Display(Name = "Password")]
     public string Password { get; set; }

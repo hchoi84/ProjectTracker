@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectTracker.Models;
+using ProjectTracker.Utilities;
 using ProjectTracker.ViewModels;
 
 namespace ProjectTracker.Controllers
@@ -37,6 +41,27 @@ namespace ProjectTracker.Controllers
         Email = member.Email,
       };
 
+      editVM.MemberClaims = new List<MemberClaim>();
+      IList<Claim> memberClaims = await _member.GetMemberClaimsAsync(member);
+      var claimTypes = Enum.GetValues(typeof(ClaimType));
+      foreach (var claimType in claimTypes)
+      {
+        Claim claim = memberClaims.FirstOrDefault(mc => mc.Type == claimType.ToString());
+        MemberClaim memberClaim = new MemberClaim();
+        if (claim != null)
+        {
+          memberClaim.ClaimType = claim.Type;
+          memberClaim.IsSelected = Convert.ToBoolean(claim.Value);
+        }
+        else
+        {
+          memberClaim.ClaimType = claimType.ToString();
+          memberClaim.IsSelected = false;
+        }
+
+        editVM.MemberClaims.Add(memberClaim);
+      }
+
       return View(editVM);
     }
 
@@ -51,9 +76,10 @@ namespace ProjectTracker.Controllers
       }
       else
       {
-        ViewBag.Message = "Updated successfully";
+        ViewBag.Message = "Updated successful";
         return RedirectToAction("Index");
       }
+
     }
 
     [HttpGet]

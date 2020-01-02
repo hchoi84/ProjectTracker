@@ -1,5 +1,7 @@
 @model List<Project>
 
+
+
 @{
   ViewBag.Title = "Projects";
 }
@@ -25,14 +27,15 @@
       {
         <div class="row row-height-3 align-items-center mt-3 bg-secondary justify-content-between">
           <div class="col-4 name">
-            <a asp-controller="Task" asp-action="Index" asp-route-id="@project.Id">@project.ProjectName</a>
+            <a asp-controller="Task" asp-action="Index" asp-route-projectId="@project.Id">@project.ProjectName</a>
           </div>
           <div class="col created">@project.Created.ToString("yyyy/MM/dd")</div>
           <div class="col updated">@project.Updated.ToString("yyyy/MM/dd")</div>
           <div class="col deadline">@project.Deadline.ToString("yyyy/MM/dd")</div>
           <div class="col creator">@project.Member.GetFullName</div>
           <div class="col" id="action">
-            @if (project.MemberId == userManager.GetUserId(User))
+            @if (User.HasClaim(c => c.Type == ClaimType.SuperAdmin.ToString() && c.Value == "true") 
+              || project.MemberId == userManager.GetUserId(User))
             {
               <a asp-controller="Project" asp-action="Edit" asp-route-projectId="@project.Id">
                 <i class="far fa-edit fa-lg mr-2"></i>

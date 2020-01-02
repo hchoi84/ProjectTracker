@@ -8,7 +8,7 @@
   
   <div class="container">
     <div class="row row-height-3 align-items-center border-bottom border-white">
-      <div class="col-4 name">Project Name</div>
+      
       <div class="col-4 name">Task Name</div>
       <div class="col status">Status</div>
       <div class="col deadline">Deadline</div>
@@ -19,7 +19,7 @@
         @foreach (var task in Model)
         {
         <div class="row row-height-3 align-items-center mt-3 bg-secondary">
-          <div class="col-4 name">@task.Project.ProjectName</div>
+          
           <div class="col-4 name">@task.TaskName</div>
           <div class="col status">@task.TaskStatus.StatusName</div>
           <div class="col deadline">@task.Deadline.ToString("yyyy/MM/dd")</div>

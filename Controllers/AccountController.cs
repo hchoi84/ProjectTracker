@@ -7,6 +7,7 @@ using MailKit.Net.Smtp;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
 using ProjectTracker.Securities;
+using ProjectTracker.Utilities;
 
 namespace ProjectTracker.Controllers
 {

@@ -37,22 +37,20 @@ namespace ProjectTracker.Models
 
     public async Task<List<Task>> GetAllTasksAsync()
     {
-      return await _context.Tasks.
-        Include(t => t.Project).
-        Include(t => t.Member).
-        Include(t => t.TaskStatus).
-        ToListAsync();
+      return await _context.Tasks
+        .Include(t => t.Member)
+        .Include(t => t.TaskStatus)
+        .ToListAsync();
     }
 
     public async Task<List<Task>> GetAllTasksOfProjectIdAsync(int id)
     {
       return await _context.Tasks.
-        Where(t => t.ProjectId == id).
-        Include(t => t.Project).
-        Include(t => t.Member).
-        Include(t => t.TaskStatus).
-        OrderBy(t => t.TaskStatus.OrderPriority).
-        ToListAsync();
+        Where(t => t.ProjectId == id)
+        .Include(t => t.Member)
+        .Include(t => t.TaskStatus)
+        .OrderBy(t => t.TaskStatus.OrderPriority)
+        .ToListAsync();
     }
 
     public async Task<Task> GetTaskAsync(int id)
@@ -63,7 +61,6 @@ namespace ProjectTracker.Models
     public async Task<List<Task>> GetTasksByMemberIds(List<string> memberIds)
     {
       return await _context.Tasks.Where(t => memberIds.Contains(t.MemberId))
-        .Include(t => t.Project)
         .Include(t => t.Member)
         .Include(t => t.TaskStatus)
           .Where(t => t.TaskStatus.StatusName != "Completed")

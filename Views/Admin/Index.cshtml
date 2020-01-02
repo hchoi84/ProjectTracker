@@ -21,9 +21,7 @@
       @foreach (var member in Model)
       {
         <div class="row row-height-3 align-items-center mt-3 bg-secondary">
-          <div class="col-4">
-            <a asp-controller="Task" asp-action="Index">@member.GetFullName</a>
-          </div>
+          <div class="col-4">@member.GetFullName</div>
           <div class="col">@member.Created.ToString("yyyy/MM/dd")</div>
           <div class="col">
             <a asp-controller="Admin" asp-action="Edit" asp-route-userId="@member.Id">

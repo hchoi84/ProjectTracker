@@ -46,7 +46,10 @@ namespace ProjectTracker
       services.AddScoped<IMember, SqlMemberRepo>();
 
       services.AddDbContextPool<AppDbContext>(options => options.UseMySql(_config.GetConnectionString("DbConnection")));
+
+      services.AddSession();
     }
+    
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
@@ -66,6 +69,8 @@ namespace ProjectTracker
 
       app.UseAuthentication();
       app.UseAuthorization();
+
+      app.UseSession();
 
       app.UseEndpoints(endpoints =>
       {

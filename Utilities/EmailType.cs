@@ -1,4 +1,4 @@
-namespace ProjectTracker.Models
+namespace ProjectTracker.Utilities
 {
   public enum EmailType
   {
