@@ -11,7 +11,8 @@ namespace ProjectTracker.Models
     Task<IdentityResult> RegisterAsync(RegisterViewModel newMember);
     Task<Member> GetMemberByIdAsync(string id);
     Task<List<Member>> GetAllMembersAsync();
-    Task<IdentityResult> UpdateAsync(MemberEditViewModel member);
+    Task<IdentityResult> UpdateUserInfo(MemberEditViewModel member);
+    Task<IdentityResult> UpdateAccessPermission(MemberEditViewModel memberEditVM);
     Task<IdentityResult> DeleteAsync(string id);
     Task<IdentityResult> UpdatePassword(MemberEditViewModel editVM);
     Task<IList<Claim>> GetMemberClaimsAsync(Member member);

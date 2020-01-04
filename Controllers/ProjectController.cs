@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace ProjectTracker.Controllers
   {
     private readonly IProject _project;
     private readonly UserManager<Member> _member;
-    public ProjectController(IProject project, UserManager<Member> member)
+    private readonly IAuthorizationService _authService;
+    public ProjectController(IProject project, UserManager<Member> member, IAuthorizationService authService)
     {
-      _member = member;
       _project = project;
+      _member = member;
+      _authService = authService;
     }
 
     public async Task<IActionResult> Index()
@@ -37,7 +40,7 @@ namespace ProjectTracker.Controllers
       }
       else
       {
-        return View();  
+        return View();
       }
 
       if (!await _project.IsUnique(newProjectVM.ProjectName))
@@ -61,10 +64,11 @@ namespace ProjectTracker.Controllers
     public async Task<IActionResult> Edit(int projectId)
     {
       var project = await _project.GetProjectAsync(projectId);
-      
-      if (project.MemberId != _member.GetUserId(User))
+
+      if (!(await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
+        && project.MemberId != _member.GetUserId(User))
       {
-        return RedirectToAction("Error", "Error");
+        return RedirectToAction("Home", "AcceessDenied");
       }
 
       return View(await GenerateProjectViewModel(projectId));
@@ -96,10 +100,11 @@ namespace ProjectTracker.Controllers
     public async Task<IActionResult> Delete(int projectId)
     {
       var project = await _project.GetProjectAsync(projectId);
-      
-      if (project.MemberId != _member.GetUserId(User))
+
+      if (!(await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
+        && project.MemberId != _member.GetUserId(User))
       {
-        return RedirectToAction("Error", "Error");
+        return RedirectToAction("Home", "AccessDenied");
       }
 
       var proj = await _project.DeleteAsync(projectId);
@@ -119,7 +124,7 @@ namespace ProjectTracker.Controllers
       {
         projectVM.Project = await _project.GetProjectAsync((int)id);
       }
-      
+
       projectVM.Members = await _member.Users.ToListAsync();
 
       return projectVM;

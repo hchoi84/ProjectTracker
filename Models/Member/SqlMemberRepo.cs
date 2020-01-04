@@ -50,37 +50,40 @@ namespace ProjectTracker.Models
       return await _member.CreateAsync(member, newMember.Password);
     }
 
-    public async Task<IdentityResult> UpdateAsync(MemberEditViewModel model)
+    public async Task<IdentityResult> UpdateUserInfo(MemberEditViewModel memberEditVM)
     {
-      IdentityResult result;
+      Member member = await _member.FindByIdAsync(memberEditVM.Id);
+      member.FirstName = memberEditVM.FirstName;
+      member.LastName = memberEditVM.LastName;
+      member.Email = memberEditVM.Email;
 
-      Member member = await _member.FindByIdAsync(model.Id);
-      member.FirstName = model.FirstName;
-      member.LastName = model.LastName;
-      member.Email = model.Email;
-      result = await _member.UpdateAsync(member);
+      return await _member.UpdateAsync(member);
+    }
 
-      if (!result.Succeeded)
-      {
-        return result;
-      }
+    public async Task<IdentityResult> UpdateAccessPermission(MemberEditViewModel memberEditVM)
+    {
+      IdentityResult result = IdentityResult.Success;
 
-      List<Claim> newClaims = model.MemberClaims
+      Member member = await _member.FindByIdAsync(memberEditVM.Id);
+      List<Claim> newClaims = memberEditVM.MemberClaims
         .Select(mc => new Claim(mc.ClaimType, mc.IsSelected ? "true" : "false")).ToList();
       List<Claim> memberClaims = await _member.GetClaimsAsync(member) as List<Claim>;
+
       foreach (Claim newClaim in newClaims)
       {
         Claim memberClaim = memberClaims.FirstOrDefault(mc => mc.Type == newClaim.Type);
 
         if (memberClaim != null)
         {
-          Claim currentClaim = memberClaims.First(mc => mc.Type == newClaim.Type);
-          result = await _member.ReplaceClaimAsync(member, currentClaim, newClaim);
+          result = await _member.ReplaceClaimAsync(member, memberClaim, newClaim);
         }
         else
         {
           result = await _member.AddClaimAsync(member, newClaim);  
         }
+
+        if (!result.Succeeded)
+          return result;
       }
       
       return result;

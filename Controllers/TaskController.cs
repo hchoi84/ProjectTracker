@@ -20,12 +20,14 @@ namespace ProjectTracker.Controllers
     private readonly ITask _task;
     private readonly ITaskStatus _taskStatus;
     private readonly UserManager<Member> _member;
-    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, UserManager<Member> member)
+    private readonly IAuthorizationService _authService;
+    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, UserManager<Member> member, IAuthorizationService authService)
     {
-      _member = member;
       _project = project;
       _task = task;
       _taskStatus = taskStatus;
+      _member = member;
+      _authService = authService;
     }
 
     [HttpGet("tasks")]
@@ -48,7 +50,7 @@ namespace ProjectTracker.Controllers
 
       return View(taskVM);
     }
-    
+
     [HttpPost("tasks/create")]
     public async Task<IActionResult> Create(int projectId, TaskCreateViewModel newTaskVM)
     {
@@ -56,7 +58,7 @@ namespace ProjectTracker.Controllers
       newTaskVM.Task.ProjectId = projectId;
 
       Task newTask = await _task.AddAsync(newTaskVM.Task);
-      
+
       Project project = await _project.GetProjectAsync(projectId);
       await _project.UpdateAsync(project);
 
@@ -67,9 +69,10 @@ namespace ProjectTracker.Controllers
     public async Task<IActionResult> Edit(int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
-      if (task.MemberId != _member.GetUserId(User))
+      if (!(await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
+        && task.MemberId != _member.GetUserId(User))
       {
-        return RedirectToAction("Error", "Error");
+        return RedirectToAction("Home", "AccessDenied");
       }
 
       TaskCreateViewModel taskVM = new TaskCreateViewModel();
@@ -83,9 +86,10 @@ namespace ProjectTracker.Controllers
     public async Task<RedirectToActionResult> Delete(int projectId, int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
-      if (task.MemberId != _member.GetUserId(User))
+      if (!(await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
+        && task.MemberId != _member.GetUserId(User))
       {
-        return RedirectToAction("Error", "Error");
+        return RedirectToAction("Home", "AccessDenied");
       }
 
       await _task.DeleteAsync(taskId);

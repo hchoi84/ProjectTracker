@@ -28,7 +28,8 @@
           <div class="col deadline">@task.Deadline.ToString("yyyy/MM/dd")</div>
           <div class="col creator">@task.Member.GetFullName</div>
           <div class="col" id="action">
-            @if (task.MemberId == userManager.GetUserId(User))
+            @if ((await authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
+              || task.MemberId == userManager.GetUserId(User))
             {
               <a asp-controller="Task" asp-action="Edit" asp-route-projectId="@task.ProjectId" asp-route-taskId="@task.Id">
                 <i class="far fa-edit fa-lg mr-2"></i>

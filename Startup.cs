@@ -48,6 +48,15 @@ namespace ProjectTracker
       services.AddDbContextPool<AppDbContext>(options => options.UseMySql(_config.GetConnectionString("DbConnection")));
 
       services.AddSession();
+
+      services.ConfigureApplicationCookie(options =>
+      {
+        options.AccessDeniedPath = new PathString("/AccessDenied");
+      });
+      services.AddAuthorization(options =>
+      {
+        options.AddPolicy("SuperAdmin", policy => policy.RequireClaim("SuperAdmin", "true"));
+      });
     }
     
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

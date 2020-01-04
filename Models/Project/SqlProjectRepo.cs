@@ -88,7 +88,7 @@ namespace ProjectTracker.Models
 
       Project project = await _context.Projects
         .Where(p => p.Id != id)
-        .FirstOrDefaultAsync(p => p.ProjectName.TrimAndTitleCase() == projectName);
+        .FirstOrDefaultAsync(p => p.ProjectName == projectName);
       return project == null ? true : false;
     }
   }

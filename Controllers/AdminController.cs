@@ -13,7 +13,7 @@ using ProjectTracker.ViewModels;
 
 namespace ProjectTracker.Controllers
 {
-  [AllowAnonymous]
+  [Authorize(Policy = "SuperAdmin")]
   public class AdminController : Controller
   {
     private readonly IMember _member;
@@ -68,7 +68,7 @@ namespace ProjectTracker.Controllers
     [HttpPost]
     public async Task<IActionResult> Edit(MemberEditViewModel model)
     {
-      IdentityResult identityResult = await _member.UpdateAsync(model);
+      IdentityResult identityResult = await _member.UpdateUserInfo(model);
       if (identityResult == null)
       {
         ViewBag.Message = "Update failed";
@@ -79,7 +79,24 @@ namespace ProjectTracker.Controllers
         ViewBag.Message = "Updated successful";
         return RedirectToAction("Index");
       }
+    }
 
+    [HttpPost]
+    public async Task<IActionResult> EditAccessPermission(MemberEditViewModel memberEditVM)
+    {
+      IdentityResult identityResult = await _member.UpdateAccessPermission(memberEditVM);
+
+      if (identityResult == null)
+      {
+        ModelState.AddModelError(string.Empty, "Updating user Access Permission failed");
+        return RedirectToAction("Edit", new { userId = memberEditVM.Id });
+      }
+      else
+      {
+        ModelState.AddModelError(string.Empty, "Updating user Access Permission successful");
+        TempData["AccessPermissionSuccess"] = "Updating user Access Permission Successful";
+        return RedirectToAction("Edit", new { userId = memberEditVM.Id });
+      }
     }
 
     [HttpGet]

@@ -29,5 +29,8 @@ namespace ProjectTracker.Controllers
 
       return View(model);
     }
+
+    [HttpGet("/AccessDenied")]
+    public IActionResult AccessDenied() => View();
   }
 }
