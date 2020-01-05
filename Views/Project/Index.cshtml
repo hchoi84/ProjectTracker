@@ -32,8 +32,9 @@
           <div class="col deadline">@project.Deadline.ToString("yyyy/MM/dd")</div>
           <div class="col creator">@project.Member.GetFullName</div>
           <div class="col" id="action">
-            @if ((await authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
-              || project.MemberId == userManager.GetUserId(User))
+            @if ((await authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded || 
+              (await authService.AuthorizeAsync(User, "Admin")).Succeeded || 
+              project.MemberId == userManager.GetUserId(User))
             {
               <a asp-controller="Project" asp-action="Edit" asp-route-projectId="@project.Id">
                 <i class="far fa-edit fa-lg mr-2"></i>

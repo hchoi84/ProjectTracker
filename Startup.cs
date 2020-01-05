@@ -56,6 +56,7 @@ namespace ProjectTracker
       services.AddAuthorization(options =>
       {
         options.AddPolicy("SuperAdmin", policy => policy.RequireClaim("SuperAdmin", "true"));
+        options.AddPolicy("Admin", policy => policy.RequireClaim("Admin", "true"));
       });
     }
     

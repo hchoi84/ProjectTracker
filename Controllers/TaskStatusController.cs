@@ -8,6 +8,7 @@ using TaskStatus = ProjectTracker.Models.TaskStatus;
 
 namespace ProjectTracker.Controllers
 {
+  [Authorize(Policy = "SuperAdmin")]
   public class TaskStatusController : Controller
   {
     private readonly ITaskStatus _taskStatus;

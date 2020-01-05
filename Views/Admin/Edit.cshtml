@@ -23,27 +23,27 @@
   <a asp-controller="admin" asp-action="index" class="btn btn-primary ml-3">Cancel</a>
 </form>
 
+@if ((await authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded)
+{
 <form asp-controller="Admin" asp-action="EditAccessPermission" method="POST" class="mt-5">
   <input type="hidden" asp-for="@Model.Id">
-  @if (User.HasClaim(c => c.Type == ClaimType.SuperAdmin.ToString() && c.Value == "true"))
-  {
-    <div class="form-group">
-      <label asp-for="@Model.MemberClaims"></label>
-      @for (int i = 0; i < Model.MemberClaims.Count; i++)
-      {
-        <div class="form-check ml-3">
-          <input type="hidden" asp-for="@Model.MemberClaims[i].ClaimType">
-          <input asp-for="@Model.MemberClaims[i].IsSelected" class="form-check-input">
-          <label asp-for="@Model.MemberClaims[i].IsSelected" class="form-check-label">
-            @Model.MemberClaims[i].ClaimType
-          </label>
-        </div>
-      }
-    </div>
-    <button type="submit" class="btn btn-primary">Update Permission</button>
-    <p class="text-info">@TempData["AccessPermissionSuccess"]</p>
-  }
+  <div class="form-group">
+    <label asp-for="@Model.MemberClaims"></label>
+    @for (int i = 0; i < Model.MemberClaims.Count; i++)
+    {
+      <div class="form-check ml-3">
+        <input type="hidden" asp-for="@Model.MemberClaims[i].ClaimType">
+        <input asp-for="@Model.MemberClaims[i].IsSelected" class="form-check-input">
+        <label asp-for="@Model.MemberClaims[i].IsSelected" class="form-check-label">
+          @Model.MemberClaims[i].ClaimType
+        </label>
+      </div>
+    }
+  </div>
+  <button type="submit" class="btn btn-primary">Update Permission</button>
+  <p class="text-info">@TempData["AccessPermission"]</p>
 </form>
+}
 
 <form asp-controller="Admin" asp-action="ChangePassword" method="POST" class="mt-5">
   <input type="hidden" asp-for="@Model.Id">

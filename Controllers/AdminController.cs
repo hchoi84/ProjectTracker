@@ -68,16 +68,24 @@ namespace ProjectTracker.Controllers
     [HttpPost]
     public async Task<IActionResult> Edit(MemberEditViewModel model)
     {
+      if (string.IsNullOrEmpty(model.FirstName) || 
+          string.IsNullOrEmpty(model.LastName) || 
+          string.IsNullOrEmpty(model.Email))
+      {
+        ModelState.AddModelError(string.Empty, "All fields are required");
+        return View();
+      }
+
       IdentityResult identityResult = await _member.UpdateUserInfo(model);
       if (identityResult == null)
       {
-        ViewBag.Message = "Update failed";
+        ModelState.AddModelError(string.Empty, "Update failed");
         return View();
       }
       else
       {
-        ViewBag.Message = "Updated successful";
-        return RedirectToAction("Index");
+        ModelState.AddModelError(string.Empty, "Update successful");
+        return RedirectToAction("Edit", new { UserId = model.Id });
       }
     }
 
@@ -88,13 +96,12 @@ namespace ProjectTracker.Controllers
 
       if (identityResult == null)
       {
-        ModelState.AddModelError(string.Empty, "Updating user Access Permission failed");
+        TempData["AccessPermission"] = "Updating user Access Permission failed";
         return RedirectToAction("Edit", new { userId = memberEditVM.Id });
       }
       else
       {
-        ModelState.AddModelError(string.Empty, "Updating user Access Permission successful");
-        TempData["AccessPermissionSuccess"] = "Updating user Access Permission Successful";
+        TempData["AccessPermission"] = "Updating user Access Permission Successful";
         return RedirectToAction("Edit", new { userId = memberEditVM.Id });
       }
     }
