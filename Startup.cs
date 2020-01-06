@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
+using ProjectTracker.Securities;
 
 namespace ProjectTracker
 {
@@ -44,6 +45,8 @@ namespace ProjectTracker
       services.AddScoped<ITask, SqlTaskRepo>();
       services.AddScoped<ITaskStatus, SqlTaskStatusRepo>();
       services.AddScoped<IMember, SqlMemberRepo>();
+      
+      services.AddTransient<IAuthorizationHandler, CanAccessActions>();
 
       services.AddDbContextPool<AppDbContext>(options => options.UseMySql(_config.GetConnectionString("DbConnection")));
 
@@ -53,10 +56,14 @@ namespace ProjectTracker
       {
         options.AccessDeniedPath = new PathString("/AccessDenied");
       });
+
       services.AddAuthorization(options =>
       {
         options.AddPolicy("SuperAdmin", policy => policy.RequireClaim("SuperAdmin", "true"));
+        
         options.AddPolicy("Admin", policy => policy.RequireClaim("Admin", "true"));
+
+        options.AddPolicy("CanAccessActions", policy => policy.AddRequirements(new CustomClaims()));
       });
     }
     

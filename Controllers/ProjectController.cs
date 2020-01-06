@@ -61,20 +61,16 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(int projectId)
     {
       var project = await _project.GetProjectAsync(projectId);
-
-      if (!(await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
-        && project.MemberId != _member.GetUserId(User))
-      {
-        return RedirectToAction("Home", "AcceessDenied");
-      }
 
       return View(await GenerateProjectViewModel(projectId));
     }
 
     [HttpPost]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(ProjectEditViewModel editProjectVM)
     {
       if (ModelState.IsValid)
@@ -97,15 +93,10 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Delete(int projectId)
     {
       var project = await _project.GetProjectAsync(projectId);
-
-      if (!(await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
-        && project.MemberId != _member.GetUserId(User))
-      {
-        return RedirectToAction("Home", "AccessDenied");
-      }
 
       var proj = await _project.DeleteAsync(projectId);
       if (proj == null)
