@@ -85,7 +85,7 @@ namespace ProjectTracker.Models
         if (!result.Succeeded)
           return result;
       }
-      
+
       return result;
     }
 

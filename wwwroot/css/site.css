@@ -11,6 +11,10 @@ a:hover{
   color: white;
 }
 
+.multiline{
+  white-space: pre-line;
+}
+
 .row-height-3{
   height: 3rem;
 }
