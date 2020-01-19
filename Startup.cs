@@ -45,6 +45,7 @@ namespace ProjectTracker
       services.AddScoped<ITask, SqlTaskRepo>();
       services.AddScoped<ITaskStatus, SqlTaskStatusRepo>();
       services.AddScoped<IMember, SqlMemberRepo>();
+      services.AddScoped<IProjectMember, SqlProjectMemberRepo>();
       
       services.AddTransient<IAuthorizationHandler, CanAccessActions>();
 

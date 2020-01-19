@@ -36,6 +36,24 @@
     </label>
     <textarea asp-for="@Model.Project.Summary" class="form-control"></textarea>
   </div>
+  <div class="form-group">
+    <label asp-for="@Model.ProjectMemberIdsToAdd">Add Members to this Project</label>
+    <select  asp-for="@Model.ProjectMemberIdsToAdd" class="form-control" size="5">
+      @foreach (var member in Model.Members)
+      {
+        <option value="@member.Id">@member.GetFullName</option>
+      }
+    </select>
+  </div>
+  <div class="form-group">
+    <label asp-for="@Model.ProjectMemberIdsToRemove">Remove Members from this Project</label>
+    <select  asp-for="@Model.ProjectMemberIdsToRemove" class="form-control" size="5">
+      @foreach (var member in Model.Members)
+      {
+        <option value="@member.Id">@member.GetFullName</option>
+      }
+    </select>
+  </div>
   <div asp-validation-summary="All" class="text-danger"></div>
   <button type="submit" class="btn btn-primary">Update</button>
   <a asp-controller="Project" asp-action="Index" class="btn btn-primary ml-2">Cancel</a>

@@ -13,5 +13,9 @@ namespace ProjectTracker.ViewModels
     
     public Project Project { get; set; }
     public List<Member> Members { get; set; }
+    public List<Member> MembersAvaileblToAdd { get; set; }
+    public List<string> ProjectMemberIdsToAdd { get; set; }
+    public List<Member> MembersAvaileblToRemove { get; set; }
+    public List<string> ProjectMemberIdsToRemove { get; set; }
   }
 }

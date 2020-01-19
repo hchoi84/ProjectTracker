@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,11 +16,13 @@ namespace ProjectTracker.Controllers
     private readonly IProject _project;
     private readonly UserManager<Member> _member;
     private readonly IAuthorizationService _authService;
-    public ProjectController(IProject project, UserManager<Member> member, IAuthorizationService authService)
+    private readonly IProjectMember _projectMember;
+    public ProjectController(IProject project, UserManager<Member> member, IAuthorizationService authService, IProjectMember projectMember)
     {
       _project = project;
       _member = member;
       _authService = authService;
+      _projectMember = projectMember;
     }
 
     public async Task<IActionResult> Index()
@@ -89,6 +93,7 @@ namespace ProjectTracker.Controllers
       }
 
       await _project.UpdateAsync(editProjectVM.Project);
+      await _projectMember.UpdateAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToAdd);
       return RedirectToAction("Index");
     }
 
@@ -107,16 +112,34 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("index");
     }
 
-    public async Task<ProjectEditViewModel> GenerateProjectViewModel(int? id)
+    public async Task<ProjectEditViewModel> GenerateProjectViewModel(int? projectId)
     {
       var projectVM = new ProjectEditViewModel();
 
-      if (id != null)
+      if (projectId != null)
       {
-        projectVM.Project = await _project.GetProjectAsync((int)id);
+        projectVM.Project = await _project.GetProjectAsync((int)projectId);
       }
 
       projectVM.Members = await _member.Users.ToListAsync();
+
+      List<ProjectMember> projectMembers = await _projectMember.GetAllMembersForProjectAsync((int)projectId);
+
+      List<Member> tempMembersAvailableToAdd = projectVM.Members.Where(m => m.Id != projectVM.Project.MemberId).ToList();
+      foreach (ProjectMember projectMember in projectMembers)
+      {
+        Member tempMemberAvailableToAdd = tempMembersAvailableToAdd.FirstOrDefault(temp => temp.Id == projectMember.MemberId);
+        if (tempMemberAvailableToAdd != null)
+        {
+          tempMembersAvailableToAdd.Remove(tempMemberAvailableToAdd);
+        }
+      }
+      projectVM.MembersAvaileblToAdd = tempMembersAvailableToAdd;
+
+      foreach (ProjectMember projectMember in projectMembers)
+      {
+        projectVM.MembersAvaileblToRemove.Add(projectMember.Member);
+      }
 
       return projectVM;
     }
