@@ -45,8 +45,8 @@ namespace ProjectTracker.Models
 
     public async Task<List<Task>> GetAllTasksOfProjectIdAsync(int id)
     {
-      return await _context.Tasks.
-        Where(t => t.ProjectId == id)
+      return await _context.Tasks
+        .Where(t => t.ProjectId == id)
         .Include(t => t.Member)
         .Include(t => t.TaskStatus)
         .OrderBy(t => t.TaskStatus.OrderPriority)

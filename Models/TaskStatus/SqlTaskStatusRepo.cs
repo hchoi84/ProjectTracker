@@ -26,7 +26,10 @@ namespace ProjectTracker.Models
       if (taskStatus.IsDefault)
       {
         TaskStatus tempTaskStatus = await _context.TaskStatuses.FirstOrDefaultAsync(ts => ts.IsDefault);
-        tempTaskStatus.IsDefault = false;
+        if (tempTaskStatus != null)
+        {
+          tempTaskStatus.IsDefault = false;
+        }
       }
       await _context.AddAsync(taskStatus);
       await _context.SaveChangesAsync();
