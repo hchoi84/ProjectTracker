@@ -82,7 +82,12 @@ namespace ProjectTracker.Models
     public async Task<int> GetDefaultTaskStatusAsync()
     {
       TaskStatus taskStatus = await _context.TaskStatuses.FirstOrDefaultAsync(ts => ts.IsDefault);
-      return taskStatus.Id;
+      if (taskStatus != null)
+      {
+        return taskStatus.Id;
+      }
+
+      return 0;
     }
   }
 }

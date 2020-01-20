@@ -43,9 +43,18 @@ namespace ProjectTracker.Controllers
     [HttpGet("tasks/create")]
     public async Task<IActionResult> Create(int projectId)
     {
+      var taskStatuses = await _taskStatus.GetDefaultTaskStatusAsync();
+      if (taskStatuses == 0)
+      {
+        ViewBag.ErrorTitle = "No Task Statuses or Default Task Status";
+        ViewBag.ErrorMessage = "Please create Task Statuses or set a default Task Status by clicking " +
+        "<a href=\"/TaskStatus\" class=\"text-primary\"><u>here</u></a>";
+        return View("Error");
+      }
+
       TaskCreateViewModel taskVM = new TaskCreateViewModel();
 
-      taskVM.Task.StatusId = await _taskStatus.GetDefaultTaskStatusAsync();
+      taskVM.Task.StatusId = taskStatuses;
       taskVM.TaskStatuses = await _taskStatus.GetAllTaskStatusAsync();
 
       return View(taskVM);
