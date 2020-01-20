@@ -93,7 +93,8 @@ namespace ProjectTracker.Controllers
       }
 
       await _project.UpdateAsync(editProjectVM.Project);
-      await _projectMember.UpdateAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToAdd);
+      await _projectMember.AddAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToAdd);
+      await _projectMember.RemoveAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToRemove);
       return RedirectToAction("Index");
     }
 
@@ -134,11 +135,11 @@ namespace ProjectTracker.Controllers
           tempMembersAvailableToAdd.Remove(tempMemberAvailableToAdd);
         }
       }
-      projectVM.MembersAvaileblToAdd = tempMembersAvailableToAdd;
+      projectVM.MembersAvailableToAdd = tempMembersAvailableToAdd;
 
       foreach (ProjectMember projectMember in projectMembers)
       {
-        projectVM.MembersAvaileblToRemove.Add(projectMember.Member);
+        projectVM.MembersAvailableToRemove.Add(projectMember.Member);
       }
 
       return projectVM;

@@ -59,7 +59,7 @@ namespace ProjectTracker.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrderPriority = table.Column<int>(nullable: false),
-                    StatusName = table.Column<string>(nullable: true),
+                    StatusName = table.Column<string>(nullable: false),
                     IsDefault = table.Column<bool>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Updated = table.Column<DateTime>(nullable: false)
@@ -182,8 +182,8 @@ namespace ProjectTracker.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     MemberId = table.Column<string>(nullable: true),
-                    ProjectName = table.Column<string>(nullable: false),
-                    Summary = table.Column<string>(nullable: false),
+                    ProjectName = table.Column<string>(maxLength: 30, nullable: false),
+                    Summary = table.Column<string>(maxLength: 300, nullable: false),
                     Deadline = table.Column<DateTime>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Updated = table.Column<DateTime>(nullable: false)
@@ -200,6 +200,33 @@ namespace ProjectTracker.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProjectMembers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ProjectId = table.Column<int>(nullable: false),
+                    MemberId = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectMembers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProjectMembers_AspNetUsers_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProjectMembers_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tasks",
                 columns: table => new
                 {
@@ -208,12 +235,11 @@ namespace ProjectTracker.Migrations
                     ProjectId = table.Column<int>(nullable: false),
                     StatusId = table.Column<int>(nullable: false),
                     MemberId = table.Column<string>(nullable: true),
-                    TaskName = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
+                    TaskName = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
                     Deadline = table.Column<DateTime>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
-                    Updated = table.Column<DateTime>(nullable: false),
-                    TaskStatusId = table.Column<int>(nullable: true)
+                    Updated = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -231,56 +257,12 @@ namespace ProjectTracker.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Tasks_TaskStatuses_TaskStatusId",
-                        column: x => x.TaskStatusId,
+                        name: "FK_Tasks_TaskStatuses_StatusId",
+                        column: x => x.StatusId,
                         principalTable: "TaskStatuses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "Created", "FirstName", "LastName", "Updated" },
-                values: new object[,]
-                {
-                    { "1", 0, "29ec376f-b4a7-483d-bed9-5bfd772aece5", "Member", "howard.choi@email.com", false, false, null, null, null, null, null, false, null, false, "howard.choi@email.com", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Howard", "Choi", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { "2", 0, "97207265-3df0-4baa-9df4-7c2134f088da", "Member", "kenny.ock@email.com", false, false, null, null, null, null, null, false, null, false, "kenny.ock@email.com", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Kenny", "Ock", new DateTime(2019, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "TaskStatuses",
-                columns: new[] { "Id", "Created", "IsDefault", "OrderPriority", "StatusName", "Updated" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2019, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), true, 20, "Pending", new DateTime(2019, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, new DateTime(2019, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 40, "Assigned", new DateTime(2019, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, new DateTime(2019, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 60, "Completed", new DateTime(2019, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Projects",
-                columns: new[] { "Id", "Created", "Deadline", "MemberId", "ProjectName", "Summary", "Updated" },
-                values: new object[] { 1, new DateTime(2019, 10, 30, 12, 3, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 20, 20, 10, 36, 53, DateTimeKind.Local).AddTicks(1312), "1", "Project Tracker", "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quisquam doloremque eaque temporibus obcaecati, aut reprehenderit repellat reiciendis deserunt. Quas nulla corporis et cum eaque, tempora voluptatum pariatur blanditiis iusto expedita. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo placeat nulla blanditiis dolores nesciunt quaerat quos asperiores eaque possimus eum.", new DateTime(2019, 10, 31, 2, 40, 0, 0, DateTimeKind.Unspecified) });
-
-            migrationBuilder.InsertData(
-                table: "Projects",
-                columns: new[] { "Id", "Created", "Deadline", "MemberId", "ProjectName", "Summary", "Updated" },
-                values: new object[] { 2, new DateTime(2019, 11, 6, 11, 30, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 20, 20, 10, 36, 53, DateTimeKind.Local).AddTicks(1802), "1", "Golfio ChannelAdvisor API", "Allow data pulling from ChannelAdvisor and report generating without needing to login or do other manual work. Purpose is to increase productivity in other areas and reduce manual report creation.", new DateTime(2019, 11, 6, 11, 30, 0, 0, DateTimeKind.Unspecified) });
-
-            migrationBuilder.InsertData(
-                table: "Tasks",
-                columns: new[] { "Id", "Created", "Deadline", "Description", "MemberId", "ProjectId", "StatusId", "TaskName", "TaskStatusId", "Updated" },
-                values: new object[] { 1, new DateTime(2019, 11, 6, 13, 34, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 6, 13, 34, 0, 0, DateTimeKind.Unspecified), "Implement CRUD operation for Project tasks", "1", 1, 1, "Implement Task Feature", null, new DateTime(2019, 11, 6, 13, 34, 0, 0, DateTimeKind.Unspecified) });
-
-            migrationBuilder.InsertData(
-                table: "Tasks",
-                columns: new[] { "Id", "Created", "Deadline", "Description", "MemberId", "ProjectId", "StatusId", "TaskName", "TaskStatusId", "Updated" },
-                values: new object[] { 2, new DateTime(2019, 11, 6, 13, 34, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 6, 13, 34, 0, 0, DateTimeKind.Unspecified), "Transition all data to utilize SQL", "1", 1, 1, "Implement SQL", null, new DateTime(2019, 11, 6, 13, 34, 0, 0, DateTimeKind.Unspecified) });
-
-            migrationBuilder.InsertData(
-                table: "Tasks",
-                columns: new[] { "Id", "Created", "Deadline", "Description", "MemberId", "ProjectId", "StatusId", "TaskName", "TaskStatusId", "Updated" },
-                values: new object[] { 3, new DateTime(2019, 11, 6, 13, 34, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 12, 6, 13, 34, 0, 0, DateTimeKind.Unspecified), "Project title and description to go on top. Rest can stay the same for now", "1", 1, 1, "Design touch-up on Project view", null, new DateTime(2019, 11, 6, 13, 34, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -320,6 +302,16 @@ namespace ProjectTracker.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectMembers_MemberId",
+                table: "ProjectMembers",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectMembers_ProjectId",
+                table: "ProjectMembers",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Projects_MemberId",
                 table: "Projects",
                 column: "MemberId");
@@ -335,9 +327,9 @@ namespace ProjectTracker.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_TaskStatusId",
+                name: "IX_Tasks_StatusId",
                 table: "Tasks",
-                column: "TaskStatusId");
+                column: "StatusId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -356,6 +348,9 @@ namespace ProjectTracker.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ProjectMembers");
 
             migrationBuilder.DropTable(
                 name: "Tasks");

@@ -14,30 +14,35 @@ namespace ProjectTracker.Models
       _context = context;
     }
 
-    public async Task<List<ProjectMember>> UpdateAsync(int projectId, List<string> projectMemberIds)
+    public async Task<List<ProjectMember>> AddAsync(int projectId, List<string> projectMemberIdsToAdd)
     {
-      var projectMembers = await _context.ProjectMembers.Where(pm => pm.ProjectId == projectId).ToListAsync();
-      foreach (var projectMember in projectMembers)
-      {
-        if (projectMemberIds.Contains(projectMember.MemberId))
-        {
-          projectMemberIds.Remove(projectMember.MemberId);
-        }
-        else
-        {
-          _context.ProjectMembers.Remove(projectMember);
-        }
-      }
-
-      foreach (var projectMemberId in projectMemberIds)
+      foreach (var projectMemberIdToAdd in projectMemberIdsToAdd)
       {
         ProjectMember pm = new ProjectMember()
         {
           ProjectId = projectId,
-          MemberId = projectMemberId,
+          MemberId = projectMemberIdToAdd,
         };
+
+        await _context.ProjectMembers.AddAsync(pm);
       }
 
+      await _context.SaveChangesAsync();
+
+      return await _context.ProjectMembers.Where(pm => pm.ProjectId == projectId).ToListAsync();
+    }
+
+    public async Task<List<ProjectMember>> RemoveAsync(int projectId, List<string> projectMemberIdsToRemove)
+    {
+      foreach (var projectMemberIdToRemove in projectMemberIdsToRemove)
+      {
+        ProjectMember pmToRemove = _context.ProjectMembers.FirstOrDefault(pm => pm.ProjectId == projectId && pm.MemberId == projectMemberIdToRemove);
+        if (pmToRemove != null)
+        {
+          _context.ProjectMembers.Remove(pmToRemove);
+        }
+      }
+      
       await _context.SaveChangesAsync();
 
       return await _context.ProjectMembers.Where(pm => pm.ProjectId == projectId).ToListAsync();

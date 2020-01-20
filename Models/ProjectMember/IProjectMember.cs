@@ -5,7 +5,8 @@ namespace ProjectTracker.Models
 {
   public interface IProjectMember
   {
-    Task<List<ProjectMember>> UpdateAsync(int projectId, List<string> projectMemberIds);
+    Task<List<ProjectMember>> AddAsync(int projectId, List<string> projectMemberIdsToAdd);
+    Task<List<ProjectMember>> RemoveAsync(int projectId, List<string> projectMemberIdsToRemove);
     Task<List<ProjectMember>> GetAllMembersForProjectAsync(int projectId);
   }
 }

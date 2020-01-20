@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectTracker.Utilities;
 using ProjectTracker.ViewModels;
 
 namespace ProjectTracker.Models
@@ -47,7 +48,20 @@ namespace ProjectTracker.Models
         Updated = DateTime.Now,
       };
 
-      return await _member.CreateAsync(member, newMember.Password);
+      var result = await _member.CreateAsync(member, newMember.Password);
+      
+      if ((await GetAllMembersAsync()).Count <= 1)
+      {
+        Claim newClaim = new Claim(ClaimType.SuperAdmin.ToString(), "true");
+        await _member.AddClaimAsync(member, newClaim);
+      }
+      else
+      {
+        Claim newClaim = new Claim(ClaimType.Member.ToString(), "true");
+        await _member.AddClaimAsync(member, newClaim);
+      }
+
+      return result;
     }
 
     public async Task<IdentityResult> UpdateUserInfo(MemberEditViewModel memberEditVM)
