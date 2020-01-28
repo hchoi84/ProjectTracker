@@ -15,6 +15,7 @@ namespace ProjectTracker.Models
     public DbSet<Task> Tasks { get; set; }
     public DbSet<TaskStatus> TaskStatuses { get; set; }
     public DbSet<ProjectMember> ProjectMembers { get; set; }
+    public DbSet<TaskMember> TaskMembers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

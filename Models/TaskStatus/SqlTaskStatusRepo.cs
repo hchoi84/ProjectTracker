@@ -66,12 +66,15 @@ namespace ProjectTracker.Models
       {
         taskStatusToUpdate.OrderPriority = taskStatus.OrderPriority;
         taskStatusToUpdate.StatusName = taskStatus.StatusName;
-        if (taskStatusToUpdate.IsDefault)
+        if (taskStatus.IsDefault)
         {
           TaskStatus tempTaskStatus = await _context.TaskStatuses.FirstOrDefaultAsync(ts => ts.IsDefault);
-          tempTaskStatus.IsDefault = false;
-          taskStatusToUpdate.IsDefault = taskStatus.IsDefault;
+          if (tempTaskStatus != null)
+          {
+            tempTaskStatus.IsDefault = false;
+          }
         }
+        taskStatusToUpdate.IsDefault = taskStatus.IsDefault;
         taskStatusToUpdate.Updated = DateTime.Now;
         await _context.SaveChangesAsync();
         return taskStatus;

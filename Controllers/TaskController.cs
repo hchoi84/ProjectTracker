@@ -21,13 +21,17 @@ namespace ProjectTracker.Controllers
     private readonly ITaskStatus _taskStatus;
     private readonly UserManager<Member> _member;
     private readonly IAuthorizationService _authService;
-    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, UserManager<Member> member, IAuthorizationService authService)
+    private readonly ITaskMember _taskMember;
+    private readonly IProjectMember _projectMember;
+    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, UserManager<Member> member, IAuthorizationService authService, ITaskMember taskMember, IProjectMember projectMember)
     {
       _project = project;
       _task = task;
       _taskStatus = taskStatus;
       _member = member;
       _authService = authService;
+      _taskMember = taskMember;
+      _projectMember = projectMember;
     }
 
     [HttpGet("tasks")]
@@ -75,6 +79,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("tasks/{taskId}/edit")]
+    // TODO: implement [Authorize(Policy = "CanAccessActions)]
     public async Task<IActionResult> Edit(int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
@@ -88,10 +93,54 @@ namespace ProjectTracker.Controllers
       taskVM.Task = await _task.GetTaskAsync(taskId);
       taskVM.TaskStatuses = await _taskStatus.GetAllTaskStatusAsync();
 
+      (await _projectMember.GetAllMembersForProjectAsync(task.ProjectId))
+        .ForEach(pm => taskVM.MembersPartOfProject.Add(pm.Member));
+
+      taskVM.MembersAvailableToAdd = (await _member.Users.ToListAsync())
+        .Where(m => m.Id != task.MemberId)
+        .ToList();
+      List<TaskMember> taskMembers = await _taskMember.GetAllMembersForTaskAsync(taskId);
+
+      taskMembers.ForEach(tm => taskVM.MembersAvailableToRemove.Add(tm.Member));
+
+      foreach (Member memberAvailableToAdd in taskVM.MembersAvailableToAdd.ToList())
+      {
+        Member projectMember = taskVM.MembersPartOfProject.FirstOrDefault(pm => pm.Id == memberAvailableToAdd.Id);
+        if (projectMember != null)
+        {
+          taskVM.MembersAvailableToAdd.Remove(memberAvailableToAdd);
+          continue;
+        }
+
+        TaskMember taskMember = taskMembers.FirstOrDefault(tm => tm.MemberId == memberAvailableToAdd.Id);
+        if (taskMember != null)
+        {
+          taskVM.MembersAvailableToAdd.Remove(memberAvailableToAdd);
+          taskMembers.Remove(taskMember);
+        }
+      }
+
       return View(taskVM);
     }
 
+    [HttpPost("tasks/{taskId}/edit")]
+    // TODO: implement [Authorize(Policy = "CanAccessActions)]
+    public async Task<IActionResult> Edit(int projectId, TaskCreateViewModel editTaskVM)
+    {
+      await _task.UpdateAsync(editTaskVM.Task);
+
+      Project project = await _project.GetProjectAsync(projectId);
+      await _project.UpdateAsync(project);
+
+      // TODO: implement the functionality to Add/Remove TaskMembers
+      await _taskMember.AddAsync(projectId, editTaskVM.TaskMemberIdsToAdd);
+      await _taskMember.RemoveAsync(projectId, editTaskVM.TaskMemberIdsToRemove);
+
+      return RedirectToAction("Index", new { projectId = projectId });
+    }
+
     [HttpPost("tasks/{taskId}/delete")]
+    // TODO: implement [Authorize(Policy = "CanAccessActions)]
     public async Task<RedirectToActionResult> Delete(int projectId, int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
@@ -105,19 +154,9 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("index", new { projectId = projectId });
     }
 
-    [HttpPost("tasks/{taskId}/edit")]
-    public async Task<IActionResult> Edit(int projectId, TaskCreateViewModel editTaskVM)
-    {
-      await _task.UpdateAsync(editTaskVM.Task);
-
-      Project project = await _project.GetProjectAsync(projectId);
-      await _project.UpdateAsync(project);
-
-      return RedirectToAction("Index", new { projectId = projectId });
-    }
-
     [HttpPost("/")]
-    public async Task<IActionResult> GetTasksByMembers(HomeIndexViewModel model)
+    // Summary: retrieves and stores data in Session as Object to prevent URL clutter
+    public async Task<IActionResult> GetTasksByMembersAndStoreInSession(HomeIndexViewModel model)
     {
       List<Task> tasks = await _task.GetTasksByMemberIds(model.MemberIds);
       HttpContext.Session.SetObject("TBM", tasks);
