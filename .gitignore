@@ -2,6 +2,7 @@ bin
 obj
 .vscode
 EmailClient.cs
+Migrations
 
 appsettings.Development.json
 appsettings.json

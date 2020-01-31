@@ -38,12 +38,16 @@
   <div class="form-group">
     <label asp-for="@Model.TaskMemberIdsToAdd">Add Members to this Task</label>
     <select  asp-for="@Model.TaskMemberIdsToAdd" class="form-control" size="3">
-      @if (Model.MembersAvailableToAdd != null)
+      @if (Model.MembersAvailableToAdd.Any())
       {
         @foreach (var member in Model.MembersAvailableToAdd)
         {
           <option value="@member.Id">@member.GetFullName</option>
         }
+      }
+      else
+      {
+        <option disabled>None</option>
       }
     </select>
   </div>
@@ -51,12 +55,33 @@
   <div class="form-group">
     <label asp-for="@Model.TaskMemberIdsToRemove">Remove Members from this Task</label>
     <select  asp-for="@Model.TaskMemberIdsToRemove" class="form-control" size="3">
-      @if (Model.MembersAvailableToRemove != null)
+      @if (Model.MembersAvailableToRemove.Any())
       {
         @foreach (var member in Model.MembersAvailableToRemove)
         {
           <option value="@member.Id">@member.GetFullName</option>
         }
+      }
+      else
+      {
+        <option disabled>None</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label asp-for="@Model.MembersPartOfProject">Members Part of the Project</label>
+    <select disabled asp-for="@Model.MembersPartOfProject" class="form-control" size="3">
+      @if (Model.MembersPartOfProject.Any())
+      {
+        @foreach (Member member in Model.MembersPartOfProject)
+        {
+          <option value="@member.Id">@member.GetFullName</option>
+        }
+      }
+      else
+      {
+        <option value="0">None</option>
       }
     </select>
   </div>

@@ -44,12 +44,16 @@
   <div class="form-group">
     <label asp-for="@Model.ProjectMemberIdsToAdd">Add Members to this Project</label>
     <select  asp-for="@Model.ProjectMemberIdsToAdd" class="form-control" size="3">
-      @if (Model.MembersAvailableToAdd != null)
+      @if (Model.MembersAvailableToAdd.Any())
       {
         @foreach (var member in Model.MembersAvailableToAdd)
         {
           <option value="@member.Id">@member.GetFullName</option>
         }
+      }
+      else
+      {
+        <option disabled>None</option>
       }
     </select>
   </div>
@@ -57,12 +61,16 @@
   <div class="form-group">
     <label asp-for="@Model.ProjectMemberIdsToRemove">Remove Members from this Project</label>
     <select  asp-for="@Model.ProjectMemberIdsToRemove" class="form-control" size="3">
-      @if (Model.MembersAvailableToRemove != null)
+      @if (Model.MembersAvailableToRemove.Any())
       {
         @foreach (var member in Model.MembersAvailableToRemove)
         {
           <option value="@member.Id">@member.GetFullName</option>
         }
+      }
+      else
+      {
+        <option disabled>None</option>
       }
     </select>
   </div>
