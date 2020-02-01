@@ -27,7 +27,23 @@ namespace ProjectTracker.Controllers
 
     public async Task<IActionResult> Index()
     {
-      var projects = await _project.GetAllProjectsAsync();
+      List<Project> projects = new List<Project>();
+
+      if ((await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded)
+      {
+        projects = await _project.GetAllProjectsAsync();
+      }
+      else
+      {
+        string memberId = _member.GetUserId(User);
+        
+        projects = (await _project.GetAllProjectsAsync())
+          .Where(p => p.MemberId == memberId)
+          .ToList();
+
+        (await _projectMember.GetAllAsync(memberId))
+          .ForEach(pm => projects.Add(pm.Project));   
+      }
 
       return View(projects);
     }

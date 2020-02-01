@@ -26,15 +26,9 @@ namespace ProjectTracker.Models
       return await _member.DeleteAsync(member);
     }
 
-    public async Task<List<Member>> GetAllMembersAsync()
-    {
-      return await _member.Users.ToListAsync();
-    }
+    public async Task<List<Member>> GetAllMembersAsync() => await _member.Users.ToListAsync();
 
-    public async Task<Member> GetMemberByIdAsync(string id)
-    {
-      return await _member.FindByIdAsync(id);
-    }
+    public async Task<Member> GetMemberByIdAsync(string id) => await _member.FindByIdAsync(id);
 
     public async Task<IdentityResult> RegisterAsync(RegisterViewModel newMember)
     {
@@ -109,9 +103,6 @@ namespace ProjectTracker.Models
       return await _member.ChangePasswordAsync(member, editVM.OldPassword, editVM.NewPassword);
     }
 
-    public async Task<IList<Claim>> GetMemberClaimsAsync(Member member)
-    {
-      return await _member.GetClaimsAsync(member);
-    }
+    public async Task<IList<Claim>> GetMemberClaimsAsync(Member member) => await _member.GetClaimsAsync(member);
   }
 }

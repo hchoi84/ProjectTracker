@@ -8,5 +8,7 @@ namespace ProjectTracker.Models
     Task<List<ProjectMember>> AddAsync(int projectId, List<string> projectMemberIdsToAdd);
     Task<List<ProjectMember>> RemoveAsync(int projectId, List<string> projectMemberIdsToRemove);
     Task<List<ProjectMember>> GetAllMembersForProjectAsync(int projectId);
+    Task<List<ProjectMember>> GetAllAsync();
+    Task<List<ProjectMember>> GetAllAsync(string memberId);
   }
 }

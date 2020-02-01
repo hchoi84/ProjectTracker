@@ -8,6 +8,7 @@ using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
 using ProjectTracker.Securities;
 using ProjectTracker.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace ProjectTracker.Controllers
 {
@@ -17,12 +18,14 @@ namespace ProjectTracker.Controllers
     private readonly IMember _member;
     private readonly SignInManager<Member> _signInManager;
     private readonly UserManager<Member> _userManager;
+    private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IMember member, SignInManager<Member> signInManager, UserManager<Member> userManager)
+    public AccountController(IMember member, SignInManager<Member> signInManager, UserManager<Member> userManager, ILogger<AccountController> logger)
     {
       _signInManager = signInManager;
       _userManager = userManager;
       _member = member;
+      _logger = logger;
     }
 
     [HttpGet]
@@ -42,7 +45,7 @@ namespace ProjectTracker.Controllers
 
           if (isValidPassword && !isEmailConfirmed)
           {
-            await SendEmailConfirmationLink(member);
+            await SendEmailConfirmationLinkAsync(member);
 
             ModelState.AddModelError(string.Empty, "Email is not confirmed yet. New confirmation link as been sent. Please check your Inbox for email confirmation link. Alternatively, please check your Spam as well.");
             return View();
@@ -157,7 +160,7 @@ namespace ProjectTracker.Controllers
       if (result.Succeeded)
       {
         Member member = await _userManager.FindByEmailAsync(regVM.Email);
-        await SendEmailConfirmationLink(member);
+        await SendEmailConfirmationLinkAsync(member);
 
         // return RedirectToAction("Login");
         ViewBag.ConfirmTitle = "Registration Successful";
@@ -203,10 +206,12 @@ namespace ProjectTracker.Controllers
       return View("Error");
     }
 
-    private async System.Threading.Tasks.Task SendEmailConfirmationLink(Member member)
+    private async System.Threading.Tasks.Task SendEmailConfirmationLinkAsync(Member member)
     {
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(member);
       var emailConfirmationLink = Url.Action("ConfirmEmail", "Account", new { memberId = member.Id, token = token }, Request.Scheme);
+
+      _logger.Log(LogLevel.Warning, emailConfirmationLink);
 
       EmailClient.SendLink(member, emailConfirmationLink, EmailType.EmailConfirmation);
     }
