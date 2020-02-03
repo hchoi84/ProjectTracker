@@ -5,8 +5,9 @@ namespace ProjectTracker.Models
 {
   public interface ITaskMember
   {
-    Task<List<TaskMember>> AddAsync(int taskId, List<string> taskMemberIdsToAdd);
-    Task<List<TaskMember>> RemoveAsync(int taskId, List<string> taskMemberIdsToRemove);
+    Task<List<TaskMember>> AddMembersAsync(int taskId, List<string> taskMemberIds);
+    Task<List<TaskMember>> RemoveMembersAsync(int taskId, List<string> taskMemberIds);
     Task<List<TaskMember>> GetAllMembersForTaskAsync(int taskId);
+    void RemoveMemberFromTasksAsync(List<int> taskIds, string memberId);
   }
 }

@@ -13,9 +13,9 @@ namespace ProjectTracker.Models
       _context = context;
     }
 
-    public async Task<List<TaskMember>> AddAsync(int taskId, List<string> taskMemberIdsToAdd)
+    public async Task<List<TaskMember>> AddMembersAsync(int taskId, List<string> taskMemberIds)
     {
-      foreach (var taskMemberIdToAdd in taskMemberIdsToAdd)
+      foreach (var taskMemberIdToAdd in taskMemberIds)
       {
         TaskMember tm = new TaskMember()
         {
@@ -31,9 +31,9 @@ namespace ProjectTracker.Models
       return await _context.TaskMembers.Where(tm => tm.TaskId == taskId).ToListAsync();
     }
 
-    public async Task<List<TaskMember>> RemoveAsync(int taskId, List<string> taskMemberIdsToRemove)
+    public async Task<List<TaskMember>> RemoveMembersAsync(int taskId, List<string> taskMemberIds)
     {
-      foreach (var taskMemberIdToRemove in taskMemberIdsToRemove)
+      foreach (var taskMemberIdToRemove in taskMemberIds)
       {
         TaskMember tmToRemove = _context.TaskMembers.FirstOrDefault(tm => tm.TaskId == taskId && tm.MemberId == taskMemberIdToRemove);
         if (tmToRemove != null)
@@ -52,6 +52,23 @@ namespace ProjectTracker.Models
       return await _context.TaskMembers.Where(tm => tm.TaskId == taskId)
         .Include(tm => tm.Member)
         .ToListAsync();
+    }
+
+    public async void RemoveMemberFromTasksAsync(List<int> taskIds, string memberId)
+    {
+      foreach (int taskId in taskIds)
+      {
+        TaskMember taskMember = await _context.TaskMembers
+          .DefaultIfEmpty(null)
+          .FirstOrDefaultAsync(tm => tm.TaskId == taskId && tm.MemberId == memberId);
+
+        if (taskMember != null)
+        {
+          _context.TaskMembers.Remove(taskMember);
+        }
+      }
+      
+      _context.SaveChanges();
     }
   }
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectTracker.Models;
 using ProjectTracker.Utilities;
 using ProjectTracker.ViewModels;
+using Task = ProjectTracker.Models.Task;
 
 namespace ProjectTracker.Controllers
 {
@@ -17,12 +18,16 @@ namespace ProjectTracker.Controllers
     private readonly UserManager<Member> _member;
     private readonly IAuthorizationService _authService;
     private readonly IProjectMember _projectMember;
-    public ProjectController(IProject project, UserManager<Member> member, IAuthorizationService authService, IProjectMember projectMember)
+    private readonly ITask _task;
+    private readonly ITaskMember _taskMember;
+    public ProjectController(IProject project, UserManager<Member> member, IAuthorizationService authService, IProjectMember projectMember, ITask task, ITaskMember taskMember)
     {
       _project = project;
       _member = member;
       _authService = authService;
       _projectMember = projectMember;
+      _task = task;
+      _taskMember = taskMember;
     }
 
     public async Task<IActionResult> Index()
@@ -36,13 +41,13 @@ namespace ProjectTracker.Controllers
       else
       {
         string memberId = _member.GetUserId(User);
-        
+
         projects = (await _project.GetAllProjectsAsync())
           .Where(p => p.MemberId == memberId)
           .ToList();
 
         (await _projectMember.GetAllAsync(memberId))
-          .ForEach(pm => projects.Add(pm.Project));   
+          .ForEach(pm => projects.Add(pm.Project));
       }
 
       return View(projects);
@@ -109,8 +114,24 @@ namespace ProjectTracker.Controllers
       }
 
       await _project.UpdateAsync(editProjectVM.Project);
-      await _projectMember.AddAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToAdd);
-      await _projectMember.RemoveAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToRemove);
+
+      if (editProjectVM.ProjectMemberIdsToAdd.Any())
+      {
+        await _projectMember.AddAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToAdd);
+
+        List<Task> projectTasks = await _task.GetAllTasksOfProjectIdAsync(editProjectVM.Project.Id);
+
+        List<int> taskIds = new List<int>();
+        projectTasks.ForEach(pt => taskIds.Add(pt.Id));
+
+        editProjectVM.ProjectMemberIdsToAdd.ForEach(id => _taskMember.RemoveMemberFromTasksAsync(taskIds, id));
+      }
+
+      if (editProjectVM.ProjectMemberIdsToRemove.Any())
+      {
+        await _projectMember.RemoveAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToRemove);
+      }
+
       return RedirectToAction("Index");
     }
 

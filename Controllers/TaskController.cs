@@ -133,8 +133,8 @@ namespace ProjectTracker.Controllers
       await _project.UpdateAsync(project);
 
       // TODO: implement the functionality to Add/Remove TaskMembers
-      await _taskMember.AddAsync(projectId, editTaskVM.TaskMemberIdsToAdd);
-      await _taskMember.RemoveAsync(projectId, editTaskVM.TaskMemberIdsToRemove);
+      await _taskMember.AddMembersAsync(projectId, editTaskVM.TaskMemberIdsToAdd);
+      await _taskMember.RemoveMembersAsync(projectId, editTaskVM.TaskMemberIdsToRemove);
 
       return RedirectToAction("Index", new { projectId = projectId });
     }
