@@ -54,13 +54,12 @@ namespace ProjectTracker.Models
         .ToListAsync();
     }
 
-    public async void RemoveMemberFromTasksAsync(List<int> taskIds, string memberId)
+    public void RemoveMemberFromTasks(List<int> taskIds, string memberId)
     {
       foreach (int taskId in taskIds)
       {
-        TaskMember taskMember = await _context.TaskMembers
-          .DefaultIfEmpty(null)
-          .FirstOrDefaultAsync(tm => tm.TaskId == taskId && tm.MemberId == memberId);
+        TaskMember taskMember = _context.TaskMembers
+          .FirstOrDefault(tm => tm.TaskId == taskId && tm.MemberId == memberId);
 
         if (taskMember != null)
         {

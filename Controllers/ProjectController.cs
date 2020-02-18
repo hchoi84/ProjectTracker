@@ -115,6 +115,7 @@ namespace ProjectTracker.Controllers
 
       await _project.UpdateAsync(editProjectVM.Project);
 
+      // TODO: Test this section
       if (editProjectVM.ProjectMemberIdsToAdd.Any())
       {
         await _projectMember.AddAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToAdd);
@@ -124,7 +125,7 @@ namespace ProjectTracker.Controllers
         List<int> taskIds = new List<int>();
         projectTasks.ForEach(pt => taskIds.Add(pt.Id));
 
-        editProjectVM.ProjectMemberIdsToAdd.ForEach(id => _taskMember.RemoveMemberFromTasksAsync(taskIds, id));
+        editProjectVM.ProjectMemberIdsToAdd.ForEach(id => _taskMember.RemoveMemberFromTasks(taskIds, id));
       }
 
       if (editProjectVM.ProjectMemberIdsToRemove.Any())
