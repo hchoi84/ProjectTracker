@@ -44,17 +44,20 @@ namespace ProjectTracker.Models
 
       var result = await _member.CreateAsync(member, newMember.Password);
       
-      if ((await GetAllMembersAsync()).Count <= 1)
+      if (result.Succeeded)
       {
-        Claim newClaim = new Claim(ClaimType.SuperAdmin.ToString(), "true");
-        await _member.AddClaimAsync(member, newClaim);
+        if ((await GetAllMembersAsync()).Count <= 1)
+        {
+          Claim newClaim = new Claim(ClaimType.SuperAdmin.ToString(), "true");
+          await _member.AddClaimAsync(member, newClaim);
+        }
+        else
+        {
+          Claim newClaim = new Claim(ClaimType.Member.ToString(), "true");
+          await _member.AddClaimAsync(member, newClaim);
+        }
       }
-      else
-      {
-        Claim newClaim = new Claim(ClaimType.Member.ToString(), "true");
-        await _member.AddClaimAsync(member, newClaim);
-      }
-
+      
       return result;
     }
 
