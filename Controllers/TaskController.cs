@@ -90,7 +90,7 @@ namespace ProjectTracker.Controllers
       }
 
       TaskCreateViewModel taskVM = new TaskCreateViewModel();
-      taskVM.Task = await _task.GetTaskAsync(taskId);
+      taskVM.Task = task;
       taskVM.TaskStatuses = await _taskStatus.GetAllTaskStatusAsync();
 
       (await _projectMember.GetAllMembersForProjectAsync(task.ProjectId))
@@ -120,12 +120,15 @@ namespace ProjectTracker.Controllers
         }
       }
 
+      taskVM.MembersAvailableToAdd = taskVM.MembersAvailableToAdd.OrderBy(m => m.GetFullName).ToList();
+      taskVM.MembersAvailableToRemove = taskVM.MembersAvailableToRemove.OrderBy(m => m.GetFullName).ToList();
+
       return View(taskVM);
     }
 
     [HttpPost("tasks/{taskId}/edit")]
     // TODO: implement [Authorize(Policy = "CanAccessActions)]
-    public async Task<IActionResult> Edit(int projectId, TaskCreateViewModel editTaskVM)
+    public async Task<IActionResult> Edit(int projectId, int taskId, TaskCreateViewModel editTaskVM)
     {
       await _task.UpdateAsync(editTaskVM.Task);
 
@@ -133,8 +136,8 @@ namespace ProjectTracker.Controllers
       await _project.UpdateAsync(project);
 
       // TODO: implement the functionality to Add/Remove TaskMembers
-      await _taskMember.AddMembersAsync(projectId, editTaskVM.TaskMemberIdsToAdd);
-      await _taskMember.RemoveMembersAsync(projectId, editTaskVM.TaskMemberIdsToRemove);
+      await _taskMember.AddMembersAsync(taskId, editTaskVM.TaskMemberIdsToAdd);
+      await _taskMember.RemoveMembersAsync(taskId, editTaskVM.TaskMemberIdsToRemove);
 
       return RedirectToAction("Index", new { projectId = projectId });
     }
