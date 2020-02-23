@@ -53,6 +53,16 @@ namespace ProjectTracker.Models
         .ToListAsync();
     }
 
+    public List<Task> GetAllTasksOfProjectId(int projectId)
+    {
+      return _context.Tasks
+        .Where(t => t.ProjectId == projectId)
+        .Include(t => t.Member)
+        .Include(t => t.TaskStatus)
+        .OrderBy(t => t.TaskStatus.OrderPriority)
+        .ToList();
+    }
+
     public async Task<Task> GetTaskAsync(int id)
     {
       return await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id);

@@ -91,5 +91,14 @@ namespace ProjectTracker.Models
         .FirstOrDefaultAsync(p => p.ProjectName == projectName);
       return project == null ? true : false;
     }
+
+    public async Task<List<Project>> GetProjectsByMemberId(string memberId)
+    {
+      return (await _context.Projects
+        .Include(p => p.Member)
+        .ToListAsync())
+        .Where(p => p.MemberId == memberId)
+        .ToList();
+    }
   }
 }

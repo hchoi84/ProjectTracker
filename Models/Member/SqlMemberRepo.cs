@@ -26,7 +26,12 @@ namespace ProjectTracker.Models
       return await _member.DeleteAsync(member);
     }
 
-    public async Task<List<Member>> GetAllMembersAsync() => await _member.Users.ToListAsync();
+    public async Task<List<Member>> GetAllMembersAsync()
+    {
+      return (await _member.Users.ToListAsync())
+        .OrderBy(m => m.GetFullName)
+        .ToList();
+    } 
 
     public async Task<Member> GetMemberByIdAsync(string id) => await _member.FindByIdAsync(id);
 

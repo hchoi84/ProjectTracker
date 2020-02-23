@@ -25,7 +25,7 @@ namespace ProjectTracker.Controllers
 
       model.ProjectsCount = (await _project.GetAllProjectsAsync()).Count();
       model.TasksCount = (await _task.GetAllTasksAsync()).Count();
-      model.Members = (await _member.GetAllMembersAsync()).OrderBy(members => members.GetFullName).ToList();
+      model.Members = await _member.GetAllMembersAsync();
 
       return View(model);
     }

@@ -42,9 +42,7 @@ namespace ProjectTracker.Controllers
       {
         string memberId = _member.GetUserId(User);
 
-        projects = (await _project.GetAllProjectsAsync())
-          .Where(p => p.MemberId == memberId)
-          .ToList();
+        projects = await _project.GetProjectsByMemberId(memberId);
 
         (await _projectMember.GetAllAsync(memberId))
           .ForEach(pm => projects.Add(pm.Project));

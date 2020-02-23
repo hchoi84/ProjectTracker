@@ -10,5 +10,6 @@ namespace ProjectTracker.Models
     Task<List<ProjectMember>> GetAllMembersForProjectAsync(int projectId);
     Task<List<ProjectMember>> GetAllAsync();
     Task<List<ProjectMember>> GetAllAsync(string memberId);
+    List<ProjectMember> GetByMemberId(string memberId);
   }
 }

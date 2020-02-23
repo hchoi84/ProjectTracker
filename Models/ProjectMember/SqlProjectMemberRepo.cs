@@ -69,5 +69,12 @@ namespace ProjectTracker.Models
         .Where(pm => pm.MemberId == memberId)
         .ToListAsync();
     }
+
+    public List<ProjectMember> GetByMemberId(string memberId)
+    {
+      return _context.ProjectMembers
+        .Where(pm => pm.MemberId == memberId)
+        .ToList();
+    }
   }
 }

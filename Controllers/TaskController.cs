@@ -161,7 +161,29 @@ namespace ProjectTracker.Controllers
     // Summary: retrieves and stores data in Session as Object to prevent URL clutter
     public async Task<IActionResult> GetTasksByMembersAndStoreInSession(HomeIndexViewModel model)
     {
-      List<Task> tasks = await _task.GetTasksByMemberIds(model.MemberIds);
+      List<int> projectIds = new List<int>();
+      List<Task> tasks = new List<Task>();
+
+      foreach(string memberId in model.MemberIds)
+      {
+        // Retrieve project IDs the member has created from Projects
+        (await _project.GetProjectsByMemberId(memberId))
+          .ForEach(project => projectIds.Add(project.Id));
+
+        // Retrieve project IDs the member is part of from ProjectMembers
+        _projectMember.GetByMemberId(memberId)
+          .ForEach(pm => projectIds.Add(pm.ProjectId));
+
+        _taskMember.GetByMemberId(memberId)
+          .ForEach(tm => tasks.Add(tm.Task));
+      }
+
+      projectIds = projectIds.Distinct().ToList();
+
+      projectIds.ForEach(projectId =>
+        _task.GetAllTasksOfProjectId(projectId).ForEach(task =>
+          tasks.Add(task)));
+      
       HttpContext.Session.SetObject("TBM", tasks);
 
       return RedirectToAction("TasksByMembers");
