@@ -52,9 +52,11 @@ namespace ProjectTracker.Models
       return projects;
     }
 
-    public async Task<Project> GetProjectAsync(int id)
+    public async Task<Project> GetProjectByIdAsync(int id)
     {
-      Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
+      Project project = await _context.Projects
+        .Include(p => p.Member)
+        .FirstOrDefaultAsync(p => p.Id == id);
       if (project != null)
       {
         return project;
@@ -94,11 +96,10 @@ namespace ProjectTracker.Models
 
     public async Task<List<Project>> GetProjectsByMemberId(string memberId)
     {
-      return (await _context.Projects
-        .Include(p => p.Member)
-        .ToListAsync())
+      return await _context.Projects
         .Where(p => p.MemberId == memberId)
-        .ToList();
+        .Include(p => p.Member)
+        .ToListAsync();
     }
   }
 }

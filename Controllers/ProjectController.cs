@@ -33,6 +33,7 @@ namespace ProjectTracker.Controllers
     public async Task<IActionResult> Index()
     {
       List<Project> projects = new List<Project>();
+      List<int> projectIds = new List<int>();
 
       if ((await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded)
       {
@@ -44,8 +45,15 @@ namespace ProjectTracker.Controllers
 
         projects = await _project.GetProjectsByMemberId(memberId);
 
-        (await _projectMember.GetAllAsync(memberId))
-          .ForEach(pm => projects.Add(pm.Project));
+        // Get all ProjectMembers that contains memberId
+        var projectMembers = _projectMember.GetByMemberId(memberId);
+
+        // For each project Id in ProjectMembers, retrieve project and add to Projects
+        foreach (var projectMember in projectMembers)
+        {
+          var project = await _project.GetProjectByIdAsync(projectMember.ProjectId);
+          projects.Add(project);
+        }
       }
 
       return View(projects);
@@ -87,7 +95,7 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(int projectId)
     {
-      var project = await _project.GetProjectAsync(projectId);
+      var project = await _project.GetProjectByIdAsync(projectId);
 
       return View(await GenerateProjectViewModel(projectId));
     }
@@ -138,7 +146,7 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Delete(int projectId)
     {
-      var project = await _project.GetProjectAsync(projectId);
+      var project = await _project.GetProjectByIdAsync(projectId);
 
       var proj = await _project.DeleteAsync(projectId);
       if (proj == null)
@@ -155,7 +163,7 @@ namespace ProjectTracker.Controllers
 
       if (projectId != null)
       {
-        projectVM.Project = await _project.GetProjectAsync((int)projectId);
+        projectVM.Project = await _project.GetProjectByIdAsync((int)projectId);
       }
 
       projectVM.Members = await _member.Users.ToListAsync();

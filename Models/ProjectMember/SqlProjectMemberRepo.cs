@@ -65,8 +65,8 @@ namespace ProjectTracker.Models
     public async Task<List<ProjectMember>> GetAllAsync(string memberId)
     {
       return await _context.ProjectMembers
-        .Include(pm => pm.Project)
         .Where(pm => pm.MemberId == memberId)
+        .Include(pm => pm.Project)
         .ToListAsync();
     }
 

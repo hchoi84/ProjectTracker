@@ -7,7 +7,7 @@ namespace ProjectTracker.Models
   public interface IProject
   {
     Task<Project> AddAsync(Project newProject);
-    Task<Project> GetProjectAsync(int id);
+    Task<Project> GetProjectByIdAsync(int id);
     Task<List<Project>> GetAllProjectsAsync();
     Task<Project> UpdateAsync(Project updatedProject);
     Task<Project> DeleteAsync(int id);

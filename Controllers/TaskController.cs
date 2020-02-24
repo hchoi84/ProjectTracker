@@ -39,7 +39,7 @@ namespace ProjectTracker.Controllers
     {
       TaskViewModel taskVM = new TaskViewModel(projectId);
       taskVM.Tasks = await _task.GetAllTasksOfProjectIdAsync(projectId);
-      taskVM.Project = await _project.GetProjectAsync(projectId);
+      taskVM.Project = await _project.GetProjectByIdAsync(projectId);
 
       return View(taskVM);
     }
@@ -72,7 +72,7 @@ namespace ProjectTracker.Controllers
 
       Task newTask = await _task.AddAsync(newTaskVM.Task);
 
-      Project project = await _project.GetProjectAsync(projectId);
+      Project project = await _project.GetProjectByIdAsync(projectId);
       await _project.UpdateAsync(project);
 
       return RedirectToAction("Index", new { projectId = projectId });
@@ -132,7 +132,7 @@ namespace ProjectTracker.Controllers
     {
       await _task.UpdateAsync(editTaskVM.Task);
 
-      Project project = await _project.GetProjectAsync(projectId);
+      Project project = await _project.GetProjectByIdAsync(projectId);
       await _project.UpdateAsync(project);
 
       // TODO: implement the functionality to Add/Remove TaskMembers
