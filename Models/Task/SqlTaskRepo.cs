@@ -65,7 +65,11 @@ namespace ProjectTracker.Models
 
     public async Task<Task> GetTaskAsync(int id)
     {
-      return await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+      return await _context.Tasks
+        .Include(t => t.Member)
+        .Include(t => t.TaskStatus)
+        .OrderBy(t => t.TaskStatus.OrderPriority)
+        .FirstOrDefaultAsync(t => t.Id == id);
     }
 
     public async Task<List<Task>> GetTasksByMemberIds(List<string> memberIds)

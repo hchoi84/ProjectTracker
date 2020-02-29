@@ -34,10 +34,26 @@ namespace ProjectTracker.Controllers
       _projectMember = projectMember;
     }
 
+    [HttpGet("/individualtasks")]
+    public async Task<IActionResult> Index()
+    {
+      TaskViewModel taskVM = new TaskViewModel();
+      List<TaskMember> taskMembers = new List<TaskMember>();
+
+      taskMembers = _taskMember.GetByMemberId(_member.GetUserId(User));
+      foreach (TaskMember taskMember in taskMembers)
+      {
+        Task task = await _task.GetTaskAsync(taskMember.TaskId);
+        taskVM.Tasks.Add(task);
+      }
+
+      return View("IndividualTasks", taskVM);
+    }
+
     [HttpGet("tasks")]
     public async Task<IActionResult> Index(int projectId)
     {
-      TaskViewModel taskVM = new TaskViewModel(projectId);
+      TaskViewModel taskVM = new TaskViewModel();
       taskVM.Tasks = await _task.GetAllTasksOfProjectIdAsync(projectId);
       taskVM.Project = await _project.GetProjectByIdAsync(projectId);
 

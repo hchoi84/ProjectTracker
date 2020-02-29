@@ -5,7 +5,7 @@ namespace ProjectTracker.ViewModels
 {
   public class TaskViewModel
   {
-    public TaskViewModel(int id)
+    public TaskViewModel()
     {
       Project = new Project();
       Tasks = new List<Task>();

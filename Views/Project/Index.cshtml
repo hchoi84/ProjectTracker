@@ -62,6 +62,23 @@
         <h5>No Projects to Display</h5>
       </div>
     }
+
+    <!-- TODO: Only display if there are individual tasks -->
+    <div class="row row-height-3 align-items-center mt-3 bg-secondary justify-content-between">
+      <div class="col-4 name">
+        <a asp-controller="Task" asp-action="Index">Individual Tasks</a>
+      </div>
+      <div class="col created">N/A</div>
+      <div class="col updated">N/A</div>
+      <div class="col deadline">N/A</div>
+      <div class="col creator">N/A</div>
+      <div class="col" id="action">
+        <a>No Action</a>
+      </div>
+    </div>
+    <div class="row align-items-center pb-3 bg-secondary">
+      <div class="col-sm-12 multiline">Individual tasks you are part of. These are tasks where you're not part of the project.</div>
+    </div>
     
     <div class="row aling-items-center mt-3" id="footer">
       <div class="col-sm-12 p-0">

@@ -39,7 +39,7 @@ namespace ProjectTracker.Controllers
       {
         projects = await _project.GetAllProjectsAsync();
       }
-      else
+      else 
       {
         string memberId = _member.GetUserId(User);
 

@@ -1,0 +1,54 @@
+@model TaskViewModel
+
+@{
+  ViewBag.Title = "Individual Tasks";
+}
+
+<div class="mt-3">
+
+  <div class="container ">
+    <h1 class="text-center">Individual Tasks</h1>
+  </div>
+
+  <div class="container">
+    <div class="row row-height-3 align-items-center border-bottom border-white">
+      <div class="col-5 name">Task Name</div>
+      <div class="col status">Status</div>
+      <div class="col deadline">Deadline</div>
+      <div class="col creator">Creator</div>
+      <div class="col action">Action</div>
+    </div>
+      @if (Model.Tasks.Any())
+      {
+        @foreach (var task in Model.Tasks)
+        {
+        <div class="row row-height-3 align-items-center mt-3 bg-secondary">
+          <div class="col-5 name">@task.TaskName</div>
+          <div class="col status">@task.TaskStatus.StatusName</div>
+          <div class="col deadline">@task.Deadline.ToString("yyyy/MM/dd")</div>
+          <div class="col creator">@task.Member.GetFullName</div>
+          <div class="col" id="action">
+            <a>No Action</a>
+          </div>
+        </div>
+        <div class="row align-items-center pb-3 bg-secondary">
+          <div class="col-sm-12 multiline">@task.Description</div>
+        </div>
+        }
+      }
+      else
+      {
+        <div class="row row-height-3 align-items-center mt-3 bg-secondary">
+          <div class="col-sm-12">There are no tasks for this project</div>
+        </div>
+      }
+    
+    <div class="row aling-items-center mt-3" id="footer">
+      <div class="col-sm-12 p-0">
+        <a asp-controller="Project" asp-action="Index" class="btn btn-primary"><i class="fas fa-arrow-left mr-2"></i>Back</a>
+      </div>
+    </div>
+    
+  </div>
+
+</div>
