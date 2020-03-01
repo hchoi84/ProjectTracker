@@ -39,9 +39,12 @@
               <a asp-controller="Project" asp-action="Create" class="dropdown-item">Create</a>
             </div>
           </li>
-          <li class="nav-item">
-            <a asp-controller="Admin" asp-action="Index" class="nav-link">Admin</a>
-          </li>
+          @if ((await authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded)
+          {
+            <li class="nav-item">
+              <a asp-controller="Admin" asp-action="Index" class="nav-link">Admin</a>
+            </li>
+          }
         </ul>
 
       </div>
