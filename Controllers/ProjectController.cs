@@ -56,6 +56,8 @@ namespace ProjectTracker.Controllers
         }
       }
 
+      ViewBag.individualTasks = _taskMember.GetByMemberId(_member.GetUserId(User)).Count();
+
       return View(projects);
     }
 
