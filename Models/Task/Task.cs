@@ -36,7 +36,7 @@ namespace ProjectTracker.Models
     public DateTime Updated { get; set; } = DateTime.Now;
 
     public TaskStatus TaskStatus { get; set; }
-    // TODO: consider removing Member
+    
     public Member Member { get; set; }
   }
 }

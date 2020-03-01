@@ -94,7 +94,7 @@ namespace ProjectTracker.Models
       return project == null ? true : false;
     }
 
-    public async Task<List<Project>> GetProjectsByMemberId(string memberId)
+    public async Task<List<Project>> GetProjectsByMemberIdAsync(string memberId)
     {
       return await _context.Projects
         .Where(p => p.MemberId == memberId)

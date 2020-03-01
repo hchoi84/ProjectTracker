@@ -70,12 +70,11 @@ namespace ProjectTracker.Models
       _context.SaveChanges();
     }
 
-    public List<TaskMember> GetByMemberId(string memberId)
+    public async Task<List<TaskMember>> GetByMemberIdAsync(string memberId)
     {
-      return _context.TaskMembers
+      return await _context.TaskMembers
         .Where(tm => tm.MemberId == memberId)
-        .Include(tm => tm.Task)
-        .ToList();
+        .ToListAsync();
     }
   }
 }

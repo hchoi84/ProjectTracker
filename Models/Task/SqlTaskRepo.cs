@@ -53,14 +53,14 @@ namespace ProjectTracker.Models
         .ToListAsync();
     }
 
-    public List<Task> GetAllTasksOfProjectId(int projectId)
+    public async Task<List<Task>> GetAllTasksOfProjectIdsAsync(List<int> projectIds)
     {
-      return _context.Tasks
-        .Where(t => t.ProjectId == projectId)
+      return await _context.Tasks
+        .Where(t => projectIds.Contains(t.ProjectId))
         .Include(t => t.Member)
         .Include(t => t.TaskStatus)
         .OrderBy(t => t.TaskStatus.OrderPriority)
-        .ToList();
+        .ToListAsync();
     }
 
     public async Task<Task> GetTaskAsync(int id)
@@ -74,7 +74,8 @@ namespace ProjectTracker.Models
 
     public async Task<List<Task>> GetTasksByMemberIds(List<string> memberIds)
     {
-      return await _context.Tasks.Where(t => memberIds.Contains(t.MemberId))
+      return await _context.Tasks
+        .Where(t => memberIds.Contains(t.MemberId))
         .Include(t => t.Member)
         .Include(t => t.TaskStatus)
           .Where(t => t.TaskStatus.StatusName != "Completed")
@@ -82,9 +83,20 @@ namespace ProjectTracker.Models
         .ToListAsync();
     }
 
+    public async Task<List<Task>> GetByTaskIdsAsync(List<int> taskIds)
+    {
+      return await _context.Tasks
+        .Where(t => taskIds.Contains(t.Id))
+        .Include(t => t.Member)
+        .Include(t => t.TaskStatus)
+        .ToListAsync();
+    }
+
     public async Task<Task> UpdateAsync(Task updateTask)
     {
-      Task task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == updateTask.Id);
+      Task task = await _context.Tasks
+        .FirstOrDefaultAsync(t => t.Id == updateTask.Id);
+        
       if (task != null)
       {
         task.StatusId = updateTask.StatusId;

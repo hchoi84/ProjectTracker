@@ -81,7 +81,6 @@ namespace ProjectTracker.Controllers
         {
           string token = await _userManager.GeneratePasswordResetTokenAsync(member);
 
-          // TODO: Implement ResetPassword action
           var passwordResetLink = Url.Action("ResetPassword", "Account", new { email = model.Email, token = token }, Request.Scheme);
 
           EmailClient.SendLink(member, passwordResetLink, EmailType.PasswordReset);

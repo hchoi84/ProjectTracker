@@ -28,21 +28,22 @@
   </div>
 </div>
 
-
-<!-- TODO: Allow only Admins access to this feature -->
-<div class="card text-center mt-4">
-  <div class="card-header">
-    <h3 class="text-dark">See Task(s) by Member(s)</h3>
+@if ((await authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded)
+{
+  <div class="card text-center mt-4">
+    <div class="card-header">
+      <h3 class="text-dark">See Task(s) by Member(s)</h3>
+    </div>
+    <div class="card-body">
+      <form asp-controller="Task" asp-action="GetTasksByMembersAndStoreInSession" method="POST">
+        <select asp-for="@Model.MemberIds" class="form-control" size="10">
+          @foreach (Member member in Model.Members)
+          {
+            <option value="@member.Id" class="font-weight-bold font-size-12">@member.GetFullName</option>
+          }
+        </select>
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+      </form>
+    </div>
   </div>
-  <div class="card-body">
-    <form asp-controller="Task" asp-action="GetTasksByMembersAndStoreInSession" method="POST">
-      <select asp-for="@Model.MemberIds" class="form-control" size="10">
-        @foreach (Member member in Model.Members)
-        {
-          <option value="@member.Id" class="font-weight-bold font-size-12">@member.GetFullName</option>
-        }
-      </select>
-      <button type="submit" class="btn btn-primary mt-3">Submit</button>
-    </form>
-  </div>
-</div>
+}

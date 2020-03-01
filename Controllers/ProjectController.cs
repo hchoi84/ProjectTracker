@@ -43,12 +43,10 @@ namespace ProjectTracker.Controllers
       {
         string memberId = _member.GetUserId(User);
 
-        projects = await _project.GetProjectsByMemberId(memberId);
+        projects = await _project.GetProjectsByMemberIdAsync(memberId);
 
-        // Get all ProjectMembers that contains memberId
-        var projectMembers = _projectMember.GetByMemberId(memberId);
+        var projectMembers = await _projectMember.GetByMemberIdAsync(memberId);
 
-        // For each project Id in ProjectMembers, retrieve project and add to Projects
         foreach (var projectMember in projectMembers)
         {
           var project = await _project.GetProjectByIdAsync(projectMember.ProjectId);
@@ -56,7 +54,7 @@ namespace ProjectTracker.Controllers
         }
       }
 
-      ViewBag.individualTasks = _taskMember.GetByMemberId(_member.GetUserId(User)).Count();
+      ViewBag.individualTasks = (await _taskMember.GetByMemberIdAsync(_member.GetUserId(User))).Count();
 
       return View(projects);
     }
@@ -123,7 +121,6 @@ namespace ProjectTracker.Controllers
 
       await _project.UpdateAsync(editProjectVM.Project);
 
-      // TODO: Test this section
       if (editProjectVM.ProjectMemberIdsToAdd.Any())
       {
         await _projectMember.AddAsync(editProjectVM.Project.Id, editProjectVM.ProjectMemberIdsToAdd);

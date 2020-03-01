@@ -12,6 +12,6 @@ namespace ProjectTracker.Models
     Task<Project> UpdateAsync(Project updatedProject);
     Task<Project> DeleteAsync(int id);
     Task<bool> IsUnique(string projectName, int id = 0);
-    Task<List<Project>> GetProjectsByMemberId(string memberId);
+    Task<List<Project>> GetProjectsByMemberIdAsync(string memberId);
   }
 }

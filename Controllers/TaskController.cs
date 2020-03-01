@@ -40,7 +40,7 @@ namespace ProjectTracker.Controllers
       TaskViewModel taskVM = new TaskViewModel();
       List<TaskMember> taskMembers = new List<TaskMember>();
 
-      taskMembers = _taskMember.GetByMemberId(_member.GetUserId(User));
+      taskMembers = await _taskMember.GetByMemberIdAsync(_member.GetUserId(User));
       foreach (TaskMember taskMember in taskMembers)
       {
         Task task = await _task.GetTaskAsync(taskMember.TaskId);
@@ -151,7 +151,6 @@ namespace ProjectTracker.Controllers
       Project project = await _project.GetProjectByIdAsync(projectId);
       await _project.UpdateAsync(project);
 
-      // TODO: implement the functionality to Add/Remove TaskMembers
       await _taskMember.AddMembersAsync(taskId, editTaskVM.TaskMemberIdsToAdd);
       await _taskMember.RemoveMembersAsync(taskId, editTaskVM.TaskMemberIdsToRemove);
 
@@ -178,27 +177,28 @@ namespace ProjectTracker.Controllers
     public async Task<IActionResult> GetTasksByMembersAndStoreInSession(HomeIndexViewModel model)
     {
       List<int> projectIds = new List<int>();
+      List<int> taskIds = new List<int>();
       List<Task> tasks = new List<Task>();
 
       foreach(string memberId in model.MemberIds)
       {
-        // Retrieve project IDs the member has created from Projects
-        (await _project.GetProjectsByMemberId(memberId))
+        (await _project.GetProjectsByMemberIdAsync(memberId))
           .ForEach(project => projectIds.Add(project.Id));
 
-        // Retrieve project IDs the member is part of from ProjectMembers
-        _projectMember.GetByMemberId(memberId)
+        (await _projectMember.GetByMemberIdAsync(memberId))
           .ForEach(pm => projectIds.Add(pm.ProjectId));
 
-        _taskMember.GetByMemberId(memberId)
-          .ForEach(tm => tasks.Add(tm.Task));
+        (await _taskMember.GetByMemberIdAsync(memberId))
+          .ForEach(tm => taskIds.Add(tm.TaskId));
       }
 
       projectIds = projectIds.Distinct().ToList();
 
-      projectIds.ForEach(projectId =>
-        _task.GetAllTasksOfProjectId(projectId).ForEach(task =>
-          tasks.Add(task)));
+      (await _task.GetAllTasksOfProjectIdsAsync(projectIds))
+        .ForEach(t => tasks.Add(t));
+
+      (await _task.GetByTaskIdsAsync(taskIds))
+        .ForEach(t => tasks.Add(t));
       
       HttpContext.Session.SetObject("TBM", tasks);
 
