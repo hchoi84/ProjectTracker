@@ -95,15 +95,10 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("tasks/{taskId}/edit")]
-    // TODO: implement [Authorize(Policy = "CanAccessActions)]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
-      if (!(await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
-        && task.MemberId != _member.GetUserId(User))
-      {
-        return RedirectToAction("Home", "AccessDenied");
-      }
 
       TaskCreateViewModel taskVM = new TaskCreateViewModel();
       taskVM.Task = task;
@@ -143,7 +138,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("tasks/{taskId}/edit")]
-    // TODO: implement [Authorize(Policy = "CanAccessActions)]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(int projectId, int taskId, TaskCreateViewModel editTaskVM)
     {
       await _task.UpdateAsync(editTaskVM.Task);
@@ -158,15 +153,10 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("tasks/{taskId}/delete")]
-    // TODO: implement [Authorize(Policy = "CanAccessActions)]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<RedirectToActionResult> Delete(int projectId, int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
-      if (!(await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded
-        && task.MemberId != _member.GetUserId(User))
-      {
-        return RedirectToAction("Home", "AccessDenied");
-      }
 
       await _task.DeleteAsync(taskId);
       return RedirectToAction("index", new { projectId = projectId });
