@@ -10,37 +10,34 @@ using System.Security.Claims;
 
 namespace ProjectTracker.Securities
 {
-  public class CanAccessActions : AuthorizationHandler<CustomClaims>
+  public class CanAccessActionsHandler : AuthorizationHandler<CanAccessActionsRequirement>
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly AppDbContext _dbContext;
-    public CanAccessActions(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext)
+    public CanAccessActionsHandler(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext)
     {
       _httpContextAccessor = httpContextAccessor;
       _dbContext = dbContext;
     }
 
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, CustomClaims requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, CanAccessActionsRequirement requirement)
     {
       var routeValues = _httpContextAccessor.HttpContext.Request.RouteValues;
       if (routeValues.Count == 0)
       {
         return Task.CompletedTask;
       }
-      // var queryValues = _httpContextAccessor.HttpContext.Request.Query;
-      // if (queryValues.Count == 0)
-      // {
-      //   return Task.CompletedTask;
-      // }
       
       object projectId;
       routeValues.TryGetValue("projectId", out projectId);
-      // StringValues projectId;
-      // queryValues.TryGetValue("projectId", out projectId);
+      if (projectId == null)
+      {
+        return Task.CompletedTask;
+      }
 
-      var creatorId = _dbContext.Projects.FirstOrDefault(p => p.Id == Convert.ToInt32(projectId)).MemberId;
+      var memberId = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-      var isCreator = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value == creatorId;
+      var isCreator = _dbContext.Projects.FirstOrDefault(p => p.Id == Convert.ToInt32(projectId)).MemberId == memberId;
 
       if (context.User.HasClaim(c => c.Type == "SuperAdmin" && c.Value == "true") ||
           context.User.HasClaim(c => c.Type == "Admin" && c.Value == "true") ||

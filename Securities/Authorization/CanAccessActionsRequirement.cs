@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ProjectTracker.Securities
 {
-  public class CustomClaims : IAuthorizationRequirement
+  public class CanAccessActionsRequirement : IAuthorizationRequirement
   {
 
   }

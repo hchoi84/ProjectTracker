@@ -47,8 +47,8 @@ namespace ProjectTracker
       services.AddScoped<IMember, SqlMemberRepo>();
       services.AddScoped<IProjectMember, SqlProjectMemberRepo>();
       services.AddScoped<ITaskMember, SqlTaskMemberRepo>();
-      
-      services.AddTransient<IAuthorizationHandler, CanAccessActions>();
+      services.AddTransient<IAuthorizationHandler, CanAccessActionsHandler>();
+      services.AddTransient<IAuthorizationHandler, CanAccessTasksHandler>();
 
       services.AddDbContextPool<AppDbContext>(options => options.UseMySql(_config.GetConnectionString("DbConnection")));
 
@@ -65,7 +65,8 @@ namespace ProjectTracker
         
         options.AddPolicy("Admin", policy => policy.RequireClaim("Admin", "true"));
 
-        options.AddPolicy("CanAccessActions", policy => policy.AddRequirements(new CustomClaims()));
+        options.AddPolicy("CanAccessActions", policy => policy.AddRequirements(new CanAccessActionsRequirement()));
+        options.AddPolicy("CanAccessTasks", policy => policy.AddRequirements(new CanAccessTasksRequirement()));
       });
     }
     

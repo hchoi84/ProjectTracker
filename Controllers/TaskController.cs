@@ -51,7 +51,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("tasks")]
-    [Authorize(Policy = "CanAccessActions")]
+    [Authorize(Policy = "CanAccessTasks")]
     public async Task<IActionResult> Index(int projectId)
     {
       TaskViewModel taskVM = new TaskViewModel();
