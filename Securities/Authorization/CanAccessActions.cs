@@ -22,14 +22,21 @@ namespace ProjectTracker.Securities
 
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, CustomClaims requirement)
     {
-      var queryValues = _httpContextAccessor.HttpContext.Request.Query;
-      if (queryValues.Count == 0)
+      var routeValues = _httpContextAccessor.HttpContext.Request.RouteValues;
+      if (routeValues.Count == 0)
       {
         return Task.CompletedTask;
       }
+      // var queryValues = _httpContextAccessor.HttpContext.Request.Query;
+      // if (queryValues.Count == 0)
+      // {
+      //   return Task.CompletedTask;
+      // }
       
-      StringValues projectId;
-      queryValues.TryGetValue("projectId", out projectId);
+      object projectId;
+      routeValues.TryGetValue("projectId", out projectId);
+      // StringValues projectId;
+      // queryValues.TryGetValue("projectId", out projectId);
 
       var creatorId = _dbContext.Projects.FirstOrDefault(p => p.Id == Convert.ToInt32(projectId)).MemberId;
 

@@ -12,6 +12,7 @@ using Task = ProjectTracker.Models.Task;
 
 namespace ProjectTracker.Controllers
 {
+  [Route("project")]
   public class ProjectController : Controller
   {
     private readonly IProject _project;
@@ -30,6 +31,7 @@ namespace ProjectTracker.Controllers
       _taskMember = taskMember;
     }
 
+    [HttpGet("/projects")]
     public async Task<IActionResult> Index()
     {
       List<Project> projects = new List<Project>();
@@ -59,10 +61,10 @@ namespace ProjectTracker.Controllers
       return View(projects);
     }
 
-    [HttpGet]
+    [HttpGet("create")]
     public IActionResult Create() => View();
 
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<IActionResult> Create(ProjectCreateViewModel newProjectVM)
     {
       if (ModelState.IsValid)
@@ -91,7 +93,7 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("Index");
     }
 
-    [HttpGet]
+    [HttpGet("{projectId}/edit")]
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(int projectId)
     {
@@ -100,7 +102,7 @@ namespace ProjectTracker.Controllers
       return View(await GenerateProjectViewModel(projectId));
     }
 
-    [HttpPost]
+    [HttpPost("{projectId}/edit")]
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(ProjectEditViewModel editProjectVM)
     {
@@ -141,7 +143,7 @@ namespace ProjectTracker.Controllers
       return RedirectToAction("Index");
     }
 
-    [HttpPost]
+    [HttpPost("{projectId}/delete")]
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Delete(int projectId)
     {

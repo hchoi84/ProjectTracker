@@ -51,6 +51,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("tasks")]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Index(int projectId)
     {
       TaskViewModel taskVM = new TaskViewModel();
@@ -61,6 +62,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet("tasks/create")]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Create(int projectId)
     {
       var taskStatuses = await _taskStatus.GetDefaultTaskStatusAsync();
@@ -81,6 +83,7 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpPost("tasks/create")]
+    [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Create(int projectId, TaskCreateViewModel newTaskVM)
     {
       newTaskVM.Task.MemberId = _member.GetUserId(User);
@@ -96,7 +99,7 @@ namespace ProjectTracker.Controllers
 
     [HttpGet("tasks/{taskId}/edit")]
     [Authorize(Policy = "CanAccessActions")]
-    public async Task<IActionResult> Edit(int taskId)
+    public async Task<IActionResult> Edit(int projectId, int taskId)
     {
       var task = await _task.GetTaskAsync(taskId);
 
