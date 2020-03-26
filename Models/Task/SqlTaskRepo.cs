@@ -2,16 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using ProjectTracker.Securities;
 
 namespace ProjectTracker.Models
 {
   public class SqlTaskRepo : ITask
   {
     private AppDbContext _context;
-    public SqlTaskRepo(AppDbContext context)
+    private readonly IDataProtector _protectTaskId;
+
+    public SqlTaskRepo(AppDbContext context, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
     {
       _context = context;
+      _protectTaskId = dataProtectionProvider.CreateProtector(dataProtectionStrings.TaskId);
     }
 
     public async Task<Task> AddAsync(Task task)
@@ -45,22 +50,32 @@ namespace ProjectTracker.Models
 
     public async Task<List<Task>> GetAllTasksOfProjectIdAsync(int projectId)
     {
-      return await _context.Tasks
+      return (await _context.Tasks
         .Where(t => t.ProjectId == projectId)
         .Include(t => t.Member)
         .Include(t => t.TaskStatus)
         .OrderBy(t => t.TaskStatus.OrderPriority)
-        .ToListAsync();
+        .ToListAsync())
+        .Select(t => {
+          t.EncryptedId = ProtectTaskId(t.Id);
+          return t;
+        })
+        .ToList();
     }
 
     public async Task<List<Task>> GetAllTasksOfProjectIdsAsync(List<int> projectIds)
     {
-      return await _context.Tasks
+      return (await _context.Tasks
         .Where(t => projectIds.Contains(t.ProjectId))
         .Include(t => t.Member)
         .Include(t => t.TaskStatus)
         .OrderBy(t => t.TaskStatus.OrderPriority)
-        .ToListAsync();
+        .ToListAsync())
+        .Select(t => {
+          t.EncryptedId = ProtectTaskId(t.Id);
+          return t;
+        })
+        .ToList();
     }
 
     public async Task<Task> GetTaskAsync(int id)
@@ -111,5 +126,8 @@ namespace ProjectTracker.Models
       return null;
     }
 
+    public string ProtectTaskId(int taskId) => _protectTaskId.Protect(taskId.ToString());
+
+    public int UnprotectTaskId(string taskId) => Convert.ToInt32(_protectTaskId.Unprotect(taskId));
   }
 }

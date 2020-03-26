@@ -21,25 +21,20 @@ namespace ProjectTracker.Controllers
     private readonly IProject _project;
     private readonly ITask _task;
     private readonly ITaskStatus _taskStatus;
-    private readonly UserManager<Member> _member;
     private readonly IAuthorizationService _authService;
     private readonly ITaskMember _taskMember;
     private readonly IProjectMember _projectMember;
-    private readonly IDataProtector _protectProjectId;
-    private readonly IDataProtector _protectTaskId;
-    private readonly IDataProtector _protectMemberId;
-    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, UserManager<Member> member, IAuthorizationService authService, ITaskMember taskMember, IProjectMember projectMember, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
+    private readonly IMember _member;
+
+    public TaskController(IProject project, ITask task, ITaskStatus taskStatus, IAuthorizationService authService, ITaskMember taskMember, IProjectMember projectMember, IMember member)
     {
       _project = project;
       _task = task;
       _taskStatus = taskStatus;
-      _member = member;
       _authService = authService;
       _taskMember = taskMember;
       _projectMember = projectMember;
-      _protectProjectId = dataProtectionProvider.CreateProtector(dataProtectionStrings.ProjectId);
-      _protectTaskId = dataProtectionProvider.CreateProtector(dataProtectionStrings.TaskId);
-      _protectMemberId = dataProtectionProvider.CreateProtector(dataProtectionStrings.MemberId);
+      _member = member;
     }
 
     [HttpGet("/individualtasks")]
@@ -48,7 +43,8 @@ namespace ProjectTracker.Controllers
       TaskViewModel taskVM = new TaskViewModel();
       List<TaskMember> taskMembers = new List<TaskMember>();
 
-      taskMembers = await _taskMember.GetByMemberIdAsync(_member.GetUserId(User));
+      string memberId = _member.GetMemberId(User);
+      taskMembers = await _taskMember.GetByMemberIdAsync(memberId);
       foreach (TaskMember taskMember in taskMembers)
       {
         Task task = await _task.GetTaskAsync(taskMember.TaskId);
@@ -62,17 +58,12 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessTasks")]
     public async Task<IActionResult> Index(string projectId)
     {
-      int projId = Convert.ToInt32(_protectProjectId.Unprotect(projectId));
+      int projId = _project.UnprotectProjectId(projectId);
 
       TaskViewModel taskVM = new TaskViewModel();
-      taskVM.Tasks = (await _task.GetAllTasksOfProjectIdAsync(projId))
-        .Select(t => {
-          t.EncryptedId = _protectTaskId.Protect(t.Id.ToString());
-          return t;
-        })
-        .ToList();
+      taskVM.Tasks = await _task.GetAllTasksOfProjectIdAsync(projId);
       taskVM.Project = await _project.GetProjectByIdAsync(projId);
-      taskVM.Project.EncryptedId = _protectProjectId.Protect(taskVM.Project.Id.ToString());
+      taskVM.Project.EncryptedId = _project.ProtectProjectId(taskVM.Project.Id);
 
       return View(taskVM);
     }
@@ -103,9 +94,9 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Create(string projectId, TaskCreateViewModel newTaskVM)
     {
-      int projId = Convert.ToInt32(_protectProjectId.Unprotect(projectId));
+      int projId = _project.UnprotectProjectId(projectId);
 
-      newTaskVM.Task.MemberId = _member.GetUserId(User);
+      newTaskVM.Task.MemberId = _member.GetMemberId(User);
       newTaskVM.Task.ProjectId = projId;
 
       Task newTask = await _task.AddAsync(newTaskVM.Task);
@@ -120,7 +111,7 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(string projectId, string taskId)
     {
-      int tId = Convert.ToInt32(_protectTaskId.Unprotect(taskId));
+      int tId = _task.UnprotectTaskId(taskId);
 
       var task = await _task.GetTaskAsync(tId);
 
@@ -132,9 +123,10 @@ namespace ProjectTracker.Controllers
       (await _projectMember.GetAllMembersForProjectAsync(task.ProjectId))
         .ForEach(pm => taskVM.MembersPartOfProject.Add(pm.Member));
 
-      taskVM.MembersAvailableToAdd = (await _member.Users.ToListAsync())
+      taskVM.MembersAvailableToAdd = (await _member.GetAllMembersAsync())
         .Where(m => m.Id != task.MemberId)
         .ToList();
+
       List<TaskMember> taskMembers = await _taskMember.GetAllMembersForTaskAsync(tId);
 
       taskMembers.ForEach(tm => taskVM.MembersAvailableToRemove.Add(tm.Member));
@@ -166,9 +158,9 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(string projectId, string taskId, TaskCreateViewModel editTaskVM)
     {
-      int tId = Convert.ToInt32(_protectTaskId.Unprotect(taskId));
+      int tId = _task.UnprotectTaskId(taskId);
 
-      int projId = Convert.ToInt32(_protectProjectId.Unprotect(projectId));
+      int projId = _project.UnprotectProjectId(projectId);
 
       await _task.UpdateAsync(editTaskVM.Task);
 
@@ -185,7 +177,7 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<RedirectToActionResult> Delete(string projectId, string taskId)
     {
-      int tId = Convert.ToInt32(_protectTaskId.Unprotect(taskId));
+      int tId = _task.UnprotectTaskId(taskId);
       var task = await _task.GetTaskAsync(tId);
 
       await _task.DeleteAsync(tId);
@@ -202,7 +194,7 @@ namespace ProjectTracker.Controllers
 
       foreach(string memberId in model.MemberIds)
       {
-        string memId = _protectMemberId.Unprotect(memberId);
+        string memId = _member.UnprotectMemberId(memberId);
 
         (await _project.GetProjectsByMemberIdAsync(memId))
           .ForEach(project => projectIds.Add(project.Id));
@@ -221,6 +213,10 @@ namespace ProjectTracker.Controllers
 
       (await _task.GetByTaskIdsAsync(taskIds))
         .ForEach(t => tasks.Add(t));
+
+      tasks.ForEach(t => {
+        t.EncryptedProjectId = _project.ProtectProjectId(t.ProjectId);
+      });
       
       HttpContext.Session.SetObject("TBM", tasks);
 

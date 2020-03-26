@@ -13,5 +13,7 @@ namespace ProjectTracker.Models
     Task<Project> DeleteAsync(int id);
     Task<bool> IsUnique(string projectName, int id = 0);
     Task<List<Project>> GetProjectsByMemberIdAsync(string memberId);
+    string ProtectProjectId(int projectId);
+    int UnprotectProjectId(string projectId);
   }
 }

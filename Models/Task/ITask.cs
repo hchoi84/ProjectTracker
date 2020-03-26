@@ -14,5 +14,7 @@ namespace ProjectTracker.Models
     Task<List<Task>> GetByTaskIdsAsync(List<int> taskIds);
     Task<Task> UpdateAsync(Task task);
     Task<Task> DeleteAsync(int id);
+    string ProtectTaskId(int taskId);
+    int UnprotectTaskId(string taskId);
   }
 }

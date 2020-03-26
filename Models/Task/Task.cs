@@ -16,6 +16,9 @@ namespace ProjectTracker.Models
     [ForeignKey("Project")]
     public int ProjectId { get; set; }
 
+    [NotMapped]
+    public string EncryptedProjectId { get; set; }
+
     [ForeignKey("TaskStatus")]
     public int StatusId { get; set; }
 

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ProjectTracker.Securities;
 using ProjectTracker.Utilities;
 
 namespace ProjectTracker.Models
@@ -11,9 +13,12 @@ namespace ProjectTracker.Models
   public class SqlProjectRepo : IProject
   {
     private readonly AppDbContext _context;
-    public SqlProjectRepo(AppDbContext context)
+    private readonly IDataProtector _protectProjectId;
+
+    public SqlProjectRepo(AppDbContext context, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
     {
       _context = context;
+      _protectProjectId = dataProtectionProvider.CreateProtector(dataProtectionStrings.ProjectId);
     }
 
     public async Task<Project> AddAsync(Project newProject)
@@ -102,5 +107,9 @@ namespace ProjectTracker.Models
         .Include(p => p.Member)
         .ToListAsync();
     }
+
+    public string ProtectProjectId(int projectId) => _protectProjectId.Protect(projectId.ToString());
+
+    public int UnprotectProjectId(string projectId) => Convert.ToInt32(_protectProjectId.Unprotect(projectId));
   }
 }

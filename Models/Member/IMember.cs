@@ -17,5 +17,8 @@ namespace ProjectTracker.Models
     Task<IdentityResult> UpdatePassword(MemberEditViewModel editVM);
     Task<IList<Claim>> GetMemberClaimsAsync(Member member);
     Task<string> GetMemberByEmailAsync(string memberEmail);
+    string ProtectMemberId(string memberId);
+    string UnprotectMemberId(string memberId);
+    string GetMemberId(ClaimsPrincipal member);
   }
 }

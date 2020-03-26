@@ -12,6 +12,7 @@
       <div class="col-4 name">Task Name</div>
       <div class="col status">Status</div>
       <div class="col deadline">Deadline</div>
+      <div class="col deadline">Creator</div>
       <div class="col action">Action</div>
     </div>
       @if (Model.Any())
@@ -23,15 +24,16 @@
           <div class="col-4 name">@task.TaskName</div>
           <div class="col status">@task.TaskStatus.StatusName</div>
           <div class="col deadline">@task.Deadline.ToString("yyyy/MM/dd")</div>
+          <div class="col deadline">@task.Member.GetFullName</div>
           <div class="col action">
             @if ((await authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded || 
             (await authService.AuthorizeAsync(User, "Admin")).Succeeded || 
             task.MemberId == userManager.GetUserId(User))
             {
-              <a asp-controller="task" asp-action="edit" asp-route-id="@task.ProjectId" asp-route-taskId="@task.Id">
+              <a asp-controller="Task" asp-action="Edit" asp-route-projectId="@task.EncryptedProjectId" asp-route-taskId="@task.EncryptedId">
                 <i class="far fa-edit fa-lg mr-2"></i>
               </a>
-              <a asp-controller="task" asp-action="delete" asp-route-id="@task.ProjectId" asp-route-taskId="@task.Id">
+              <a asp-controller="Task" asp-action="Delete" asp-route-projectId="@task.EncryptedProjectId" asp-route-taskId="@task.EncryptedId">
                 <i class="far fa-trash-alt fa-lg mr-2"></i>
               </a>
             }
