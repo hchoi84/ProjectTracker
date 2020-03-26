@@ -32,10 +32,10 @@
               (await authService.AuthorizeAsync(User, "Admin")).Succeeded ||
               task.MemberId == userManager.GetUserId(User))
             {
-              <a asp-controller="Task" asp-action="Edit" asp-route-projectId="@task.ProjectId" asp-route-taskId="@task.Id">
+              <a asp-controller="Task" asp-action="Edit" asp-route-projectId="@Model.Project.EncryptedId" asp-route-taskId="@task.EncryptedId">
                 <i class="far fa-edit fa-lg mr-2"></i>
               </a>
-              <form asp-controller="Task" asp-action="Delete" asp-route-projectId="@task.ProjectId" asp-route-taskId="@task.Id" method="POST" class="inline">
+              <form asp-controller="Task" asp-action="Delete" asp-route-projectId="@Model.Project.EncryptedId" asp-route-taskId="@task.EncryptedId" method="POST" class="inline">
                 <button type="submit" class="transparent border-0 text-light">
                   <i class="far fa-trash-alt fa-lg mr-2"></i>
                 </button>
@@ -65,7 +65,7 @@
         @if (User.HasClaim(c => c.Type == ClaimType.SuperAdmin.ToString() && c.Value == "true")
           || Model.Project.MemberId == userManager.GetUserId(User))
         {
-          <a asp-controller="Task" asp-action="Create" asp-route-projectId="@Model.Project.Id" class="btn btn-primary ml-3"><i class="fas fa-plus mr-2"></i>Add New Task</a>
+          <a asp-controller="Task" asp-action="Create" asp-route-projectId="@Model.Project.EncryptedId" class="btn btn-primary ml-3"><i class="fas fa-plus mr-2"></i>Add New Task</a>
         }
       </div>
     </div>

@@ -10,6 +10,9 @@ namespace ProjectTracker.Models
     [Key]
     public int Id { get; set; }
 
+    [NotMapped]
+    public string EncryptedId { get; set; }
+
     [ForeignKey("Project")]
     public int ProjectId { get; set; }
 

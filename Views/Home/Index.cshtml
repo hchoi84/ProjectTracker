@@ -39,7 +39,7 @@
         <select asp-for="@Model.MemberIds" class="form-control" size="10">
           @foreach (Member member in Model.Members)
           {
-            <option value="@member.Id" class="font-weight-bold font-size-12">@member.GetFullName</option>
+            <option value="@member.EncryptedId" class="font-weight-bold font-size-12">@member.GetFullName</option>
           }
         </select>
         <button type="submit" class="btn btn-primary mt-3">Submit</button>

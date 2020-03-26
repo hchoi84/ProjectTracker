@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace ProjectTracker.Models
@@ -9,6 +10,9 @@ namespace ProjectTracker.Models
     public string LastName { get; set; }
     public DateTime Created { get; set; }
     public DateTime Updated { get; set; }
+
+    [NotMapped]
+    public string EncryptedId { get; set; }
 
     public string GetFullName 
     { 

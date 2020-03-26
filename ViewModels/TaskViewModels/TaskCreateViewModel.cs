@@ -15,6 +15,8 @@ namespace ProjectTracker.ViewModels
       TaskMemberIdsToRemove = new List<string>();
       MembersPartOfProject = new List<Member>();
     }
+
+    public string ProjectId { get; set; }
     public Task Task { get; set; }
     public List<TaskStatus> TaskStatuses { get; set; }
 

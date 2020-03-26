@@ -210,7 +210,7 @@ namespace ProjectTracker.Controllers
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(member);
       var emailConfirmationLink = Url.Action("ConfirmEmail", "Account", new { memberId = member.Id, token = token }, Request.Scheme);
 
-      // _logger.Log(LogLevel.Warning, emailConfirmationLink);
+      _logger.Log(LogLevel.Warning, emailConfirmationLink);
 
       EmailClient.SendLink(member, emailConfirmationLink, EmailType.EmailConfirmation);
     }

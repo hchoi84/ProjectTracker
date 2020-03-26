@@ -4,10 +4,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectTracker.Models;
+using ProjectTracker.Securities;
 using ProjectTracker.Utilities;
 using ProjectTracker.ViewModels;
 
@@ -17,25 +19,33 @@ namespace ProjectTracker.Controllers
   public class AdminController : Controller
   {
     private readonly IMember _member;
-    public AdminController(IMember member)
+    private readonly IDataProtector _protectMemberId;
+    public AdminController(IMember member, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
     {
       _member = member;
+      _protectMemberId = dataProtectionProvider.CreateProtector(dataProtectionStrings.MemberId);
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-      List<Member> members = await _member.GetAllMembersAsync();
+      List<Member> members = (await _member.GetAllMembersAsync())
+        .Select(m => {
+            m.EncryptedId = _protectMemberId.Protect(m.Id);
+            return m;
+          })
+        .ToList();
       return View(members);
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(string userId)
+    public async Task<IActionResult> Edit(string memberId)
     {
-      Member member = await _member.GetMemberByIdAsync(userId);
+      string id = _protectMemberId.Unprotect(memberId);
+      Member member = await _member.GetMemberByIdAsync(id);
       MemberEditViewModel editVM = new MemberEditViewModel
       {
-        Id = member.Id,
+        EncryptedId = memberId,
         FirstName = member.FirstName,
         LastName = member.LastName,
         Email = member.Email,
@@ -85,7 +95,7 @@ namespace ProjectTracker.Controllers
       else
       {
         ModelState.AddModelError(string.Empty, "Update successful");
-        return RedirectToAction("Edit", new { UserId = model.Id });
+        return RedirectToAction("Edit", new { memberId = model.EncryptedId });
       }
     }
 
@@ -97,19 +107,20 @@ namespace ProjectTracker.Controllers
       if (identityResult == null)
       {
         TempData["AccessPermission"] = "Updating user Access Permission failed";
-        return RedirectToAction("Edit", new { userId = memberEditVM.Id });
+        return RedirectToAction("Edit", new { memberId = memberEditVM.EncryptedId });
       }
       else
       {
         TempData["AccessPermission"] = "Updating user Access Permission Successful";
-        return RedirectToAction("Edit", new { userId = memberEditVM.Id });
+        return RedirectToAction("Edit", new { memberId = memberEditVM.EncryptedId });
       }
     }
 
     [HttpGet]
-    public async Task<IActionResult> Delete(string userId)
+    public async Task<IActionResult> Delete(string memberId)
     {
-      var identityResult = await _member.DeleteAsync(userId);
+      string id = _protectMemberId.Unprotect(memberId);
+      var identityResult = await _member.DeleteAsync(id);
       if (identityResult.Succeeded)
       {
         return RedirectToAction("Index");

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 using ProjectTracker.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace ProjectTracker.Securities
 {
@@ -14,10 +15,12 @@ namespace ProjectTracker.Securities
   {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly AppDbContext _dbContext;
-    public CanAccessActionsHandler(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext)
+    private readonly IDataProtector _protectProjectId;
+    public CanAccessActionsHandler(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
     {
       _httpContextAccessor = httpContextAccessor;
       _dbContext = dbContext;
+      _protectProjectId = dataProtectionProvider.CreateProtector(dataProtectionStrings.ProjectId);
     }
 
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, CanAccessActionsRequirement requirement)
@@ -35,9 +38,10 @@ namespace ProjectTracker.Securities
         return Task.CompletedTask;
       }
 
+      int projId = Convert.ToInt32(_protectProjectId.Unprotect(projectId.ToString()));
       var memberId = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-      var isCreator = _dbContext.Projects.FirstOrDefault(p => p.Id == Convert.ToInt32(projectId)).MemberId == memberId;
+      var isCreator = _dbContext.Projects.FirstOrDefault(p => p.Id == projId).MemberId == memberId;
 
       if (context.User.HasClaim(c => c.Type == "SuperAdmin" && c.Value == "true") ||
           context.User.HasClaim(c => c.Type == "Admin" && c.Value == "true") ||

@@ -10,9 +10,15 @@ namespace ProjectTracker.Models
   {
     [Key]
     public int Id { get; set; }
+    
+    [NotMapped]
+    public string EncryptedId { get; set; }
 
     [ForeignKey("Member")]
     public string MemberId { get; set; }
+
+    [NotMapped]
+    public string EncryptedMemberId { get; set; }
     
     [Required(ErrorMessage = "Project Name is Required")]
     // [UIHint()]  <== what's this??

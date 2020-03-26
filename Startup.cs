@@ -49,6 +49,7 @@ namespace ProjectTracker
       services.AddScoped<ITaskMember, SqlTaskMemberRepo>();
       services.AddTransient<IAuthorizationHandler, CanAccessActionsHandler>();
       services.AddTransient<IAuthorizationHandler, CanAccessTasksHandler>();
+      services.AddSingleton<DataProtectionStrings>();
 
       services.AddDbContextPool<AppDbContext>(options => options.UseMySql(_config.GetConnectionString("DbConnection")));
 

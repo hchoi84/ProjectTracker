@@ -8,12 +8,12 @@ namespace ProjectTracker.ViewModels
 
     [Required(ErrorMessage = "(Required)")]
     [Display(Name = "First Name")]
-    [MinLength(2, ErrorMessage = "Must be between at least {1} characters")]
+    [MinLength(2, ErrorMessage = "Must be at least {1} characters")]
     public string FirstName { get; set; }
 
     [Required(ErrorMessage = "(Required)")]
     [Display(Name = "Last Name")]
-    [MinLength(2, ErrorMessage = "Must be between at least {1} characters")]    
+    [MinLength(2, ErrorMessage = "Must be at least {1} characters")]    
     public string LastName { get; set; }
 
     [Required(ErrorMessage = "(Required)")]

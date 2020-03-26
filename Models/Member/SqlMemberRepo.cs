@@ -4,9 +4,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Policy;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectTracker.Securities;
 using ProjectTracker.Utilities;
 using ProjectTracker.ViewModels;
 
@@ -15,9 +17,11 @@ namespace ProjectTracker.Models
   public class SqlMemberRepo : IMember
   {
     private readonly UserManager<Member> _member;
-    public SqlMemberRepo(UserManager<Member> member)
+    private readonly IDataProtector _protector;
+    public SqlMemberRepo(UserManager<Member> member, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
     {
       _member = member;
+      _protector = dataProtectionProvider.CreateProtector(dataProtectionStrings.MemberId);
     }
 
     public async Task<IdentityResult> DeleteAsync(string id)
@@ -68,7 +72,8 @@ namespace ProjectTracker.Models
 
     public async Task<IdentityResult> UpdateUserInfo(MemberEditViewModel memberEditVM)
     {
-      Member member = await _member.FindByIdAsync(memberEditVM.Id);
+      string id = _protector.Unprotect(memberEditVM.EncryptedId);
+      Member member = await _member.FindByIdAsync(id);
       member.FirstName = memberEditVM.FirstName;
       member.LastName = memberEditVM.LastName;
       member.Email = memberEditVM.Email;
@@ -80,7 +85,8 @@ namespace ProjectTracker.Models
     {
       IdentityResult result = IdentityResult.Success;
 
-      Member member = await _member.FindByIdAsync(memberEditVM.Id);
+      string id = _protector.Unprotect(memberEditVM.EncryptedId);
+      Member member = await _member.FindByIdAsync(id);
       List<Claim> newClaims = memberEditVM.MemberClaims
         .Select(mc => new Claim(mc.ClaimType, mc.IsSelected ? "true" : "false")).ToList();
       List<Claim> memberClaims = await _member.GetClaimsAsync(member) as List<Claim>;
@@ -107,7 +113,8 @@ namespace ProjectTracker.Models
 
     public async Task<IdentityResult> UpdatePassword(MemberEditViewModel editVM)
     {
-      Member member = await _member.FindByIdAsync(editVM.Id);
+      string id = _protector.Unprotect(editVM.EncryptedId);
+      Member member = await _member.FindByIdAsync(id);
       return await _member.ChangePasswordAsync(member, editVM.OldPassword, editVM.NewPassword);
     }
 

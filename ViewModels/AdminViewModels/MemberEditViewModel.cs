@@ -6,7 +6,7 @@ namespace ProjectTracker.ViewModels
 {
   public class MemberEditViewModel
   {
-    public string Id { get; set; }
+    public string EncryptedId { get; set; }
 
     [Display(Name = "First Name")]
     public string FirstName { get; set; }

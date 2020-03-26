@@ -67,6 +67,7 @@ namespace ProjectTracker.Models
     public async Task<Project> UpdateAsync(Project updatedProject)
     {
       Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == updatedProject.Id);
+      
       if (project != null)
       {
         project.MemberId = updatedProject.MemberId;
