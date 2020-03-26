@@ -13,14 +13,12 @@ namespace ProjectTracker.Controllers
     private readonly IProject _project;
     private readonly ITask _task;
     private readonly IMember _member;
-    private readonly IDataProtector _protectMemberId;
 
-    public HomeController(IProject project, ITask task, IMember member, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
+    public HomeController(IProject project, ITask task, IMember member)
     {
       _member = member;
       _task = task;
       _project = project;
-      _protectMemberId = dataProtectionProvider.CreateProtector(dataProtectionStrings.MemberId);
     }
     
     public async Task<IActionResult> Index()
@@ -31,12 +29,10 @@ namespace ProjectTracker.Controllers
       
       model.TasksCount = (await _task.GetAllTasksAsync()).Count();
 
-      model.Members = (await _member.GetAllMembersAsync())
-        .Select(m => {
-          m.EncryptedId = _protectMemberId.Protect(m.Id);
-          return m;
-        })
-        .ToList();
+      model.Members = await _member.GetAllMembersAsync();
+
+      string userEmail = User.Identity.Name;
+      ViewBag.MemberFullName = await _member.GetMemberByEmailAsync(userEmail);
 
       return View(model);
     }

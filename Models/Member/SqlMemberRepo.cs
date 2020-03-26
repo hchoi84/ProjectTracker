@@ -17,27 +17,36 @@ namespace ProjectTracker.Models
   public class SqlMemberRepo : IMember
   {
     private readonly UserManager<Member> _member;
-    private readonly IDataProtector _protector;
+    private readonly IDataProtector _protectMemberId;
     public SqlMemberRepo(UserManager<Member> member, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
     {
       _member = member;
-      _protector = dataProtectionProvider.CreateProtector(dataProtectionStrings.MemberId);
+      _protectMemberId = dataProtectionProvider.CreateProtector(dataProtectionStrings.MemberId);
     }
 
-    public async Task<IdentityResult> DeleteAsync(string id)
+    public async Task<IdentityResult> DeleteAsync(string memberId)
     {
-      Member member = await _member.FindByIdAsync(id);
+      string decryptId = _protectMemberId.Unprotect(memberId);
+      Member member = await _member.FindByIdAsync(decryptId);
       return await _member.DeleteAsync(member);
     }
 
     public async Task<List<Member>> GetAllMembersAsync()
     {
       return (await _member.Users.ToListAsync())
+        .Select(m => {
+          m.EncryptedId = _protectMemberId.Protect(m.Id);
+          return m;
+        })
         .OrderBy(m => m.GetFullName)
         .ToList();
     } 
 
-    public async Task<Member> GetMemberByIdAsync(string id) => await _member.FindByIdAsync(id);
+    public async Task<Member> GetMemberByIdAsync(string memberId)
+    {
+      string decryptId = _protectMemberId.Unprotect(memberId);
+      return await _member.FindByIdAsync(decryptId);
+    }
 
     public async Task<IdentityResult> RegisterAsync(RegisterViewModel newMember)
     {
@@ -55,7 +64,8 @@ namespace ProjectTracker.Models
       
       if (result.Succeeded)
       {
-        if ((await GetAllMembersAsync()).Count <= 1)
+        var count = _member.Users.Count();
+        if (count <= 1)
         {
           Claim newClaim = new Claim(ClaimType.SuperAdmin.ToString(), "true");
           await _member.AddClaimAsync(member, newClaim);
@@ -72,7 +82,7 @@ namespace ProjectTracker.Models
 
     public async Task<IdentityResult> UpdateUserInfo(MemberEditViewModel memberEditVM)
     {
-      string id = _protector.Unprotect(memberEditVM.EncryptedId);
+      string id = _protectMemberId.Unprotect(memberEditVM.EncryptedId);
       Member member = await _member.FindByIdAsync(id);
       member.FirstName = memberEditVM.FirstName;
       member.LastName = memberEditVM.LastName;
@@ -85,7 +95,7 @@ namespace ProjectTracker.Models
     {
       IdentityResult result = IdentityResult.Success;
 
-      string id = _protector.Unprotect(memberEditVM.EncryptedId);
+      string id = _protectMemberId.Unprotect(memberEditVM.EncryptedId);
       Member member = await _member.FindByIdAsync(id);
       List<Claim> newClaims = memberEditVM.MemberClaims
         .Select(mc => new Claim(mc.ClaimType, mc.IsSelected ? "true" : "false")).ToList();
@@ -113,11 +123,16 @@ namespace ProjectTracker.Models
 
     public async Task<IdentityResult> UpdatePassword(MemberEditViewModel editVM)
     {
-      string id = _protector.Unprotect(editVM.EncryptedId);
+      string id = _protectMemberId.Unprotect(editVM.EncryptedId);
       Member member = await _member.FindByIdAsync(id);
       return await _member.ChangePasswordAsync(member, editVM.OldPassword, editVM.NewPassword);
     }
 
     public async Task<IList<Claim>> GetMemberClaimsAsync(Member member) => await _member.GetClaimsAsync(member);
+
+    public async Task<string> GetMemberByEmailAsync(string memberEmail)
+    {
+      return (await _member.FindByEmailAsync(memberEmail)).GetFullName;
+    }
   }
 }

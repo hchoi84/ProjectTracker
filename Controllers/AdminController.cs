@@ -19,30 +19,22 @@ namespace ProjectTracker.Controllers
   public class AdminController : Controller
   {
     private readonly IMember _member;
-    private readonly IDataProtector _protectMemberId;
-    public AdminController(IMember member, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings)
+    public AdminController(IMember member)
     {
       _member = member;
-      _protectMemberId = dataProtectionProvider.CreateProtector(dataProtectionStrings.MemberId);
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-      List<Member> members = (await _member.GetAllMembersAsync())
-        .Select(m => {
-            m.EncryptedId = _protectMemberId.Protect(m.Id);
-            return m;
-          })
-        .ToList();
+      List<Member> members = await _member.GetAllMembersAsync();
       return View(members);
     }
 
     [HttpGet]
     public async Task<IActionResult> Edit(string memberId)
     {
-      string id = _protectMemberId.Unprotect(memberId);
-      Member member = await _member.GetMemberByIdAsync(id);
+      Member member = await _member.GetMemberByIdAsync(memberId);
       MemberEditViewModel editVM = new MemberEditViewModel
       {
         EncryptedId = memberId,
@@ -119,8 +111,7 @@ namespace ProjectTracker.Controllers
     [HttpGet]
     public async Task<IActionResult> Delete(string memberId)
     {
-      string id = _protectMemberId.Unprotect(memberId);
-      var identityResult = await _member.DeleteAsync(id);
+      var identityResult = await _member.DeleteAsync(memberId);
       if (identityResult.Succeeded)
       {
         return RedirectToAction("Index");
