@@ -69,6 +69,12 @@ namespace ProjectTracker
         options.AddPolicy("CanAccessActions", policy => policy.AddRequirements(new CanAccessActionsRequirement()));
         options.AddPolicy("CanAccessTasks", policy => policy.AddRequirements(new CanAccessTasksRequirement()));
       });
+
+      services.AddAuthentication()
+        .AddGoogle(options => {
+          options.ClientId = GoogleAPI.ClientId;
+          options.ClientSecret = GoogleAPI.ClientSecret;
+      });
     }
     
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

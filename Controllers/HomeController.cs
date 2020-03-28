@@ -32,7 +32,7 @@ namespace ProjectTracker.Controllers
       model.Members = await _member.GetAllMembersAsync();
 
       string userEmail = User.Identity.Name;
-      ViewBag.MemberFullName = await _member.GetMemberByEmailAsync(userEmail);
+      ViewBag.MemberFullName = await _member.GetMemberFullNameByEmailAsync(userEmail);
 
       return View(model);
     }

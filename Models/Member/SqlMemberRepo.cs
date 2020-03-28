@@ -80,6 +80,13 @@ namespace ProjectTracker.Models
       return result;
     }
 
+    public async Task<IdentityResult> RegisterExternalLogin(Member member, ExternalLoginInfo info)
+    {
+      await _userManager.CreateAsync(member);
+      await _userManager.AddLoginAsync(member, info);
+      return IdentityResult.Success;
+    }
+
     public async Task<IdentityResult> UpdateUserInfo(MemberEditViewModel memberEditVM)
     {
       string id = _protectMemberId.Unprotect(memberEditVM.EncryptedId);
@@ -130,9 +137,14 @@ namespace ProjectTracker.Models
 
     public async Task<IList<Claim>> GetMemberClaimsAsync(Member member) => await _userManager.GetClaimsAsync(member);
 
-    public async Task<string> GetMemberByEmailAsync(string memberEmail)
+    public async Task<string> GetMemberFullNameByEmailAsync(string memberEmail)
     {
       return (await _userManager.FindByEmailAsync(memberEmail)).GetFullName;
+    }
+
+    public async Task<Member> GetMemberByEmailAsync(string memberEmail)
+    {
+      return await _userManager.FindByEmailAsync(memberEmail);
     }
 
     public string ProtectMemberId(string memberId) => _protectMemberId.Protect(memberId);

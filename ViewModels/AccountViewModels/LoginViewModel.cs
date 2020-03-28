@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ProjectTracker.ViewModels
 {
@@ -14,5 +16,9 @@ namespace ProjectTracker.ViewModels
 
     [Display(Name = "Remember me")]
     public bool RememberMe { get; set; }
+
+    public string ReturnURL { get; set; }
+
+    public IList<AuthenticationScheme> ExternalLogins { get; set; }
   }
 }

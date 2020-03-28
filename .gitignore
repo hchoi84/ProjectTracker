@@ -2,6 +2,7 @@ bin
 obj
 .vscode
 EmailClient.cs
+GoogleAPI.cs
 Migrations
 
 appsettings.Development.json

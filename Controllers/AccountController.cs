@@ -9,6 +9,8 @@ using ProjectTracker.ViewModels;
 using ProjectTracker.Securities;
 using ProjectTracker.Utilities;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Security.Claims;
 
 namespace ProjectTracker.Controllers
 {
@@ -29,7 +31,16 @@ namespace ProjectTracker.Controllers
     }
 
     [HttpGet]
-    public IActionResult Login() => View();
+    public async Task<IActionResult> Login(string returnUrl)
+    {
+      LoginViewModel loginVM = new LoginViewModel
+      {
+        ReturnURL = returnUrl,
+        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+      };
+
+      return View(loginVM);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel loginVM, string returnUrl)
@@ -210,9 +221,99 @@ namespace ProjectTracker.Controllers
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(member);
       var emailConfirmationLink = Url.Action("ConfirmEmail", "Account", new { memberId = member.Id, token = token }, Request.Scheme);
 
+      // TODO: Remove this line for public
       _logger.Log(LogLevel.Warning, emailConfirmationLink);
 
       EmailClient.SendLink(member, emailConfirmationLink, EmailType.EmailConfirmation);
+    }
+
+    [HttpPost]
+    public IActionResult ExternalLogin(string provider, string returnUrl)
+    {
+      var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl = returnUrl });
+
+      var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+
+      return new ChallengeResult(provider, properties);
+    }
+
+    public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+    {
+      returnUrl ??= Url.Content("~/");
+
+      LoginViewModel loginViewModel = new LoginViewModel
+      {
+        ReturnURL = returnUrl,
+        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+      };
+
+      if (remoteError != null)
+      {
+        ModelState.AddModelError(string.Empty, $"Error: {remoteError}");
+
+        return View("Login", loginViewModel);
+      }
+
+      ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
+
+      if (info == null)
+      {
+        ModelState.AddModelError(string.Empty, $"Error: Unknown");
+
+        return View("Login", loginViewModel);
+      }
+
+      string email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+      Member member = null;
+
+      if (email != null)
+      {
+        member = await _member.GetMemberByEmailAsync(email);
+
+        if (member != null && !member.EmailConfirmed)
+        {
+          ModelState.AddModelError(string.Empty, "Email not confirmed yet");
+          return View("Login", loginViewModel);
+        }
+      }
+
+      var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+      if (signInResult.Succeeded)
+      {
+        return LocalRedirect(returnUrl);
+      }
+
+      if (email != null)
+      {
+        if (member == null)
+        {
+          member = new Member
+          {
+            UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
+            Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+          };
+
+          var result = await _member.RegisterExternalLogin(member, info);
+
+          if (result.Succeeded)
+          {
+            await SendEmailConfirmationLinkAsync(member);
+
+            ViewBag.ConfirmTitle = "Registration Successful";
+            ViewBag.ConfirmMessage = "Please check your Inbox or Spam folder for confirmation link. If you do not receive it within 5 minutes, try to login to receive new confirmation link.";
+            return View("Confirmation");
+          }
+
+          return LocalRedirect(returnUrl);
+        }
+      }
+
+      ViewBag.ErrorTitle = $"Response error from {info.LoginProvider}";
+      ViewBag.ErrorMessage = $"Please contact support";
+
+      return View("Error");
     }
   }
 }
