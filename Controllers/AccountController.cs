@@ -293,6 +293,8 @@ namespace ProjectTracker.Controllers
           {
             UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
             Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+            FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? info.Principal.FindFirstValue(ClaimTypes.Name),
+            LastName = info.Principal.FindFirstValue(ClaimTypes.Surname),
           };
 
           var result = await _member.RegisterExternalLogin(member, info);

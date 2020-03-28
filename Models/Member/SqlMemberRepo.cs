@@ -64,17 +64,7 @@ namespace ProjectTracker.Models
       
       if (result.Succeeded)
       {
-        var count = _userManager.Users.Count();
-        if (count <= 1)
-        {
-          Claim newClaim = new Claim(ClaimType.SuperAdmin.ToString(), "true");
-          await _userManager.AddClaimAsync(member, newClaim);
-        }
-        else
-        {
-          Claim newClaim = new Claim(ClaimType.Member.ToString(), "true");
-          await _userManager.AddClaimAsync(member, newClaim);
-        }
+        await SetClaim(member);
       }
       
       return result;
@@ -82,9 +72,33 @@ namespace ProjectTracker.Models
 
     public async Task<IdentityResult> RegisterExternalLogin(Member member, ExternalLoginInfo info)
     {
-      await _userManager.CreateAsync(member);
-      await _userManager.AddLoginAsync(member, info);
-      return IdentityResult.Success;
+      IdentityResult result = await _userManager.CreateAsync(member);
+
+      if (result.Succeeded)
+      {
+        await SetClaim(member);
+      }
+      else
+      {
+        return result;
+      }
+
+      return await _userManager.AddLoginAsync(member, info);
+    }
+
+    private async System.Threading.Tasks.Task SetClaim(Member member)
+    {
+      var count = _userManager.Users.Count();
+      if (count <= 1)
+      {
+        Claim newClaim = new Claim(ClaimType.SuperAdmin.ToString(), "true");
+        await _userManager.AddClaimAsync(member, newClaim);
+      }
+      else
+      {
+        Claim newClaim = new Claim(ClaimType.Member.ToString(), "true");
+        await _userManager.AddClaimAsync(member, newClaim);
+      }
     }
 
     public async Task<IdentityResult> UpdateUserInfo(MemberEditViewModel memberEditVM)
