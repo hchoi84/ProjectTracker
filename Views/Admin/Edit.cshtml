@@ -28,7 +28,7 @@
 <form asp-controller="Admin" asp-action="EditAccessPermission" method="POST" class="mt-5">
   <input type="hidden" asp-for="@Model.EncryptedId">
   <div class="form-group">
-    <label asp-for="@Model.MemberClaims"></label>
+    <label asp-for="@Model.MemberClaims" class="mr-1"></label>
     @for (int i = 0; i < Model.MemberClaims.Count; i++)
     {
       <div class="form-check ml-3">
@@ -37,6 +37,7 @@
         <label asp-for="@Model.MemberClaims[i].IsSelected" class="form-check-label">
           @Model.MemberClaims[i].ClaimType
         </label>
+        <i class="far fa-question-circle fa-xs" data-toggle="tooltip" data-placement="right" data-offset="0 10" title="@Model.MemberClaims[i].Description"></i>
       </div> 
     }
   </div>

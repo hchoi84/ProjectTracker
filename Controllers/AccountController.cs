@@ -2,8 +2,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MimeKit;
-using MailKit.Net.Smtp;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
 using ProjectTracker.Securities;
@@ -45,6 +43,9 @@ namespace ProjectTracker.Controllers
     [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel loginVM, string returnUrl)
     {
+      loginVM.ReturnURL = returnUrl;
+      loginVM.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
       if (ModelState.IsValid)
       {
         Member member = await _userManager.FindByEmailAsync(loginVM.Email);
@@ -61,6 +62,11 @@ namespace ProjectTracker.Controllers
             ModelState.AddModelError(string.Empty, "Email is not confirmed yet. New confirmation link as been sent. Please check your Inbox for email confirmation link. Alternatively, please check your Spam as well.");
             return View();
           }
+        }
+        else
+        {
+          ModelState.AddModelError(string.Empty, "Invalid login attempt");
+          return View(loginVM);
         }
 
         var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe, false);

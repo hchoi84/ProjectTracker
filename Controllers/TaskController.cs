@@ -1,17 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
 using ProjectTracker.Utilities;
 using Task = ProjectTracker.Models.Task;
-using ProjectTracker.Securities;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace ProjectTracker.Controllers
 {
@@ -227,6 +222,12 @@ namespace ProjectTracker.Controllers
     public IActionResult TasksByMembers()
     {
       List<Task> tasks = HttpContext.Session.GetObject<List<Task>>("TBM");
+      
+      if (tasks == null)
+      {
+        return RedirectToAction("Index", "Home");
+      }
+
       HttpContext.Session.Clear();
 
       return View("DisplayTasks", tasks);

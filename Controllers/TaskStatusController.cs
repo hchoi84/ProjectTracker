@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using TaskStatus = ProjectTracker.Models.TaskStatus;

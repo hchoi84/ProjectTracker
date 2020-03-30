@@ -4,12 +4,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ProjectTracker.Models;
-using ProjectTracker.Securities;
 using ProjectTracker.Utilities;
 using ProjectTracker.ViewModels;
 
@@ -54,11 +51,13 @@ namespace ProjectTracker.Controllers
         {
           memberClaim.ClaimType = claim.Type;
           memberClaim.IsSelected = Convert.ToBoolean(claim.Value);
+          memberClaim.Description = memberClaim.GetDescription(memberClaim.ClaimType);
         }
         else
         {
           memberClaim.ClaimType = claimType.ToString();
           memberClaim.IsSelected = false;
+          memberClaim.Description = memberClaim.GetDescription(memberClaim.ClaimType);
         }
 
         editVM.MemberClaims.Add(memberClaim);
