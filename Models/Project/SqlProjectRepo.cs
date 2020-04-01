@@ -52,7 +52,15 @@ namespace ProjectTracker.Models
 
     public async Task<List<Project>> GetAllProjectsAsync()
     {
-      var projects = await _context.Projects.Include(p => p.Member).ToListAsync();
+      var projects = (await _context.Projects
+        .Include(p => p.Member)
+        .ToListAsync())
+        .Select(p => 
+        {
+          p.EncryptedId = _protectProjectId.Protect(p.Id.ToString());
+          return p;
+        })
+        .ToList();
 
       return projects;
     }
@@ -62,8 +70,10 @@ namespace ProjectTracker.Models
       Project project = await _context.Projects
         .Include(p => p.Member)
         .FirstOrDefaultAsync(p => p.Id == id);
+      
       if (project != null)
       {
+        project.EncryptedId = _protectProjectId.Protect(project.Id.ToString());
         return project;
       }
       return null;
@@ -102,10 +112,15 @@ namespace ProjectTracker.Models
 
     public async Task<List<Project>> GetProjectsByMemberIdAsync(string memberId)
     {
-      return await _context.Projects
+      return (await _context.Projects
         .Where(p => p.MemberId == memberId)
         .Include(p => p.Member)
-        .ToListAsync();
+        .ToListAsync())
+        .Select(p => {
+          p.EncryptedId = _protectProjectId.Protect(p.Id.ToString());
+          return p;
+        })
+        .ToList();
     }
 
     public string ProtectProjectId(int projectId) => _protectProjectId.Protect(projectId.ToString());

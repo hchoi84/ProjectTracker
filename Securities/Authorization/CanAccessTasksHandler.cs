@@ -44,8 +44,9 @@ namespace ProjectTracker.Securities
       var isInProjectMember = _dbContext.ProjectMembers.Any(pm => 
         pm.ProjectId == projId && 
         pm.MemberId == memberId);
+      var isSuperAdmin = context.User.HasClaim(c => c.Type == "SuperAdmin" && c.Value == "true");
 
-      if (isCreator || isInProjectMember)
+      if (isCreator || isInProjectMember || isSuperAdmin)
       {
         context.Succeed(requirement);
       }

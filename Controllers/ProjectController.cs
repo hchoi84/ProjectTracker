@@ -21,17 +21,15 @@ namespace ProjectTracker.Controllers
     private readonly IProjectMember _projectMember;
     private readonly ITask _task;
     private readonly ITaskMember _taskMember;
-    private readonly IDataProtector _protectProjectId;
     private readonly IMember _member;
 
-    public ProjectController(IProject project, IAuthorizationService authService, IProjectMember projectMember, ITask task, ITaskMember taskMember, IDataProtectionProvider dataProtectionProvider, DataProtectionStrings dataProtectionStrings, IMember member)
+    public ProjectController(IProject project, IAuthorizationService authService, IProjectMember projectMember, ITask task, ITaskMember taskMember, IMember member)
     {
       _project = project;
       _authService = authService;
       _projectMember = projectMember;
       _task = task;
       _taskMember = taskMember;
-      _protectProjectId = dataProtectionProvider.CreateProtector(dataProtectionStrings.ProjectId);
       _member = member;
     }
 
@@ -43,23 +41,13 @@ namespace ProjectTracker.Controllers
 
       if ((await _authService.AuthorizeAsync(User, "SuperAdmin")).Succeeded)
       {
-        projects = (await _project.GetAllProjectsAsync())
-          .Select(p => {
-            p.EncryptedId = _protectProjectId.Protect(p.Id.ToString());
-            return p;
-          })
-          .ToList();
+        projects = await _project.GetAllProjectsAsync();
       }
       else 
       {
         string memberId = _member.GetMemberId(User);
 
-        projects = (await _project.GetProjectsByMemberIdAsync(memberId))
-          .Select(p => {
-            p.EncryptedId = _protectProjectId.Protect(p.Id.ToString());
-            return p;
-          })
-          .ToList();
+        projects = await _project.GetProjectsByMemberIdAsync(memberId);
 
         var projectMembers = await _projectMember.GetByMemberIdAsync(memberId);
 
@@ -111,7 +99,7 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(string projectId)
     {
-      int id = Convert.ToInt32(_protectProjectId.Unprotect(projectId));
+      int id = Convert.ToInt32(_project.UnprotectProjectId(projectId));
 
       return View(await GenerateProjectViewModel(id));
     }
@@ -120,7 +108,7 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Edit(ProjectEditViewModel editProjectVM)
     {
-      editProjectVM.Project.Id = Convert.ToInt32(_protectProjectId.Unprotect(editProjectVM.Project.EncryptedId));
+      editProjectVM.Project.Id = Convert.ToInt32(_project.UnprotectProjectId(editProjectVM.Project.EncryptedId));
 
       if (ModelState.IsValid)
       {
@@ -137,7 +125,7 @@ namespace ProjectTracker.Controllers
         return View(await GenerateProjectViewModel(editProjectVM.Project.Id));
       }
 
-      editProjectVM.Project.Id = Convert.ToInt32(_protectProjectId.Unprotect(editProjectVM.Project.EncryptedId));
+      editProjectVM.Project.Id = Convert.ToInt32(_project.UnprotectProjectId(editProjectVM.Project.EncryptedId));
       
       editProjectVM.Project.MemberId = _member.UnprotectMemberId(editProjectVM.Project.EncryptedMemberId);
       
@@ -145,7 +133,7 @@ namespace ProjectTracker.Controllers
 
       if (editProjectVM.ProjectMemberIdsToAdd.Any())
       {
-        int projId = Convert.ToInt32(_protectProjectId.Unprotect(editProjectVM.Project.EncryptedId));
+        int projId = Convert.ToInt32(_project.UnprotectProjectId(editProjectVM.Project.EncryptedId));
         var projMemIdsToAdd = editProjectVM.ProjectMemberIdsToAdd
           .Select(projectMemberIdToAdd => {
             string id = _member.UnprotectMemberId(projectMemberIdToAdd);
@@ -165,7 +153,7 @@ namespace ProjectTracker.Controllers
 
       if (editProjectVM.ProjectMemberIdsToRemove.Any())
       {
-        int projId = Convert.ToInt32(_protectProjectId.Unprotect(editProjectVM.Project.EncryptedId));
+        int projId = Convert.ToInt32(_project.UnprotectProjectId(editProjectVM.Project.EncryptedId));
         var projMemIdsToRemove = editProjectVM.ProjectMemberIdsToRemove
           .Select(projectMemberIdToRemove => {
             string id = _member.UnprotectMemberId(projectMemberIdToRemove);
@@ -182,7 +170,7 @@ namespace ProjectTracker.Controllers
     [Authorize(Policy = "CanAccessActions")]
     public async Task<IActionResult> Delete(string projectId)
     {
-      int projId = Convert.ToInt32(_protectProjectId.Unprotect(projectId));
+      int projId = Convert.ToInt32(_project.UnprotectProjectId(projectId));
       var project = await _project.GetProjectByIdAsync(projId);
 
       var proj = await _project.DeleteAsync(projId);
@@ -203,7 +191,7 @@ namespace ProjectTracker.Controllers
       if (projectId != null)
       {
         projectVM.Project = await _project.GetProjectByIdAsync((int)projectId);
-        projectVM.Project.EncryptedId = _protectProjectId.Protect(projectVM.Project.Id.ToString());
+
         if (projectVM.Project.MemberId != null)
         {
           projectVM.Project.Member = projectVM.Members.FirstOrDefault(m => m.Id == projectVM.Project.MemberId);
