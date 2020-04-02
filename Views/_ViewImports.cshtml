@@ -3,8 +3,10 @@
 @using ProjectTracker.ViewModels
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Http
 
 @inject UserManager<Member> userManager
 @inject IAuthorizationService authService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

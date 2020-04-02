@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Models;
 using ProjectTracker.ViewModels;
@@ -31,6 +32,7 @@ namespace ProjectTracker.Controllers
 
       string userEmail = User.Identity.Name;
       ViewBag.MemberFullName = await _member.GetMemberFullNameByEmailAsync(userEmail);
+      HttpContext.Session.SetString("FullName", await _member.GetMemberFullNameByEmailAsync(userEmail));
 
       return View(model);
     }
