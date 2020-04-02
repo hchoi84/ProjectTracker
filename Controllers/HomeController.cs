@@ -31,7 +31,6 @@ namespace ProjectTracker.Controllers
       model.Members = await _member.GetAllMembersAsync();
 
       string userEmail = User.Identity.Name;
-      ViewBag.MemberFullName = await _member.GetMemberFullNameByEmailAsync(userEmail);
       HttpContext.Session.SetString("FullName", await _member.GetMemberFullNameByEmailAsync(userEmail));
 
       return View(model);
